@@ -10,7 +10,7 @@ const config = {
    width: 800,
    height: 640,
    tickspeed: 30,
-   fps: 60,
+   fps: 500000,
    webglOptions: {
       antialias: true
    }
@@ -87,7 +87,7 @@ function main() {
    var camera = new Camera(fieldOfView, aspect, zNear, zFar);
 
    camera.setTo(0, 0, -5);
-   camera.lookAt(0,0,0);
+   camera.lookAt(0, 0, 0);
 
    document.body.onkeypress = function (e) {
       let speed = 0.5;
@@ -105,7 +105,7 @@ function main() {
             camera.move(-speed, 0, 0);
             break;
       }
-      camera.lookAt(0,0,0);
+      camera.lookAt(0, 0, 0);
    }
 
    setInterval(() => {
@@ -120,35 +120,19 @@ function main() {
    var dateAtBegin = Date.now();
    var timePassed, averageTimePerFrame, currentfps;
    var fpsCouter = 0;
-   var checkInterval = 1; // In seconds
 
    setInterval(() => {
 
       timePassed = Date.now() - dateAtBegin;
-
-      if (timePassed > 1000) {
+      if (timePassed > 5000) {
 
          averageTimePerFrame = timePassed / fpsCouter;
          currentfps = timePassed / averageTimePerFrame;
-
-         console.log("current fps: (better)", currentfps);
-
-         fpsCouter = 0;
-         dateAtBegin = Date.now();
-      }
-
-      /*if (fpsCouter == (config.fps * checkInterval)) { // Wird noch überarbeitet vom mir (Merlin)
-         dateAtEnd = Date.now();
-
-         totalTimePassed = dateAtEnd - dateAtBegin;
-         console.log(totalTimePassed);
-         averageTimePerFrame = totalTimePassed / (config.fps * checkInterval);
-         frames = (totalTimePassed / averageTimePerFrame) / checkInterval;
-         console.log("current fps: ", frames);
+         console.log("current fps: ", currentfps);
 
          fpsCouter = 0;
          dateAtBegin = Date.now();
-      }*/ else {
+      } else {
          fpsCouter++;
       }
 
