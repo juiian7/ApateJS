@@ -1,113 +1,82 @@
-//
-/**
- * @typedef {import("../utility/color.js").IColor} IColor
- * @typedef {import("../utility/vector.js").IVector} IVector
- */
-/*
-import Vector from "../utility/vector.js";
 import Color, {
-    rgbToHex
+    hexToRgb
 } from "../utility/color.js";
-*/
+import PixelScreen from "./pixel/pixelScreen.js";
+import {
+    apateConfig
+} from "../apateConfig.js";
+import AsciiScreen from "./ascii/asciiScreen.js";
 
-/**
- * @typedef ScreenConfig 
- * @property {string} selector
- * @property {number} width
- * @property {number} height
- * @property {number} scale
- * @property {number} numberOfLayers
- * @property {number} refreshSpeed used for engine
- * @property {bool} cleanUpScreen used for engine
- */
+export default class Screen {
 
-/**
- * @type {ScreenConfig}
- */
-const defaultConfig = {
-    selector: '#screen',
-    width: 128,
-    height: 128,
-    scale: 4,
-    numberOfLayers: 1,
-    refreshSpeed: 30,
-    cleanUpScreen: false
-}
+    constructor(element) {
 
-/**
- * @typedef {Object} Screen
- */
-export default class PixelScreen {
-    /**
-     * @param {ScreenConfig?} screenConfig
-     */
-    constructor(screenConfig) {
-        this.screenConfig = {
-            ...defaultConfig,
-            ...screenConfig
-        };
-        const parentElement = document.querySelector(this.screenConfig.selector);
+        this.element = element;
 
-        this.canvases = [];
-        this.contexts = [];
+        this.pixelScreen = new PixelScreen(this.element);
+        //this.asciiScreen = new AsciiScreen(element);
 
-        for (let l = 0; l < this.screenConfig.numberOfLayers; l++) {
-
-            let canvas = document.createElement('canvas');
-            canvas.width = this.screenConfig.width * this.screenConfig.scale;
-            canvas.height = this.screenConfig.height * this.screenConfig.scale;
-            canvas.style.zIndex = l;
-            canvas.style.position = 'absolute';
-
-            let context = canvas.getContext('2d');
-            parentElement.appendChild(canvas);
-
-            this.canvases.push(canvas);
-            this.contexts.push(context);
-        }
-
-
-        this.clearScreen();
+        this.tmpColor = new Color(0, 0, 0);
+        this.clear({
+            r: 0,
+            g: 0,
+            b: 0
+        });
     }
 
-    clearScreen() {
-        for (let l = 0; l < this.contexts.length; l++) {
-            this.contexts[l].clearRect(0, 0, this.canvases[l].width, this.canvases[l].height);
-        }
-    }
-
-    flushLayer(layer, color) {
-        this.contexts[layer].fillStyle = color;
-        this.contexts[layer].fillRect(0, 0, this.canvases[layer].width, this.canvases[layer].height);
-    }
-
-    clearLayer(layer){
-        this.contexts[layer].clearRect(0, 0, this.canvases[layer].width, this.canvases[layer].height);
+    clear(c) {
+        this.pixelScreen.clear(c.r, c.g, c.b);
     }
 
     /**
      * @param {number} x x-coord
      * @param {number} y y-coord
-     * @param {string} c color as hex code 
-     * @param {number?} layer which layer to draw 
+     * @param {{r,g,b}} c color
      */
-    pixel(x, y, c, layer) {
-        this.contexts[layer].fillStyle = c;
-        this.contexts[layer].fillRect(x * this.screenConfig.scale, y * this.screenConfig.scale, this.screenConfig.scale, this.screenConfig.scale);
+    pixel(x, y, c) {
+        this.pixelScreen.setPixel(x, y, c.r, c.g, c.b);
+    }
+
+    /**
+     * 
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} w 
+     * @param {number} h 
+     * @param {{r,g,b}} c 
+     */
+    rect(x, y, w, h, c) {
+        for (let i = 0; i < w; i++) {
+            for (let j = 0; j < h; j++) {
+                this.pixelScreen.setPixel(x + i, y + j, c.r, c.g, c.b);
+            }
+        }
     }
 
     /**
      * @param {number} x x-coord
      * @param {number} y y-coord
-     * @param {number} scale scale of the sprite
      * @param {any} spriteObj sprite format: [{x,y,hex},...]
-     * @param {number?} layer which layer to draw 
+     * @param {number} scale 
      */
-    pixelSprite(x, y, scale, spriteObj, layer) {
-        //scale *= this.screenConfig.scale
+    sprite(x, y, spriteObj, scale) {
         for (let i = 0; i < spriteObj.length; i++) {
-            this.contexts[layer].fillStyle = spriteObj[i].c;
-            this.contexts[layer].fillRect(((x + spriteObj[i].x) * scale) * this.screenConfig.scale,(y + spriteObj[i].y) * ( scale * this.screenConfig.scale), scale * this.screenConfig.scale, scale * this.screenConfig.scale);
+            this.rect(x + (spriteObj[i].x * scale), y + (spriteObj[i].y * scale), scale, scale, hexToRgb(spriteObj[i].c));
         }
+    }
+
+    text(x, y, t, c) {
+        /*this.asciiScreen.setColor(c.HEX);
+
+        let xOffset = 0;
+        let yOffset = 0;
+        for (let i = 0; i < t.length; i++) {
+            this.asciiScreen.putChar(x + xOffset, y + yOffset, t[i]);
+            if (t[i] == '\n') {
+                yOffset++;
+                xOffset = x;
+            }
+            xOffset++;
+        }*/
     }
 }

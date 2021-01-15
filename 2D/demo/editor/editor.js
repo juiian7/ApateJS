@@ -1,6 +1,11 @@
-import Color from '../../src/utility/color.js';
-import Screen from '../../src/screen/screen.js';
+import { apateConfig } from '../../src/apateConfig.js';
+import Engine from '../../src/engine.js';
+import Color, {
+    hexToRgb
+} from '../../src/utility/color.js';
 
+
+apateConfig.parentSelector = '#view';
 
 const palette = {
     black: {
@@ -85,83 +90,206 @@ const palette = {
     }
 }
 
-var screenconfig = {
-    width: 16,
-    height: 16,
-    scale: 32
-};
-
-
-let params = new URLSearchParams(window.location.search);
-
-let size = params.get('size');
-if (size) {
-    screenconfig.width = Number.parseInt(size.split('x')[0]);
-    screenconfig.height = Number.parseInt(size.split('x')[1]);
-}
-
-var screen = new Screen('#view', screenconfig);
+let engine = new Engine();
 
 var sprite = [];
+let backgroundColor = {
+    r: 100,
+    g: 100,
+    b: 100
+};
+
+engine.clearColor = backgroundColor;
+
+//engine.registerButton('lighter', 'ArrowUp');
+//engine.registerButton('darker', 'ArrowDown');
+
+engine.registerButton('right', 'ArrowRight');
+engine.registerButton('left', 'ArrowLeft');
+engine.registerButton('space', 'Space');
 
 
-var currentColor = '#000000';
+
+let w = 16;
+let h = 16;
+
+let pw = Math.round((110 / w));
+let ph = Math.round((110 / h));
+
+let currentColor = palette['red'];
+let doRemove = false;
+let currentSelection = 8;
+let colors = Object.keys(palette);
+
+currentColor = palette[colors[currentSelection]];
+let nextTime = new Date().getTime() + 300;
+
+engine.on('update', () => {
+
+    /*if (engine.isButtonPressed('lighter') && backgroundColor.r < 253) {
+        backgroundColor.r += 2;
+        backgroundColor.b = backgroundColor.g = backgroundColor.r;
+
+        engine.clearColor = backgroundColor;
+
+    } else if (engine.isButtonPressed('darker') && backgroundColor.r > 2) {
+        backgroundColor.r -= 2;
+        backgroundColor.b = backgroundColor.g = backgroundColor.r;
+
+        engine.clearColor = backgroundColor;
+    }*/
+
+    if (engine.isButtonPressed('right') && nextTime < new Date().getTime()) {
+
+        currentSelection++;
+        if (currentSelection > colors.length - 1) currentSelection = 0;
+
+        currentColor = palette[colors[currentSelection]];
+        nextTime = new Date().getTime() + 300;
+
+    } else if (engine.isButtonPressed('left') && nextTime < new Date().getTime()) {
+
+        currentSelection--;
+        if (currentSelection < 0) currentSelection = colors.length - 1;
+
+        currentColor = palette[colors[currentSelection]];
+        nextTime = new Date().getTime() + 300;
+    }
+
+    displayPalette(palette);
+    renderGrid();
+    renderSprite();
+
+    if (engine.IsMouseDown) {
+        if (engine.mouseY < h * ph && engine.mouseX < w * pw) {
+            let {
+                x,
+                y
+            } = screenToSprite(engine.mouseX, engine.mouseY);
+            removePixelIfExists(x, y);
+            if (!doRemove) sprite.push({
+                x,
+                y,
+                c: currentColor
+            });
+        } else {
+            handleClickedColor(engine.mouseX, engine.mouseY)
+        }
+    }
+});
+
+engine.on('save', () => {
+    engine.saveObjToBrowser('sprite', sprite);
+});
+
+engine.on('load', () => {
+    let s = engine.loadObjFromBrowser('sprite');
+    if (s) sprite = s;
+});
 
 
-displayPalette(palette);
+function removePixelIfExists(x, y) {
+    let p = sprite.find(p => p.x == x && p.y == y);
+    if (p) {
+        let index = sprite.indexOf(p);
+        sprite.splice(index, 1);
+    }
+}
 
 function displayPalette(palette) {
-    var colors = document.querySelector('#colors');
+    let i = 0;
+    let dw = 128 / Object.keys(palette).length;
     for (const color in palette) {
-        var c = new Color(palette[color].r, palette[color].g, palette[color].b);
-        let div = document.createElement('div');
-        div.style.backgroundColor = c.HEX;
-        div.style.height = '40px';
-        div.style.width = '40px';
-        //div.innerText = c.HEX;
+        if (palette[color] == currentColor) {
+            engine.screen.rect(i * dw, 128 - 8, dw, 7, palette[color]);
+        } else engine.screen.rect(i * dw, 128 - 5, dw, 5, palette[color]);
+        i++;
+    }
+}
 
-        div.onclick = (ev) => {
-            currentColor = rgb2hex(ev.currentTarget.style.backgroundColor);
-        };
+function handleClickedColor(mx, my) {
+    let i = 0;
+    let dw = 128 / Object.keys(palette).length;
+    for (const color in palette) {
 
-        colors.appendChild(div);
+        let x = i * dw;
+        let w = dw;
+        let y = 128 - 8;
+        let h = 10;
+
+        if (mx > x && mx < x + w && my > y && my < y + h) {
+            currentColor = palette[color];
+        }
+
+        i++;
+    }
+}
+
+function renderGrid() {
+    for (let i = 0; i < w; i++) {
+        engine.screen.rect(pw + (i * pw) - 1, 0, 1, h * ph, palette['black']);
+    }
+    for (let j = 0; j < h; j++) {
+        engine.screen.rect(0, ph + (j * ph) - 1, w * pw, 1, palette['black']);
+    }
+}
+
+function renderSprite() {
+    for (const pixel of sprite) {
+        engine.screen.rect(pixel.x * pw, pixel.y * ph, pw - 1, ph - 1, pixel.c);
+    }
+}
+
+function screenToSprite(mouseX, mouseY) {
+    return {
+        x: Math.floor(mouseX / pw),
+        y: Math.floor(mouseY / ph)
     }
 }
 
 let x = 0;
 let y = 0;
 
-document.querySelector('#view').onmousemove = (ev) => {
-    x = Math.floor(ev.clientX / screenconfig.scale);
-    y = Math.floor(ev.clientY / screenconfig.scale);
-};
-
-document.querySelector('#view').onmousedown = (ev) => {
-    let s = sprite.find(p => p.x == x && p.y == y);
-    if (!s) {
-        sprite.push({
-            x,
-            y,
-            c: currentColor
-        });
-    } else s.c = currentColor;
-
-    console.log(currentColor, sprite);
-    screen.pixelSprite(0, 0, 1, sprite);
-};
-
 var hexDigits = new Array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f");
 
-//Function to convert rgb color to hex format
-function rgb2hex(rgb) {
-    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+engine.setTitle('ApateJS Sprite Editor');
+engine.addControl('Download', () => {
+    download('sprite.json', JSON.stringify(sprite));
+});
+
+engine.addControl('Clear', () => {
+    sprite = [];
+});
+
+let tmpColor;
+
+function toggleMode() {
+    doRemove = !doRemove;
+    let name = 'Erase';
+    if (doRemove) {
+        name = 'Draw';
+        tmpColor = currentColor;
+        currentColor = null;
+    } else {
+        currentColor = tmpColor;
+    }
+    return {
+        name
+    };
 }
 
-function hex(x) {
-    return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
-}
+engine.addControl('Erase', toggleMode, 'space');
 
+
+engine.run();
+
+engine.setDescription(`#ApateJS Sprite Editor
+
+test:
+- 12as
+- de34`);
+
+// ##############################################################################
 
 function download(filename, text) {
     var element = document.createElement('a');
@@ -175,7 +303,3 @@ function download(filename, text) {
 
     document.body.removeChild(element)
 }
-
-document.querySelector('#download').onclick = () => {
-    download('sprite.json', JSON.stringify(sprite));
-};

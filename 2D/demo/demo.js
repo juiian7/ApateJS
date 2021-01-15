@@ -1,132 +1,109 @@
 //
 
+import Engine from '../src/engine.js';
+import Color from '../src/utility/color.js';
 
+var engine = new Engine();
 
+engine.ShowMouse = true;
 
-import Engine from "../src/engine.js";
-import {
-    loadFromURL
-} from '../src/utility/spriteMgr.js'
-
-
-var player;
-
-
-/**
- * @type {import("../screen/screen.js").ScreenConfig}
- */
-const config = {
-    scale: 4,
-    cleanUpScreen: true,
-    numberOfLayers: 2
-};
-
-var engine = new Engine(config);
-
-engine.registerButton('space', 'Space');
+engine.registerButton('Up', 'KeyW');
+engine.registerButton('Down', 'KeyS');
+engine.registerButton('Left', 'KeyA');
+engine.registerButton('Right', 'KeyD');
 
 let eid = engine.ECS.createEntity();
 
-engine.ECS.addSystem('position', (comp) => {
-    //console.log(engine.getPressedKeys());
-    if (engine.isButtonPressed('space')) {
-        comp.x++;
-        comp.y++;
-    }
-});
+engine.ECS.setSystem('movement', ['position'], (comps) => {
+    if (comps['position'].eid == eid) {
+        //console.log(engine.getPressedKeys());
+        if (engine.isButtonPressed('Up')) comps['position'].y--;
+        if (engine.isButtonPressed('Down')) comps['position'].y++;
+        if (engine.isButtonPressed('Left')) comps['position'].x--;
+        if (engine.isButtonPressed('Right')) comps['position'].x++;
 
-
-/*
-engine.registerEvent("onStart",(self) => {
-    self.screen.flushLayer(0, '#000000');
-});
-*/
-/*engine.registerEvent("onUpdate", (self) => {
-    self.screen.clearLayer(1);
-});*/
-
-
-for (let i = 0; i < engine.screen.screenConfig.width; i++) {
-    for (let j = 0; j < engine.screen.screenConfig.height; j++) {
-        engine.screen.pixel(i, j, genHex(), 0);
-    }
-}
-
-engine.registerEvent("onLastUpdate", (self) => {
-    //self.screen.clearScreen();
-
-    for (let i = 0; i < engine.screen.screenConfig.width; i++) {
-        for (let j = 0; j < engine.screen.screenConfig.height; j++) {
-            engine.screen.pixel(i, j, genHex(), 0);
+        if (comps['position'].x >= 128) {
+            engine.IsRunning = false;
         }
     }
 
-    //self.screen.flushLayer(0, genHex());
-    //let comp = self.ECS.getEntityComponent(eid, 'position');
-    //self.screen.pixelSprite(comp.x, comp.y, 4, player, 0);
 });
 
-(async () => {
-    player = await loadFromURL('/demo/playerSprite.json');
+let i = 0;
+let c = new Color(255, 255, 0);
+
+let lastmx = engine.mouseX;
+let lastmy = engine.mouseY;
+
+engine.on("update", () => {
+    for (let i = 0; i < 128; i++) {
+        for (let j = 0; j < 128; j++) {
+            //e.screen.pixel(i, j, genColor(), 0);
+        }
+    }
+
+    //engine.screen.text(0,0,i+'',c);
+});
+
+engine.on('start', async () => {
+    let player = await engine.loadSprite('/demo/playerSprite.json');
+    engine.Title = 'Cool Demo Game';
+
     engine.ECS.addComponent(eid, 'sprite', {
         sprite: player,
         layer: 1,
         scale: 4
     });
+    let rectEntityID = engine.ECS.createEntity();
+    engine.ECS.addComponent(rectEntityID, 'rectangle', {
+        w: 10,
+        h: 10,
+        c: new Color(0, 255, 255)
+    });
+    engine.ECS.setSystem('rectUpdate', ['position', 'rectangle'], (comps) => {
+        if (comps['position'].eid == rectEntityID) {
+            if (engine.IsMouseDown) {
+                if (engine.mouseX > comps['position'].x && engine.mouseX < comps['position'].x + comps['rectangle'].w &&
+                    engine.mouseY > comps['position'].y && engine.mouseY < comps['position'].y + comps['rectangle'].h) {
+                    comps['position'].x += engine.mouseX - lastmx;
+                    comps['position'].y += engine.mouseY - lastmy;
+                }
 
-    engine.run();
-})()
+            }
 
-
-/*
-let y = 0, x = 0;
-let scale = 1;
-setInterval(() => {
-    //screen.clearScreen();
-    screen.clearLayer(1);
-    screen.pixelSprite(x++, y++, scale, player, 1);
-}, 1000/30); 
-
-setInterval(() => {
-    scale += 1;
-    if (scale > 6) scale = 1;
-}, 1000);
-
-for (let i = 0; i < screen.screenConfig.width; i++) {
-    for (let j = 0; j < screen.screenConfig.height; j++) {
-        screen.pixelXYHEX(i, j, genHex(), 0);
-    }
-}*/
-
-
-/*
-let frames = 0;
-let nextSec = new Date().getTime() + 1000;
-
-function drawScreen() {
-    for (let i = 0; i < screen.screenConfig.width; i++) {
-        for (let j = 0; j < screen.screenConfig.height; j++) {
-            screen.pixelXYHEX(i, j, genHex());
+            lastmx = engine.mouseX;
+            lastmy = engine.mouseY;
         }
-    }
-    frames++;
-    if (new Date().getTime() > nextSec){
-        nextSec = new Date().getTime() + 1000; 
-        console.log(frames);
-        frames = 0;
-    }
-}
-setInterval(drawScreen, 0);
-*/
-/**
- * @param {number} begin
- * @param {number} end
- */
-/*
-function randomRange(begin,end){
-    return Math.floor((Math.random() * end)+begin)
-}
-*/
+    });
+    engine.ECS.setSystem('rectRendererer', ['position', 'rectangle'], (comps) => {
+        engine.screen.rect(comps['position'].x, comps['position'].y, comps['rectangle'].w, comps['rectangle'].h, comps['rectangle'].c);
+    });
+});
+
+(async () => {
+    engine.run();
+})();
+
+engine.on("exit", () => {
+    console.log('exit');
+});
+
+engine.on('save', () => {
+
+});
+
+engine.on('load', () => {
+
+});
+
+
 function genHex() {
     return '#' + (Math.floor(Math.random() * 0xFFFFFF)).toString(16).padStart(6, '0');
+}
+
+function genColor() {
+    let r = Math.random() * 255 + 1;
+    let g = Math.random() * 255 + 1;
+    let b = Math.random() * 255 + 1;
+    return new Color(r, g, b);
 }

@@ -1,6 +1,26 @@
 //
 
+/*
+entity:
+{
+    id:[comp1,comp2,...],
+    ...
+}
+component:
+{
+    type: [comp1,comp2,...],
+    ...
+}
 
+system:
+{
+    name: {
+        targets: [comp1.type,comp2.type,...?],
+        update: (comps)
+    }
+}
+
+*/
 
 export default class ECS {
 
@@ -9,7 +29,6 @@ export default class ECS {
         this.entities = {};
         this.components = {};
         this.systems = {};
-
     }
 
     createEntity() {
@@ -37,30 +56,48 @@ export default class ECS {
         this.components[type].push(component);
 
         component.eid = entity;
+        component.type = type;
     }
 
     /**
      * @param {string} type 
-     * @param {(comp: any)=>void} system
+     * @param {(comps: any[])=>void} system
      */
-    addSystem(type, system) {
-        this.systems[type] = system;
+    setSystem(name, targets, system) {
+        this.systems[name] = {
+            targets,
+            update: system
+        };
     }
 
-    /**
-     * @param {string} type 
-     */
-    updateComponents(type) {
-        if (!this.systems[type]) return;
-        for (let i = 0; i < this.components[type].length; i++) {
-            this.systems[type](this.components[type][i]);
+    runSystem(name) {
+        let targets = this.systems[name].targets; // ['position', 'sprite']
+
+        let entitiesIDs = Object.keys(this.entities);
+        for (let i = 0; i < entitiesIDs.length; i++) {
+            let comps = this.entities[entitiesIDs[i]].filter(obj => {
+                for (const type of targets) {
+                    if (obj.type == type) return true;
+                }
+                return false;
+            });
+
+            if (comps.length == targets.length) {
+                let sortcomps=  {};
+                for (const type of targets) {
+                    sortcomps[type] = this.entities[entitiesIDs[i]].find(comp => comp.type == type);
+                }
+
+                this.systems[name].update(sortcomps);
+            }
         }
+        
     }
 
     updateAll() {
-        let keys = Object.keys(this.components);
-        for (let i = 0; i < keys.length; i++) {
-            this.updateComponents(keys[i]);
+        let systemNames = Object.keys(this.systems);
+        for (let i = 0; i < systemNames.length; i++) {
+            this.runSystem(systemNames[i]);
         }
     }
 
@@ -77,9 +114,8 @@ export default class ECS {
     }
 
     loadDefaultsSystems(engine) {
-        this.addSystem('sprite', (comp) => {
-            let p = this.getEntityComponent(comp.eid, 'position');
-            engine.screen.pixelSprite(p.x, p.y, comp.scale, comp.sprite, comp.layer)
-        })
+        this.setSystem('sprite', ['position', 'sprite'], (comps) => {
+            engine.screen.sprite(comps['position'].x, comps['position'].y, comps['sprite'].sprite, comps['sprite'].scale);
+        });
     }
 }
