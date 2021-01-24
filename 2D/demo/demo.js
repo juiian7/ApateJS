@@ -47,7 +47,7 @@ engine.on("update", () => {
 
 engine.on('start', async () => {
     let player = await engine.loadSprite('/demo/playerSprite.json');
-    engine.Title = 'Cool Demo Game';
+    //engine.Title = 'Cool Demo Game';
 
     engine.ECS.addComponent(eid, 'sprite', {
         sprite: player,
@@ -95,7 +95,6 @@ engine.on('save', () => {
 engine.on('load', () => {
 
 });
-
 
 function genHex() {
     return '#' + (Math.floor(Math.random() * 0xFFFFFF)).toString(16).padStart(6, '0');

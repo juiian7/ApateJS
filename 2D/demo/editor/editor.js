@@ -1,4 +1,5 @@
 import { apateConfig } from '../../src/apateConfig.js';
+import ApateUI from '../../src/apateUI.js';
 import Engine from '../../src/engine.js';
 import Color, {
     hexToRgb
@@ -6,6 +7,7 @@ import Color, {
 
 
 apateConfig.parentSelector = '#view';
+apateConfig.useUI = true;
 
 const palette = {
     black: {
@@ -91,6 +93,9 @@ const palette = {
 }
 
 let engine = new Engine();
+engine.ShowMouse = true;
+
+let ui = engine.ui;
 
 var sprite = [];
 let backgroundColor = {
@@ -252,12 +257,12 @@ let y = 0;
 
 var hexDigits = new Array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f");
 
-engine.setTitle('ApateJS Sprite Editor');
-engine.addControl('Download', () => {
+ui.setTitle('ApateJS Sprite Editor');
+ui.addControl('Download', () => {
     download('sprite.json', JSON.stringify(sprite));
 });
 
-engine.addControl('Clear', () => {
+ui.addControl('Clear', () => {
     sprite = [];
 });
 
@@ -278,12 +283,12 @@ function toggleMode() {
     };
 }
 
-engine.addControl('Erase', toggleMode, 'space');
+ui.addControl('Erase', toggleMode);
 
 
 engine.run();
 
-engine.setDescription(`#ApateJS Sprite Editor
+ui.setDescription(`#ApateJS Sprite Editor
 
 test:
 - 12as

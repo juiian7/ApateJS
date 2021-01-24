@@ -4,6 +4,7 @@
 import {
     apateConfig
 } from './apateConfig.js';
+import ApateUI from './apateUI.js';
 import ECS from './ECS/ECS.js';
 import Screen from './screen/screen.js';
 import Color from './utility/color.js';
@@ -11,40 +12,31 @@ import Color from './utility/color.js';
 
 export default class Engine {
     constructor() {
-        let root = document.querySelector(apateConfig.parentSelector);
-        this.element = root.querySelector('#main');
-        if (this.element) {
-            this.element.innerText = '';
-        } else {
-            this.element = document.createElement('div');
-            root.appendChild(this.element);
+
+        if (apateConfig.useUI) {
+            this.ui = new ApateUI();
+            this.ui.uiElements.controlPause.onclick = () => {
+                this.IsRunning = !this.IsRunning;
+                if (this.IsRunning) this.ui.uiElements.controlPause.innerText = 'Pause';
+                else this.ui.uiElements.controlPause.innerText = 'Resume';
+            };
+            this.ui.uiElements.controlSave.onclick = () => {
+                this.save();
+            }
+            this.ui.uiElements.controlLoad.onclick = () => {
+                this.load();
+            }
         }
 
-        let style = document.createElement('style');
-        style.innerText = stylesheet;
-        document.head.appendChild(style);
-
         this.clearColor = new Color(0, 0, 0);
-
-        this.element.id = 'main';
-        let {
-            title,
-            screen,
-            controls,
-            description,
-            controlPause,
-            controlSave,
-            controlLoad
-        } = initEngineHTML(this.element);
-
-        this.controlsDivElement = controls;
-        this.descriptionElement = description;
-        this.titleElement = title;
 
         this.ECS = new ECS();
         this.ECS.loadDefaultsSystems(this);
 
-        this.screen = new Screen(screen);
+        let el = document.querySelector(apateConfig.parentSelector);
+        if (apateConfig.useUI) el = this.ui.uiElements.screen;
+
+        this.screen = new Screen(el);
 
         this.keyMap = {};
         this.keys = [];
@@ -83,54 +75,7 @@ export default class Engine {
             self['mouseUp']();
         });
 
-        let white = new Color(255, 255, 255);
-
-        let pauseResume = () => {
-
-            self.IsRunning = !self.IsRunning;
-
-
-            self.screen.rect(10, 10, 3, 10, white);
-            self.screen.rect(15, 10, 3, 10, white);
-
-            self.screen.pixelScreen.updateTexture();
-            self.screen.pixelScreen.render();
-
-
-            if (self.IsRunning) {
-                controlPause.innerText = 'Pause (p)';
-            } else {
-                controlPause.innerText = 'Resume (p)';
-            }
-            return true;
-        }
-        controlPause.onclick = pauseResume;
-
-        controlSave.onclick = () => {
-            self['save']();
-        }
-        controlLoad.onclick = () => {
-            self['load']();
-        }
-
-        this.keybinds = {
-            p: pauseResume
-        };
-        this.keyMap['p'] = 'KeyP';
-
         document.addEventListener('keydown', (ev) => {
-            for (const key in this.keyMap) {
-                if (this.keyMap[key] == ev.code) {
-
-                    if (this.keybinds[key]) {
-                        if (this.keybinds[key]()) {
-                            ev.preventDefault();
-                            return;
-                        }
-                    }
-                }
-            }
-
             this.keys.push(ev.code);
         });
 
@@ -149,9 +94,6 @@ export default class Engine {
         this['mouseDown'] = () => {};
         this['mouseUp'] = () => {};
     }
-    setTitle(title) {
-        this.titleElement.innerText = title;
-    }
     run() {
         this.IsRunning = true;
 
@@ -164,9 +106,10 @@ export default class Engine {
         let self = this;
 
         //start render loop
-        /*let renderLoop = function () {
+        let renderLoop = function () {
 
-            if (self.IsRunning) drawMouse(self.mouseX, self.mouseY, 3, self);
+            if (!self.IsRunning) drawPause(6, 6, 4, 10, self);
+            if (self.IsRunning && self.ShowMouse) drawMouse(self.mouseX, self.mouseY, 3, self);
 
             frames++;
 
@@ -175,7 +118,7 @@ export default class Engine {
 
             if (!self.isStopped) window.requestAnimationFrame(renderLoop);
         }
-        window.requestAnimationFrame(renderLoop);*/
+        window.requestAnimationFrame(renderLoop);
 
         this.updateLoop = setInterval(() => {
 
@@ -188,14 +131,14 @@ export default class Engine {
 
                 ticks++;
 
-                drawMouse(self.mouseX, self.mouseY, 3, self);
+                //drawMouse(self.mouseX, self.mouseY, 3, self);
 
-                self.screen.pixelScreen.updateTexture();
-                self.screen.pixelScreen.render();
+                //self.screen.pixelScreen.updateTexture();
+                //self.screen.pixelScreen.render();
 
-                frames++;
+                //frames++;
             }
-        }, 1000 / avgTicks);
+        }, 0);
 
         this.infoLoop = setInterval(() => {
             if (this.IsRunning) {
@@ -259,137 +202,10 @@ export default class Engine {
         if (objS) return JSON.parse(objS);
         return null;
     }
-
-    addControl(name, onClick, keybind) {
-
-        let controlEl = document.createElement('button');
-        let append = keybind ? ' (' + keybind + ')' : '';
-
-        controlEl.innerText = name + append;
-        controlEl.classList.add('controlItem');
-        let execute = () => {
-            let args = onClick();
-            if (args) {
-                if (args.name) controlEl.innerText = args.name + append;
-                if (args.prevent) return true;
-            }
-        };
-        controlEl.onclick = execute;
-        if (keybind) this.keybinds[keybind] = execute;
-
-        this.controlsDivElement.appendChild(controlEl);
-    }
-
-    setDescription(markDown) {
-        let lines = markDown.split('\n');
-        let isList = false;
-
-        let html = '';
-
-        for (let i = 0; i < lines.length; i++) {
-            if (lines[i].trim()[0] == '#') {
-
-                if (isList) {
-                    html += '</ul>';
-                    isList = false;
-                }
-
-                let title = lines[i].slice(1).trim();
-                html += '<h1>' + title + '</h1>';
-
-            } else if (lines[i].trim()[0] == '-') {
-
-                if (!isList) {
-                    html += '<ul>';
-                    isList = true;
-                }
-
-                let item = lines[i].slice(1).trim();
-                html += '<li>' + item + '</li>';
-
-            } else {
-
-                if (isList) {
-                    html += '</ul>';
-                    isList = false;
-                }
-                html += '<p>' + lines[i] + '</p>';
-            }
-        }
-        
-        if (isList) {
-            html += '</ul>';
-            isList = false;
-        }
-
-        this.descriptionElement.innerHTML = html;
-    }
 }
 
 
 
-/**
- * 
- * @param {HTMLDivElement} element 
- */
-function initEngineHTML(element) {
-    element.classList.add('mainContent');
-    element.style.width = (apateConfig.width * apateConfig.scale) + 20 + 'px';
-
-    let header = document.createElement('div');
-    header.id = 'header';
-    let title = document.createElement('h1');
-    header.appendChild(title);
-    title.innerText = 'ApateJS';
-    title.classList.add('title');
-
-
-    let body = document.createElement('div');
-    body.classList.add('mainDiv');
-
-    let screen = document.createElement('div');
-    screen.id = '#screen';
-    screen.style.margin = '0px auto 0px auto';
-    screen.style.width = (apateConfig.width * apateConfig.scale) + 'px';
-    screen.style.height = (apateConfig.height * apateConfig.scale) + 'px';
-
-    let controls = document.createElement('div');
-    controls.id = 'controls';
-    controls.classList.add('controlBox');
-
-    let controlList = ['Pause (p)', 'Save', 'Load'];
-    let controlsArray = [];
-    for (let i = 0; i < controlList.length; i++) {
-        let controlEl = document.createElement('button');
-        controlEl.innerText = controlList[i];
-        controlEl.classList.add('controlItem');
-
-        controlsArray.push(controlEl);
-        controls.appendChild(controlEl);
-    }
-
-
-    body.appendChild(screen);
-    body.appendChild(controls);
-
-    let description = document.createElement('div');
-    description.classList.add('description');
-    body.appendChild(description);
-
-    element.appendChild(header);
-    element.appendChild(body);
-
-
-    return {
-        title,
-        screen,
-        controls,
-        description,
-        controlPause: controlsArray[0],
-        controlSave: controlsArray[1],
-        controlLoad: controlsArray[2]
-    };
-}
 
 let defaultMouse = [{
     x: 0,
@@ -425,57 +241,17 @@ function drawMouse(x, y, scale, engine) {
     }
 }
 
-let stylesheet = `
-
-.mainDiv {
-    padding: 10px;
+const white = {
+    r: 255,
+    g: 255,
+    b: 255,
 }
 
-.mainContent {
-    border-radius: 4px ;
-    background-color:#333333;
+/**
+ * 
+ * @param {Engine} engine 
+ */
+function drawPause(x, y, w, h, engine) {
+    engine.screen.rect(x, y, w, h, white);
+    engine.screen.rect(x + w * 2, y, w, h, white);
 }
-
-.controlBox {
-    display: flex;
-    text-align: center;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    padding: 10px;
-    margin: 0px;
-}
-
-.controlItem {
-    /*height: 40px;*/
-    background-color: #333333;
-    border: 0px;
-    border-radius: 4px;
-    font-family: pixel;
-    color: #eeeeee;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 20px;
-    margin: 0px;
-}
-
-.controlItem:hover {
-    background-color: #222222;
-}
-.title {
-    text-align: center;
-    color: #eeeeee;
-    font-family: pixel;
-    margin: 0px;
-    padding: 10px;
-}
-
-.description {
-    color: #eeeeee;
-    font-family: pixel;
-    border-radius: 8px;
-    background-color: #222222;
-}
-.description > h1 {
-    text-align: center;
-}
-`;
