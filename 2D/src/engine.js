@@ -182,11 +182,17 @@ export default class Engine {
     }
 
     registerButton(name, keyCode) {
-        this.keyMap[name] = keyCode;
+        if (!this.keyMap[name]) this.keyMap[name] = []
+        this.keyMap[name].push(keyCode);
     }
 
     isButtonPressed(name) {
-        return this.keys.includes(this.keyMap[name]);
+        if (!this.keyMap[name]) return false;
+        
+        for (let i = 0; i < this.keyMap[name].length; i++) {
+            if (this.keys.includes(this.keyMap[name][i])) return true;
+        }
+        return false;
     }
 
     getPressedKeyCodes() {
