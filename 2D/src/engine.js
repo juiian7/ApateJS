@@ -29,6 +29,7 @@ export default class Engine {
         }
 
         this.clearColor = new Color(0, 0, 0);
+        this.clearScreen = true;
 
         this.ECS = new ECS();
         this.ECS.loadDefaultsSystems(this);
@@ -94,20 +95,21 @@ export default class Engine {
         this['mouseDown'] = () => {};
         this['mouseUp'] = () => {};
     }
-    run() {
+    async run() {
+        // create variables
         this.IsRunning = true;
+        let self = this;
 
-        this['load']();
-        this['start']();
+        // timing
+        let lastTime = new Date().getTime();
+        let time = 0;
+        let delta = 0;
+
         let frames = 0;
         let ticks = 0;
-        let avgTicks = 60;
-
-        let self = this;
 
         //start render loop
         let renderLoop = function () {
-
             if (!self.IsRunning) drawPause(6, 6, 4, 10, self);
             if (self.IsRunning && self.ShowMouse) drawMouse(self.mouseX, self.mouseY, 3, self);
 
@@ -120,26 +122,7 @@ export default class Engine {
         }
         window.requestAnimationFrame(renderLoop);
 
-        this.updateLoop = setInterval(() => {
-
-            if (this.IsRunning) {
-                self.screen.clear(self.clearColor);
-
-                this['update']();
-                this.ECS.updateAll();
-                this['lastUpdate']();
-
-                ticks++;
-
-                //drawMouse(self.mouseX, self.mouseY, 3, self);
-
-                //self.screen.pixelScreen.updateTexture();
-                //self.screen.pixelScreen.render();
-
-                //frames++;
-            }
-        }, 0);
-
+        // draw info
         this.infoLoop = setInterval(() => {
             if (this.IsRunning) {
                 console.log({
@@ -151,21 +134,45 @@ export default class Engine {
                 ticks = 0;
             }
         }, 1000);
+
+
+        // load game files
+        await this['load']();
+        // start game (download rescources)
+        await this['start']();
+
+
+
+
+        // set update intervall and update objects
+        this.updateLoop = setInterval(() => {
+
+            time = new Date().getTime();
+            delta = time - lastTime;
+
+            if (this.IsRunning) {
+                if (this.clearScreen) self.screen.clear(self.clearColor);
+
+                this['update'](delta);
+                this.ECS.updateAll(delta);
+                this['lastUpdate'](delta);
+
+                ticks++;
+            }
+            lastTime = time;
+        }, 0);
+
+
     }
 
 
-    runExit() {
+    stop() {
         clearInterval(this.updateLoop);
         clearInterval(this.infoLoop);
         this.isStopped = true;
 
         this['exit']();
     }
-
-    runSave() {
-        this['save']();
-    }
-
 
     /**
      * 
@@ -231,10 +238,12 @@ function drawMouse(x, y, scale, engine) {
                 //engine.screen.pixel()
                 let c = engine.screen.pixelScreen.getPixel(x + i + defaultMouse[mp].x * scale, y + j + defaultMouse[mp].y * scale);
                 let f = (c.r + c.g + c.b) / 3;
+                f = (f - 255) * -1;
+                //f = f < 128 ? f/2 : f*3;
                 engine.screen.pixel(x + i + defaultMouse[mp].x * scale, y + j + defaultMouse[mp].y * scale, {
-                    r: f - 60,
-                    g: f - 60,
-                    b: f - 60
+                    r: f,
+                    g: f,
+                    b: f
                 });
             }
         }

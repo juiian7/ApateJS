@@ -1,11 +1,4 @@
-import Color, {
-    hexToRgb
-} from "../utility/color.js";
 import PixelScreen from "./pixel/pixelScreen.js";
-import {
-    apateConfig
-} from "../apateConfig.js";
-import AsciiScreen from "./ascii/asciiScreen.js";
 
 export default class Screen {
 
@@ -16,7 +9,7 @@ export default class Screen {
         this.pixelScreen = new PixelScreen(this.element);
         //this.asciiScreen = new AsciiScreen(element);
 
-        this.tmpColor = new Color(0, 0, 0);
+        //this.tmpColor = new Color(0, 0, 0);
         this.clear({
             r: 0,
             g: 0,
@@ -61,7 +54,7 @@ export default class Screen {
      */
     sprite(x, y, spriteObj, scale) {
         for (let i = 0; i < spriteObj.length; i++) {
-            this.rect(x + (spriteObj[i].x * scale), y + (spriteObj[i].y * scale), scale, scale, hexToRgb(spriteObj[i].c));
+            this.rect(x + (spriteObj[i].x * scale), y + (spriteObj[i].y * scale), scale, scale, spriteObj[i].c);
         }
     }
 
