@@ -9,7 +9,7 @@ import {
     loadImgFromUrl
 } from "../src/utility/spriteMgr.js";
 
-//apateConfig.useUI = true;
+apateConfig.useUI = true;
 
 let random = new Random();
 let sprite;

@@ -124,15 +124,13 @@ export default class Engine {
 
         // draw info
         this.infoLoop = setInterval(() => {
-            if (this.IsRunning) {
-                console.log({
-                    frames,
-                    ticks
-                });
+            console.log({
+                frames,
+                ticks
+            });
 
-                frames = 0;
-                ticks = 0;
-            }
+            frames = 0;
+            ticks = 0;
         }, 1000);
 
 

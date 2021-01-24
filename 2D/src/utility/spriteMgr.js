@@ -36,9 +36,10 @@ export function imgToSprite(img) {
         }
         let r = image.data[i],
             g = image.data[i + 1],
-            b = image.data[i + 2];
+            b = image.data[i + 2],
+            a = image.data[i + 3];
 
-        if (r == g && g == b && b == 0) continue;
+        if (a == 0) continue;
 
         sprite.push({
             x,
@@ -49,8 +50,6 @@ export function imgToSprite(img) {
                 b
             }
         });
-        
-       
     }
     return sprite;
 }
