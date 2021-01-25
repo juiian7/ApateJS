@@ -1,7 +1,6 @@
 //
 
 import Engine from '../src/engine.js';
-import Color from '../src/utility/color.js';
 
 var engine = new Engine();
 
@@ -30,7 +29,7 @@ engine.ECS.setSystem('movement', ['position'], (comps) => {
 });
 
 let i = 0;
-let c = new Color(255, 255, 0);
+let c = {r:255, g:255, b:0};
 
 let lastmx = engine.mouseX;
 let lastmy = engine.mouseY;
@@ -58,7 +57,7 @@ engine.on('start', async () => {
     engine.ECS.addComponent(rectEntityID, 'rectangle', {
         w: 10,
         h: 10,
-        c: new Color(0, 255, 255)
+        c
     });
     engine.ECS.setSystem('rectUpdate', ['position', 'rectangle'], (comps) => {
         if (comps['position'].eid == rectEntityID) {
@@ -95,14 +94,3 @@ engine.on('save', () => {
 engine.on('load', () => {
 
 });
-
-function genHex() {
-    return '#' + (Math.floor(Math.random() * 0xFFFFFF)).toString(16).padStart(6, '0');
-}
-
-function genColor() {
-    let r = Math.random() * 255 + 1;
-    let g = Math.random() * 255 + 1;
-    let b = Math.random() * 255 + 1;
-    return new Color(r, g, b);
-}

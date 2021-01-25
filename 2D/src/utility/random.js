@@ -4,10 +4,7 @@ export default class Random {
      */
     constructor(seed) {
         if (!seed) seed = new Date().getTime();
-        this.a = seed
-        this.b = seed
-        this.c = seed
-        this.seed = seed;
+        this.setSeed(seed);
     }
 
     /**
@@ -26,6 +23,13 @@ export default class Random {
      */
     between(min, max) {
         return (this.next() * max) + min;
+    }
+
+    setSeed(seed) {
+        this.a = seed
+        this.b = seed
+        this.c = seed
+        this.seed = seed;
     }
 }
 

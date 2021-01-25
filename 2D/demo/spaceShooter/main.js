@@ -1,17 +1,12 @@
-import {
-    apateConfig
-} from "../../src/apateConfig.js";
-import Engine from "../../src/engine.js";
-import Random from "../../src/utility/random.js";
-import {
-    imgToSprite,
-    loadImgFromUrl
-} from "../../src/utility/spriteMgr.js";
+import Engine, {
+    apateConfig,
+    spriteMgr
+} from "../../src/engine.js";
 
 apateConfig.useUI = true;
 
-let rand = new Random(123456);
 let engine = new Engine();
+engine.random.setSeed(123456);
 
 engine.registerButton('Left', 'KeyA');
 engine.registerButton('Left', 'ArrowLeft');
@@ -52,9 +47,9 @@ let ship = {
 }
 
 engine.on("start", async () => {
-    shipSprite = imgToSprite(await loadImgFromUrl('./images/ship.png'));
-    enemySprite = imgToSprite(await loadImgFromUrl('./images/enemy.png'));
-    bulletSprite = imgToSprite(await loadImgFromUrl('./images/bullet.png'));
+    shipSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/ship.png'));
+    enemySprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/enemy.png'));
+    bulletSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/bullet.png'));
 
     engine.clearColor = {
         r: 0,
@@ -91,7 +86,7 @@ engine.on("update", (delta) => {
     if (isAlive) {
         nextSpawn -= delta;
         if (nextSpawn < 0) {
-            createEnemy(rand.between(0, 127 - 8), -10);
+            createEnemy(engine.random.between(0, 127 - 8), -10);
             nextSpawn = 1000 / spawnsPerSec;
         }
 
@@ -168,7 +163,7 @@ engine.on("update", (delta) => {
             b: 2
         });
 
-        let msg = 'Game Over\nScore: ' + score + '\nHighscore: ' + highscore +'\nR to Restart';
+        let msg = 'Game Over\nScore: ' + score + '\nHighscore: ' + highscore + '\nR to Restart';
         engine.screen.text(128 / 2 - 9 * 4, 128 / 2 - 4, msg, {
             r: 129,
             g: 176,
@@ -186,7 +181,7 @@ function createEnemy(x, y) {
     currentEnemies.push({
         x,
         y,
-        speed: rand.between(0.01, 0.05)
+        speed: engine.random.between(0.01, 0.05)
     });
 }
 

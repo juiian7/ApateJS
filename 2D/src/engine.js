@@ -1,14 +1,16 @@
 //
 
-
-import {
-    apateConfig
-} from './apateConfig.js';
 import ApateUI from './apateUI.js';
 import ECS from './ECS/ECS.js';
 import Screen from './screen/screen.js';
-import Color from './utility/color.js';
+import Random from './utility/random.js';
+import SpriteMgr from './utility/spriteMgr.js';
+import ApateConfig from './apateConfig.js';
 
+
+export var apateConfig = new ApateConfig(128, 128, 4, 'body');
+
+export var spriteMgr = new SpriteMgr();
 
 export default class Engine {
     constructor() {
@@ -27,8 +29,13 @@ export default class Engine {
                 this.load();
             }
         }
+        this.random = new Random();
 
-        this.clearColor = new Color(0, 0, 0);
+        this.clearColor = {
+            r: 0,
+            g: 0,
+            b: 0
+        }
         this.clearScreen = true;
 
         this.ECS = new ECS();
@@ -268,3 +275,4 @@ function drawPause(x, y, w, h, engine) {
     engine.screen.rect(x, y, w, h, white);
     engine.screen.rect(x + w * 2, y, w, h, white);
 }
+

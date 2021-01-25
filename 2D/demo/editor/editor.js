@@ -1,9 +1,4 @@
-import { apateConfig } from '../../src/apateConfig.js';
-import ApateUI from '../../src/apateUI.js';
-import Engine from '../../src/engine.js';
-import Color, {
-    hexToRgb
-} from '../../src/utility/color.js';
+import Engine,{ apateConfig } from '../../src/engine.js';
 
 
 apateConfig.parentSelector = '#view';

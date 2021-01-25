@@ -1,7 +1,7 @@
 import {
     charSpriteMap
 } from "./asciiSprites.js";
-import PixelScreen from "./pixel/pixelScreen.js";
+import PixelScreen from "./pixelScreen.js";
 
 export default class Screen {
 

@@ -1,6 +1,6 @@
 import {
     apateConfig
-} from './apateConfig.js';
+} from './engine.js';
 
 export default class ApateUI {
 

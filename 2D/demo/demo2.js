@@ -1,29 +1,26 @@
-import {
-    apateConfig
-} from "../src/apateConfig.js";
-import Engine from "../src/engine.js";
-import Random from "../src/utility/random.js";
-import Color from "../src/utility/color.js";
-import {
-    imgToSprite,
-    loadImgFromUrl
-} from "../src/utility/spriteMgr.js";
+
+import Engine,{
+    apateConfig,
+    spriteMgr
+} from "../src/engine.js";
 
 apateConfig.useUI = true;
 
-let random = new Random();
+
 let sprite;
 
 let engine = new Engine();
 engine.ShowMouse = false;
 
+let random = engine.random;
+
 engine.on("start", async () => {
-    let img = await loadImgFromUrl('test.png');
-    sprite = imgToSprite(img);
+    let img = await spriteMgr.loadImgFromUrl('test.png');
+    sprite = spriteMgr.imgToSprite(img);
     console.log(sprite);
 
     engine.clearScreen = false;
-    engine.screen.rect(0, 0, 10, 10, new Color(255, 0, 0));
+    engine.screen.rect(0, 0, 10, 10, {r:255, g:0, b:0});
     engine.screen.sprite(0, 0, sprite, 4);
 
     await sleep(1000);
