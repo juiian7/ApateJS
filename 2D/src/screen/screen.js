@@ -1,3 +1,6 @@
+import {
+    charSpriteMap
+} from "./asciiSprites.js";
 import PixelScreen from "./pixel/pixelScreen.js";
 
 export default class Screen {
@@ -53,23 +56,48 @@ export default class Screen {
      * @param {number} scale 
      */
     sprite(x, y, spriteObj, scale) {
+        x = Math.round(x);
+        y = Math.round(y);
         for (let i = 0; i < spriteObj.length; i++) {
             this.rect(x + (spriteObj[i].x * scale), y + (spriteObj[i].y * scale), scale, scale, spriteObj[i].c);
         }
     }
 
-    text(x, y, t, c) {
-        /*this.asciiScreen.setColor(c.HEX);
+    text(x, y, text, c, options) {
+        options = {
+            ...defaultTextOptions,
+            ...options
+        };
+        options.leftSpace *= options.scale;
+        options.topSpace *= options.scale;
+        let xOffset = x;
+        for (let i = 0; i < text.length; i++) {
 
-        let xOffset = 0;
-        let yOffset = 0;
-        for (let i = 0; i < t.length; i++) {
-            this.asciiScreen.putChar(x + xOffset, y + yOffset, t[i]);
-            if (t[i] == '\n') {
-                yOffset++;
-                xOffset = x;
+            let char = text[i].toUpperCase();
+            if (char == ' ') {
+                xOffset += 4 + options.leftSpace;
+                continue;
             }
-            xOffset++;
-        }*/
+            if (char == '\n') {
+                xOffset = x;
+                y += 5 + options.topSpace;
+                continue;
+            }
+            let charSprite = charSpriteMap[char];
+
+            for (let j = 0; j < charSprite.pixels.length; j++) {
+                this.rect((charSprite.pixels[j].x * options.scale) + xOffset, (charSprite.pixels[j].y * options.scale) + y, options.scale, options.scale, c);
+            }
+            xOffset += charSprite.len + options.leftSpace;
+        }
     }
+}
+
+const defaultTextOptions = {
+    scale: 1,
+    leftSpace: 1,
+    topSpace: 1,
+    //align
+    //autoNewLine
+    //maxX
 }

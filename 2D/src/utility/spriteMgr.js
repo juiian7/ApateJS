@@ -14,12 +14,14 @@ export function loadImgFromUrl(url) {
     });
 }
 
+
+let canvas = document.createElement('canvas');
+
 /**
  * 
  * @param {HTMLImageElement} img 
  */
 export function imgToSprite(img) {
-    let canvas = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
     let ctx = canvas.getContext('2d');
