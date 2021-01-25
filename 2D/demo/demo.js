@@ -46,7 +46,7 @@ engine.on("update", () => {
 });
 
 engine.on('start', async () => {
-    let player = await engine.loadSprite('/demo/playerSprite.json');
+    let player = await engine.loadSprite('./playerSprite.json');
     //engine.Title = 'Cool Demo Game';
 
     engine.ECS.addComponent(eid, 'sprite', {

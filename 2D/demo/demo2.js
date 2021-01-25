@@ -2,7 +2,7 @@ import {
     apateConfig
 } from "../src/apateConfig.js";
 import Engine from "../src/engine.js";
-import Random from "../src/random.js";
+import Random from "../src/utility/random.js";
 import Color from "../src/utility/color.js";
 import {
     imgToSprite,
