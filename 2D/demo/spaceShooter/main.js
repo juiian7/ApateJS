@@ -40,7 +40,7 @@ let ship = {
 
 engine.on("start", async () => {
     shipSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/ship.png'));
-    enemySprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/enemy.png'));
+    enemySprite = spriteMgr.imgToAnimatedSprite(await spriteMgr.loadImgFromUrl('./images/enemy.png'), 8);
     bulletSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/bullet.png'));
 
     engine.clearColor = {
@@ -60,10 +60,21 @@ let bulletSpeed = 0.5;
 let spawnsPerSec = 2;
 let nextSpawn = 1000 / spawnsPerSec;
 
-engine.on("update", (delta) => {
-    if (!isAlive /* && engine.isButtonPressed('Reset')*/ ) {
+let nextAnimFrame = 1000 / 20;
+let animFrame = 0;
 
-        setTimeout(() => {
+engine.on("update", (delta) => {
+
+    nextAnimFrame -= delta;
+    if (isAlive && nextAnimFrame <= 0) {
+        nextAnimFrame = 1000 / 20;
+        animFrame++;
+        if (animFrame >= enemySprite.length) animFrame = 0;
+    }
+
+    if (!isAlive && engine.isButtonPressed('Action2')) {
+
+        
             isAlive = true;
             currentEnemies = [];
             bullets = [];
@@ -75,7 +86,7 @@ engine.on("update", (delta) => {
                 speed: 0.1
             };
             spawnsPerSec = 2;
-        }, 1000);
+        
     }
 
     if (isAlive) {
@@ -149,7 +160,7 @@ engine.on("update", (delta) => {
                 engine.save();
             }
         }
-        engine.screen.sprite(currentEnemies[i].x, currentEnemies[i].y, enemySprite, 1);
+        engine.screen.animatedSprite(currentEnemies[i].x, currentEnemies[i].y, enemySprite, 1, animFrame);
     }
     // draw player
     engine.screen.sprite(ship.x, ship.y, shipSprite, ship.scale);
@@ -178,7 +189,7 @@ engine.on("update", (delta) => {
             b: 2
         });
 
-        let msg = 'Game Over\nScore: ' + score + '\nHighscore: ' + highscore + '\nR to Restart';
+        let msg = 'Game Over\nScore: ' + score + '\nHighscore: ' + highscore + '\nP to Restart';
         engine.screen.text(128 / 2 - 9 * 4, 128 / 2 - 4, msg, {
             r: 129,
             g: 176,

@@ -62,6 +62,10 @@ export default class Screen {
             this.rect(x + (spriteObj[i].x * scale), y + (spriteObj[i].y * scale), scale, scale, spriteObj[i].c);
         }
     }
+    animatedSprite(x, y, animSpriteObj, scale, frame) {
+        this.sprite(x, y, animSpriteObj[frame], scale);
+    }
+
 
     text(x, y, text, c, options) {
         options = {
