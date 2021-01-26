@@ -7,6 +7,7 @@ let engine = new Engine();
 engine.random.setSeed(6942007);
 
 engine.useUI();
+engine.ui.setTitle('Space Shooter');
 
 let currentEnemies = [];
 let bullets = [];
@@ -16,7 +17,6 @@ let highscore = 0;
 
 let gen = 0;
 
-engine.ui.setTitle('Space Shooter');
 engine.on('load', () => {
     let savefile = engine.loadObjFromBrowser('spaceShooter');
     if (savefile) highscore = savefile.score;
@@ -41,11 +41,7 @@ engine.on("start", async () => {
     enemySprite = spriteMgr.imgToAnimatedSprite(await spriteMgr.loadImgFromUrl('./images/enemy.png'), 8);
     bulletSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/bullet.png'));
 
-    engine.clearColor = {
-        r: 0,
-        g: 55,
-        b: 2
-    };
+    engine.clearColor = rgb(0,0,0);
 });
 
 let isAlive = true;
@@ -72,19 +68,19 @@ engine.on("update", (delta) => {
 
     if (!isAlive && engine.isButtonPressed('Action2')) {
 
-        
-            isAlive = true;
-            currentEnemies = [];
-            bullets = [];
-            score = 0;
-            ship = {
-                x: 128 / 2 - 4,
-                y: 110,
-                scale: 1,
-                speed: 0.1
-            };
-            spawnsPerSec = 2;
-        
+
+        isAlive = true;
+        currentEnemies = [];
+        bullets = [];
+        score = 0;
+        ship = {
+            x: 128 / 2 - 4,
+            y: 110,
+            scale: 1,
+            speed: 0.1
+        };
+        spawnsPerSec = 2;
+
     }
 
     if (isAlive) {
@@ -116,8 +112,8 @@ engine.on("update", (delta) => {
         if (nearestEnemy)
             move = nearestEnemy.x < ship.x ? -1 : 1;*/
 
-        if (engine.isButtonPressed('Left')/* move == -1*/) ship.x -= delta * ship.speed;
-        if (engine.isButtonPressed('Right')/* move == 1*/) ship.x += delta * ship.speed;
+        if (engine.isButtonPressed('Left') /* move == -1*/ ) ship.x -= delta * ship.speed;
+        if (engine.isButtonPressed('Right') /* move == 1*/ ) ship.x += delta * ship.speed;
 
 
         for (let i = 0; i < bullets.length; i++) {
@@ -158,19 +154,27 @@ engine.on("update", (delta) => {
                 engine.save();
             }
         }
+    }
+
+
+});
+
+engine.on('draw', () => {
+    
+    drawBG(engine.screen);
+
+    for (let i = 0; i < currentEnemies.length; i++) {
         engine.screen.animatedSprite(currentEnemies[i].x, currentEnemies[i].y, enemySprite, 1, animFrame);
+    }
+
+    for (let i = 0; i < bullets.length; i++) {
+        engine.screen.sprite(bullets[i].x, bullets[i].y, bulletSprite, 1);
     }
     // draw player
     engine.screen.sprite(ship.x, ship.y, shipSprite, ship.scale);
-    // draw ground
-    engine.screen.rect(0, 128 - 2, 128, 8, {
-        r: 145,
-        g: 193,
-        b: 0
-    });
 
     if (isAlive) {
-        engine.screen.text(0,0,'Gen: ' + gen,{
+        engine.screen.text(0, 0, 'Gen: ' + gen, {
             r: 129,
             g: 176,
             b: 0
@@ -196,8 +200,8 @@ engine.on("update", (delta) => {
             topSpace: 4
         });
     }
-
 });
+
 
 engine.run();
 
@@ -220,4 +224,10 @@ function isCollision(obj1, obj2) {
         obj2.y + obj2.h <= obj1.y
     ) return false;
     return true;
+}
+
+function rgb(r,g,b) {
+    return {
+        r,g,b
+    };
 }

@@ -88,6 +88,11 @@ export default class Engine {
         this['mouseUp'] = () => {};
     }
     async run() {
+        // load game files
+        await this['load']();
+        // start game (download rescources)
+        await this['start']();
+
         // create variables
         this.IsRunning = true;
         let self = this;
@@ -104,6 +109,10 @@ export default class Engine {
         let renderLoop = function () {
             if (!self.IsRunning) drawPause(6, 6, 4, 10, self);
             if (self.IsRunning && self.ShowMouse) drawMouse(self.mouseX, self.mouseY, 3, self);
+
+            if (self.clearScreen) self.screen.clear(self.clearColor);
+
+            self['draw']();
 
             frames++;
 
@@ -126,10 +135,6 @@ export default class Engine {
         }, 1000);
 
 
-        // load game files
-        await this['load']();
-        // start game (download rescources)
-        await this['start']();
 
         // set update intervall and update objects
         this.updateLoop = setInterval(() => {
@@ -141,9 +146,6 @@ export default class Engine {
                 if (navigator.getGamepads()[0]) {
                     this.controllerAxes = navigator.getGamepads()[0].axes;
                 }
-
-
-                if (this.clearScreen) self.screen.clear(self.clearColor);
 
                 this['update'](delta);
                 this.ECS.updateAll(delta);
@@ -162,13 +164,12 @@ export default class Engine {
         clearInterval(this.updateLoop);
         clearInterval(this.infoLoop);
         this.isStopped = true;
-
         this['exit']();
     }
 
     /**
      * 
-     * @param {'start' | 'update'| 'lastUpdate'| 'exit' | 'save' | 'load'} event 
+     * @param {'start' | 'update'| 'draw'| 'lastUpdate'| 'exit' | 'save' | 'load'} event 
      * @param {() => void} handler 
      */
     on(event, handler) {
@@ -223,6 +224,11 @@ export default class Engine {
             this.load();
         }
     }
+    /**
+     * 
+     * @param {Screen} screen 
+     */
+    draw(screen) {}
 }
 
 
