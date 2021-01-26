@@ -46,8 +46,10 @@ export default class Engine {
 
         this.screen = new Screen(el);
 
-        this.keyMap = {};
+        this.keyMap = loadKeyMap();
         this.keys = [];
+
+        this.controllerAxes = [];
 
         this.IsRunning = false;
 
@@ -59,6 +61,7 @@ export default class Engine {
         this.IsMouseDown = false;
 
         this.ShowMouse = false;
+
 
         let self = this;
 
@@ -90,6 +93,10 @@ export default class Engine {
         document.addEventListener('keyup', (ev) => {
             this.keys = this.keys.filter((code) => code != ev.code);
         });
+        window.addEventListener('gamepadconnected', (ev) => {
+            console.log('gamepad connected!', ev);
+        });
+
 
         this['start'] = () => {};
         this['update'] = () => {};
@@ -146,9 +153,6 @@ export default class Engine {
         // start game (download rescources)
         await this['start']();
 
-
-
-
         // set update intervall and update objects
         this.updateLoop = setInterval(() => {
 
@@ -156,6 +160,11 @@ export default class Engine {
             delta = time - lastTime;
 
             if (this.IsRunning) {
+                if (navigator.getGamepads()[0]) {
+                    this.controllerAxes = navigator.getGamepads()[0].axes;
+                }
+                    
+
                 if (this.clearScreen) self.screen.clear(self.clearColor);
 
                 this['update'](delta);
@@ -188,28 +197,29 @@ export default class Engine {
         this[event] = handler;
     }
 
-    registerButton(name, keyCode) {
-        if (!this.keyMap[name]) this.keyMap[name] = []
-        this.keyMap[name].push(keyCode);
-    }
-
+    /**
+     * 
+     * @param {'Up' | 'Down'| 'Left'| 'Right' | 'Action1' | 'Action2' | 'Action3' | 'Action4'} name 
+     */
     isButtonPressed(name) {
-        if (!this.keyMap[name]) return false;
+        name = name.toLowerCase();
+        
+        if (navigator.getGamepads()[0]) {
+
+            if (name == 'up' && this.controllerAxes[1] < -0.3) return true;
+            else if (name == 'down' && this.controllerAxes[1] > 0.3) return true;
+            else if (name == 'left' && this.controllerAxes[0] < -0.3) return true;
+            else if (name == 'right' && this.controllerAxes[0] > 0.3) return true;
+            
+            else if (name == 'action1' && navigator.getGamepads()[0].buttons[controllerMap['action1']].pressed) return true;
+            else if (name == 'action2' && navigator.getGamepads()[0].buttons[controllerMap['action2']].pressed) return true;
+        } 
         
         for (let i = 0; i < this.keyMap[name].length; i++) {
             if (this.keys.includes(this.keyMap[name][i])) return true;
         }
+
         return false;
-    }
-
-    getPressedKeyCodes() {
-        return this.keys;
-    }
-
-    async loadSprite(url) {
-        var res = await fetch(url);
-        let json = await res.json();
-        return json;
     }
 
     saveObjToBrowser(name, obj) {
@@ -276,3 +286,20 @@ function drawPause(x, y, w, h, engine) {
     engine.screen.rect(x + w * 2, y, w, h, white);
 }
 
+function loadKeyMap() {
+    return {
+        'up': ['KeyW', 'ArrowUp'],
+        'down': ['KeyS', 'ArrowDown'],
+        'left': ['KeyA', 'ArrowLeft'],
+        'right': ['KeyD', 'ArrowRight'],
+
+        'action1': ['KeyX', 'KeyO'],
+        'action2': ['KeyC', 'KeyP'],
+        //'action3': ['KeyK'],
+        //'action4': ['KeyL']
+    }
+}
+const controllerMap = {
+    'action1' : 0,
+    'action2' : 2
+}

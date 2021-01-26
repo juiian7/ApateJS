@@ -1,15 +1,10 @@
 //
 
-import Engine from '../src/engine.js';
+import Engine, { spriteMgr } from '../src/engine.js';
 
 var engine = new Engine();
 
 engine.ShowMouse = true;
-
-engine.registerButton('Up', 'KeyW');
-engine.registerButton('Down', 'KeyS');
-engine.registerButton('Left', 'KeyA');
-engine.registerButton('Right', 'KeyD');
 
 let eid = engine.ECS.createEntity();
 
@@ -45,7 +40,7 @@ engine.on("update", () => {
 });
 
 engine.on('start', async () => {
-    let player = await engine.loadSprite('./playerSprite.json');
+    let player = await spriteMgr.loadSpriteFromURL('./playerSprite.json');
     //engine.Title = 'Cool Demo Game';
 
     engine.ECS.addComponent(eid, 'sprite', {

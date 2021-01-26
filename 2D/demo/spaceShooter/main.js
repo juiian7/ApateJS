@@ -6,17 +6,7 @@ import Engine, {
 apateConfig.useUI = true;
 
 let engine = new Engine();
-engine.random.setSeed(123456);
-
-engine.registerButton('Left', 'KeyA');
-engine.registerButton('Left', 'ArrowLeft');
-
-engine.registerButton('Right', 'KeyD');
-engine.registerButton('Right', 'ArrowRight');
-
-engine.registerButton('Reset', 'KeyR');
-
-engine.registerButton('Shoot', 'Space');
+engine.random.setSeed(6942007);
 
 
 let currentEnemies = [];
@@ -25,6 +15,8 @@ let bullets = [];
 
 let score = 0;
 let highscore = 0;
+
+let gen = 0;
 
 engine.ui.setTitle('Space Shooter');
 engine.on('load', () => {
@@ -69,18 +61,21 @@ let spawnsPerSec = 2;
 let nextSpawn = 1000 / spawnsPerSec;
 
 engine.on("update", (delta) => {
-    if (!isAlive && engine.isButtonPressed('Reset')) {
-        isAlive = true;
-        currentEnemies = [];
-        bullets = [];
-        score = 0;
-        ship = {
-            x: 128 / 2 - 4,
-            y: 110,
-            scale: 1,
-            speed: 0.1
-        };
-        spawnsPerSec = 2;
+    if (!isAlive /* && engine.isButtonPressed('Reset')*/ ) {
+
+        setTimeout(() => {
+            isAlive = true;
+            currentEnemies = [];
+            bullets = [];
+            score = 0;
+            ship = {
+                x: 128 / 2 - 4,
+                y: 110,
+                scale: 1,
+                speed: 0.1
+            };
+            spawnsPerSec = 2;
+        }, 1000);
     }
 
     if (isAlive) {
@@ -91,16 +86,29 @@ engine.on("update", (delta) => {
         }
 
         nextShoot -= delta;
-        if (engine.isButtonPressed('Shoot') && nextShoot < 0) {
+        if (engine.isButtonPressed('Action1') && nextShoot < 0) {
             bullets.push({
                 x: ship.x,
                 y: ship.y
             });
             nextShoot = 1000 / shootsPerSec;
         }
+        /*
+        let nearestEnemy = null;
+        for (let i = 0; i < currentEnemies.length; i++) {
+            if (nearestEnemy) {
+                nearestEnemy = currentEnemies.y > nearestEnemy.y ? currentEnemies : nearestEnemy;
+            } else {
+                nearestEnemy = currentEnemies[0];
+            }
+        }
+        let move = 0;
 
-        if (engine.isButtonPressed('Left')) ship.x -= delta * ship.speed;
-        if (engine.isButtonPressed('Right')) ship.x += delta * ship.speed;
+        if (nearestEnemy)
+            move = nearestEnemy.x < ship.x ? -1 : 1;*/
+
+        if (engine.isButtonPressed('Left')/* move == -1*/) ship.x -= delta * ship.speed;
+        if (engine.isButtonPressed('Right')/* move == 1*/) ship.x += delta * ship.speed;
 
 
         for (let i = 0; i < bullets.length; i++) {
@@ -136,6 +144,7 @@ engine.on("update", (delta) => {
             if (currentEnemies[i].y > 120) {
 
                 isAlive = false;
+                gen++;
                 highscore = score > highscore ? score : highscore;
                 engine.save();
             }
@@ -151,12 +160,18 @@ engine.on("update", (delta) => {
         b: 0
     });
 
-    if (isAlive) engine.screen.text(0, 120, 'Score: ' + score + ' - Best: ' + highscore, {
-        r: 129,
-        g: 176,
-        b: 0
-    });
-    else {
+    if (isAlive) {
+        engine.screen.text(0,0,'Gen: ' + gen,{
+            r: 129,
+            g: 176,
+            b: 0
+        });
+        engine.screen.text(0, 120, 'Score: ' + score + ' - Best: ' + highscore, {
+            r: 129,
+            g: 176,
+            b: 0
+        });
+    } else {
         engine.screen.rect(128 / 2 - 12 * 4, 128 / 2 - 4, 9 * 8, 10 * 3, {
             r: 0,
             g: 55,
