@@ -1,9 +1,5 @@
 //
 
-import {
-    apateConfig
-} from "../engine.js";
-
 export default class PixelScreen {
     /**
      * 
@@ -13,8 +9,8 @@ export default class PixelScreen {
 
         const el = parentElement.querySelector('#pixelscreen');
 
-        this.width = apateConfig.width;
-        this.height = apateConfig.height;
+        this.width = 128;
+        this.height = 128;
         if (el) {
             this.canvas = el;
         } else {
@@ -23,8 +19,8 @@ export default class PixelScreen {
         }
 
         this.canvas.id = 'pixelscreen';
-        this.canvas.width = this.width * apateConfig.scale;
-        this.canvas.height = this.height * apateConfig.scale;
+        this.canvas.width = this.width * 4;
+        this.canvas.height = this.height * 4;
         this.canvas.style.position = 'relative';
         this.canvas.style.zIndex = 1;
         this.canvas.style.cursor = 'none';

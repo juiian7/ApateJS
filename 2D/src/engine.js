@@ -5,30 +5,11 @@ import ECS from './ECS/ECS.js';
 import Screen from './screen/screen.js';
 import Random from './utility/random.js';
 import SpriteMgr from './utility/spriteMgr.js';
-import ApateConfig from './apateConfig.js';
-
-
-export var apateConfig = new ApateConfig(128, 128, 4, 'body');
 
 export var spriteMgr = new SpriteMgr();
 
 export default class Engine {
     constructor() {
-
-        if (apateConfig.useUI) {
-            this.ui = new ApateUI();
-            this.ui.uiElements.controlPause.onclick = () => {
-                this.IsRunning = !this.IsRunning;
-                if (this.IsRunning) this.ui.uiElements.controlPause.innerText = 'Pause';
-                else this.ui.uiElements.controlPause.innerText = 'Resume';
-            };
-            this.ui.uiElements.controlSave.onclick = () => {
-                this.save();
-            }
-            this.ui.uiElements.controlLoad.onclick = () => {
-                this.load();
-            }
-        }
         this.random = new Random();
 
         this.clearColor = {
@@ -41,11 +22,10 @@ export default class Engine {
         this.ECS = new ECS();
         this.ECS.loadDefaultsSystems(this);
 
-        let el = document.querySelector(apateConfig.parentSelector);
-        if (apateConfig.useUI) el = this.ui.uiElements.screen;
+        let el = document.body;
 
         this.screen = new Screen(el);
-
+        
         this.keyMap = loadKeyMap();
         this.keys = [];
 
@@ -53,8 +33,6 @@ export default class Engine {
 
         this.IsRunning = false;
 
-
-        let scale = apateConfig.scale;
 
         this.mouseX = 0;
         this.mouseY = 0;
@@ -66,8 +44,8 @@ export default class Engine {
         let self = this;
 
         this.screen.pixelScreen.canvas.addEventListener('mousemove', (e) => {
-            self.mouseX = Math.round(e.offsetX / scale);
-            self.mouseY = Math.round(e.offsetY / scale);
+            self.mouseX = Math.round(e.offsetX / 4);
+            self.mouseY = Math.round(e.offsetY / 4);
         });
 
         let font = new FontFace('pixel', 'url(https://kusternigg.at/pixel.ttf)');
@@ -163,7 +141,7 @@ export default class Engine {
                 if (navigator.getGamepads()[0]) {
                     this.controllerAxes = navigator.getGamepads()[0].axes;
                 }
-                    
+
 
                 if (this.clearScreen) self.screen.clear(self.clearColor);
 
@@ -203,18 +181,18 @@ export default class Engine {
      */
     isButtonPressed(name) {
         name = name.toLowerCase();
-        
+
         if (navigator.getGamepads()[0]) {
 
             if (name == 'up' && this.controllerAxes[1] < -0.3) return true;
             else if (name == 'down' && this.controllerAxes[1] > 0.3) return true;
             else if (name == 'left' && this.controllerAxes[0] < -0.3) return true;
             else if (name == 'right' && this.controllerAxes[0] > 0.3) return true;
-            
+
             else if (name == 'action1' && navigator.getGamepads()[0].buttons[controllerMap['action1']].pressed) return true;
             else if (name == 'action2' && navigator.getGamepads()[0].buttons[controllerMap['action2']].pressed) return true;
-        } 
-        
+        }
+
         for (let i = 0; i < this.keyMap[name].length; i++) {
             if (this.keys.includes(this.keyMap[name][i])) return true;
         }
@@ -229,6 +207,21 @@ export default class Engine {
         let objS = localStorage.getItem(name);
         if (objS) return JSON.parse(objS);
         return null;
+    }
+
+    useUI() {
+        this.ui = new ApateUI(this.screen.pixelScreen.canvas);
+        this.ui.uiElements.controlPause.onclick = () => {
+            this.IsRunning = !this.IsRunning;
+            if (this.IsRunning) this.ui.uiElements.controlPause.innerText = 'Pause';
+            else this.ui.uiElements.controlPause.innerText = 'Resume';
+        };
+        this.ui.uiElements.controlSave.onclick = () => {
+            this.save();
+        }
+        this.ui.uiElements.controlLoad.onclick = () => {
+            this.load();
+        }
     }
 }
 
@@ -293,13 +286,13 @@ function loadKeyMap() {
         'left': ['KeyA', 'ArrowLeft'],
         'right': ['KeyD', 'ArrowRight'],
 
-        'action1': ['KeyX', 'KeyO'],
-        'action2': ['KeyC', 'KeyP'],
+        'action1': ['KeyZ', 'KeyN'],
+        'action2': ['KeyX', 'KeyM'],
         //'action3': ['KeyK'],
         //'action4': ['KeyL']
     }
 }
 const controllerMap = {
-    'action1' : 0,
-    'action2' : 2
+    'action1': 0,
+    'action2': 2
 }

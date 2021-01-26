@@ -1,17 +1,15 @@
 import Engine, {
-    apateConfig,
     spriteMgr
 } from "../../src/engine.js";
 
-apateConfig.useUI = true;
 
 let engine = new Engine();
 engine.random.setSeed(6942007);
 
+engine.useUI();
 
 let currentEnemies = [];
 let bullets = [];
-
 
 let score = 0;
 let highscore = 0;

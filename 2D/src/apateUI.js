@@ -1,11 +1,8 @@
-import {
-    apateConfig
-} from './engine.js';
 
 export default class ApateUI {
 
-    constructor() {
-        let root = document.querySelector(apateConfig.parentSelector);
+    constructor(engineEL) {
+        let root = document.body;
         this.element = root.querySelector('#main');
         if (this.element) {
             this.element.innerText = '';
@@ -25,7 +22,7 @@ export default class ApateUI {
             controlPause,
             controlSave,
             controlLoad
-        } = initEngineHTML(this.element);
+        } = initEngineHTML(this.element, engineEL);
 
         this.uiElements = {
             title,
@@ -114,9 +111,9 @@ export default class ApateUI {
  * 
  * @param {HTMLDivElement} element 
  */
-function initEngineHTML(element) {
+function initEngineHTML(element, engineEL) {
     element.classList.add('mainContent');
-    element.style.width = (apateConfig.width * apateConfig.scale) + 20 + 'px';
+    element.style.width = (128 * 4) + 20 + 'px';
 
     let header = document.createElement('div');
     header.id = 'header';
@@ -132,8 +129,9 @@ function initEngineHTML(element) {
     let screen = document.createElement('div');
     screen.id = '#screen';
     screen.style.margin = '0px auto 0px auto';
-    screen.style.width = (apateConfig.width * apateConfig.scale) + 'px';
-    screen.style.height = (apateConfig.height * apateConfig.scale) + 'px';
+    screen.style.width = (128 * 4) + 'px';
+    screen.style.height = (128 * 4) + 'px';
+    screen.appendChild(engineEL);
 
     let controls = document.createElement('div');
     controls.id = 'controls';
