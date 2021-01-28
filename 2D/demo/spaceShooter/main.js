@@ -2,6 +2,9 @@ import Engine, {
     spriteMgr
 } from "../../src/engine.js";
 
+let colors = {
+    white: rgb(230, 230, 230),
+};
 
 let engine = new Engine();
 engine.random.setSeed(6942007);
@@ -9,40 +12,8 @@ engine.random.setSeed(6942007);
 engine.useUI();
 engine.ui.setTitle('Space Shooter');
 
-let currentEnemies = [];
-let bullets = [];
-
 let score = 0;
 let highscore = 0;
-
-let gen = 0;
-
-engine.on('load', () => {
-    let savefile = engine.loadObjFromBrowser('spaceShooter');
-    if (savefile) highscore = savefile.score;
-});
-
-engine.on('save', () => {
-    engine.saveObjToBrowser('spaceShooter', {
-        score: highscore
-    });
-});
-
-let shipSprite, enemySprite, bulletSprite;
-let ship = {
-    x: 128 / 2 - 4,
-    y: 110,
-    scale: 1,
-    speed: 0.1
-}
-
-engine.on("start", async () => {
-    shipSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/ship.png'));
-    enemySprite = spriteMgr.imgToAnimatedSprite(await spriteMgr.loadImgFromUrl('./images/enemy.png'), 8);
-    bulletSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/bullet.png'));
-
-    engine.clearColor = rgb(0,0,0);
-});
 
 let isAlive = true;
 
@@ -57,19 +28,102 @@ let nextSpawn = 1000 / spawnsPerSec;
 let nextAnimFrame = 1000 / 20;
 let animFrame = 0;
 
+let ship = {
+    x: 128 / 2 - 4,
+    y: 110,
+    scale: 1,
+    speed: 0.1
+}
+let shipSprite, enemySprite, bulletSprite, coloredBulletSprite
+
+let currentEnemies = [];
+let bullets = [];
+
+let stars = [];
+let starColors = [
+    rgb(230, 230, 200),
+    rgb(230, 230, 230),
+    rgb(165, 165, 165),
+    rgb(215, 210, 215)
+];
+createStars(100);
+
+engine.on("start", async () => {
+    shipSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/ship.png'));
+    enemySprite = spriteMgr.imgToAnimatedSprite(await spriteMgr.loadImgFromUrl('./images/enemy.png'), 8);
+    bulletSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/bullet.png'));
+
+    engine.clearColor = rgb(0, 0, 55);
+    colorBullet(0, 255, 0);
+});
+
 engine.on("update", (delta) => {
+    if (isAlive) {
+        // timing
+        nextAnimFrame -= delta;
+        if (nextAnimFrame <= 0) {
+            nextAnimFrame = 1000 / 20;
+            animFrame++;
+            if (animFrame >= enemySprite.length) animFrame = 0;
+        }
+        nextSpawn -= delta;
+        if (nextSpawn <= 0) {
+            createEnemy(engine.random.between(0, 127 - 8), -10);
+            nextSpawn = 1000 / spawnsPerSec;
+        }
+        nextShoot -= delta;
+        if (engine.isButtonPressed('Action1') && nextShoot < 0) {
+            bullets.push({
+                x: ship.x,
+                y: ship.y
+            });
+            nextShoot = 1000 / shootsPerSec;
+        }
 
-    nextAnimFrame -= delta;
-    if (isAlive && nextAnimFrame <= 0) {
-        nextAnimFrame = 1000 / 20;
-        animFrame++;
-        if (animFrame >= enemySprite.length) animFrame = 0;
+        // movement
+        if (engine.isButtonPressed('Left')) ship.x -= delta * ship.speed;
+        if (engine.isButtonPressed('Right')) ship.x += delta * ship.speed;
+
+        for (let i = 0; i < bullets.length; i++) {
+            // update
+            bullets[i].y -= bulletSpeed * delta;
+            if (bullets[i].y < -10) { // clean far bullets
+                bullets.splice(i, 1);
+                i--;
+                continue;
+            }
+
+            // collision
+            for (let j = 0; j < currentEnemies.length; j++) {
+                if (isCollision(bullets[i], currentEnemies[j])) {
+                    currentEnemies.splice(j, 1); // hit enemy
+                    j--;
+                    score++;
+                    spawnsPerSec = score / 10 + 2;
+                }
+            }
+        }
+
+        // update enemies
+        for (let i = 0; i < currentEnemies.length; i++) {
+            currentEnemies[i].y += currentEnemies[i].speed * delta;
+
+            if (currentEnemies[i].y > 120) { // lost
+                isAlive = false;
+                highscore = score > highscore ? score : highscore;
+                engine.save();
+            }
+        }
+
+        for (let i = 0; i < stars.length; i++) {
+
+            stars[i].tmpY += 0.3;
+            if (stars[i].y + stars[i].tmpY > 128) stars[i].tmpY = 0 - stars[i].y;
+        }
     }
-
     if (!isAlive && engine.isButtonPressed('Action2')) {
 
-
-        isAlive = true;
+        isAlive = true; // Restart
         currentEnemies = [];
         bullets = [];
         score = 0;
@@ -80,126 +134,48 @@ engine.on("update", (delta) => {
             speed: 0.1
         };
         spawnsPerSec = 2;
-
     }
-
-    if (isAlive) {
-        nextSpawn -= delta;
-        if (nextSpawn < 0) {
-            createEnemy(engine.random.between(0, 127 - 8), -10);
-            nextSpawn = 1000 / spawnsPerSec;
-        }
-
-        nextShoot -= delta;
-        if (engine.isButtonPressed('Action1') && nextShoot < 0) {
-            bullets.push({
-                x: ship.x,
-                y: ship.y
-            });
-            nextShoot = 1000 / shootsPerSec;
-        }
-        /*
-        let nearestEnemy = null;
-        for (let i = 0; i < currentEnemies.length; i++) {
-            if (nearestEnemy) {
-                nearestEnemy = currentEnemies.y > nearestEnemy.y ? currentEnemies : nearestEnemy;
-            } else {
-                nearestEnemy = currentEnemies[0];
-            }
-        }
-        let move = 0;
-
-        if (nearestEnemy)
-            move = nearestEnemy.x < ship.x ? -1 : 1;*/
-
-        if (engine.isButtonPressed('Left') /* move == -1*/ ) ship.x -= delta * ship.speed;
-        if (engine.isButtonPressed('Right') /* move == 1*/ ) ship.x += delta * ship.speed;
-
-
-        for (let i = 0; i < bullets.length; i++) {
-            // update
-            bullets[i].y -= bulletSpeed * delta;
-            if (bullets[i].y < -10) {
-                bullets.splice(i, 1);
-                i--;
-                continue;
-            }
-
-            // collision
-            for (let j = 0; j < currentEnemies.length; j++) {
-                if (isCollision(bullets[i], currentEnemies[j])) {
-                    currentEnemies.splice(j, 1);
-                    j--;
-                    score++;
-                    spawnsPerSec = score / 10 + 2;
-                    continue;
-                }
-            }
-
-            // draw
-            engine.screen.sprite(bullets[i].x, bullets[i].y, bulletSprite, 1);
-        }
-    }
-
-
-    for (let i = 0; i < currentEnemies.length; i++) {
-        if (isAlive) {
-            currentEnemies[i].y += currentEnemies[i].speed * delta;
-
-            if (currentEnemies[i].y > 120) {
-
-                isAlive = false;
-                gen++;
-                highscore = score > highscore ? score : highscore;
-                engine.save();
-            }
-        }
-    }
-
-
 });
 
 engine.on('draw', () => {
-    
-    drawBG(engine.screen);
-
-    for (let i = 0; i < currentEnemies.length; i++) {
-        engine.screen.animatedSprite(currentEnemies[i].x, currentEnemies[i].y, enemySprite, 1, animFrame);
-    }
-
-    for (let i = 0; i < bullets.length; i++) {
-        engine.screen.sprite(bullets[i].x, bullets[i].y, bulletSprite, 1);
-    }
-    // draw player
-    engine.screen.sprite(ship.x, ship.y, shipSprite, ship.scale);
 
     if (isAlive) {
-        engine.screen.text(0, 0, 'Gen: ' + gen, {
-            r: 129,
-            g: 176,
-            b: 0
-        });
-        engine.screen.text(0, 120, 'Score: ' + score + ' - Best: ' + highscore, {
-            r: 129,
-            g: 176,
-            b: 0
-        });
-    } else {
-        engine.screen.rect(128 / 2 - 12 * 4, 128 / 2 - 4, 9 * 8, 10 * 3, {
-            r: 0,
-            g: 55,
-            b: 2
-        });
+        drawBG(engine.screen);
 
-        let msg = 'Game Over\nScore: ' + score + '\nHighscore: ' + highscore + '\nP to Restart';
-        engine.screen.text(128 / 2 - 9 * 4, 128 / 2 - 4, msg, {
-            r: 129,
-            g: 176,
-            b: 0
-        }, {
+        for (let i = 0; i < currentEnemies.length; i++) {
+            engine.screen.animatedSprite(currentEnemies[i].x, currentEnemies[i].y, enemySprite, 1, animFrame);
+        }
+        // draw player
+        for (let i = 0; i < bullets.length; i++) {
+            engine.screen.sprite(bullets[i].x, bullets[i].y, coloredBulletSprite, 1);
+        }
+        // draw player
+        engine.screen.sprite(ship.x, ship.y, shipSprite, ship.scale);
+
+        engine.screen.text(0, 120, 'Score: ' + score + ' - Best: ' + highscore, colors.white);
+    } else {
+        engine.screen.text(20, 35, 'Game Over', colors.white, {
+            scale: 2,
+            leftSpace: 3
+        });
+        engine.screen.text(36, 100, 'Restart (X/V)', colors.white, 1);
+
+        let msg = 'Score: ' + score + '\nHighscore: ' + highscore;
+        engine.screen.text(36, 128 / 2, msg, colors.white, {
             topSpace: 4
         });
     }
+});
+
+engine.on('load', () => {
+    let savefile = engine.loadObjFromBrowser('spaceShooter');
+    if (savefile) highscore = savefile.score;
+});
+
+engine.on('save', () => {
+    engine.saveObjToBrowser('spaceShooter', {
+        score: highscore
+    });
 });
 
 
@@ -214,6 +190,21 @@ function createEnemy(x, y) {
 }
 
 
+function colorBullet(r, g, b) {
+    coloredBulletSprite = [];
+    for (let i = 0; i < bulletSprite.length; i++) {
+        let c = bulletSprite[i].c;
+        c.r = (c.r + r) / 2;
+        c.g = (c.g + g) / 2;
+        c.b = (c.b + b) / 2;
+        coloredBulletSprite.push({
+            x: bulletSprite[i].x,
+            y: bulletSprite[i].y,
+            c
+        });
+    }
+}
+
 function isCollision(obj1, obj2) {
     obj1.w = obj1.h = 8;
     obj2.w = obj2.h = 8;
@@ -226,8 +217,32 @@ function isCollision(obj1, obj2) {
     return true;
 }
 
-function rgb(r,g,b) {
+function createStars(amount) {
+    for (let i = 0; i < amount; i++) {
+        let x = Math.round(engine.random.between(0, 128));
+        let y = Math.round(engine.random.between(0, 128));
+        let c = starColors[Math.round(engine.random.between(0, 3))];
+        let s = 1;
+        stars.push({
+            x,
+            y,
+            c,
+            s,
+            tmpY: 0
+        });
+    }
+}
+
+function drawBG() {
+    for (let i = 0; i < stars.length; i++) {
+        engine.screen.rect(stars[i].x, stars[i].y + Math.round(stars[i].tmpY), stars[i].s, stars[i].s, stars[i].c);
+    }
+}
+
+function rgb(r, g, b) {
     return {
-        r,g,b
+        r,
+        g,
+        b
     };
 }
