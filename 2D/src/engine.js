@@ -112,7 +112,7 @@ export default class Engine {
 
             if (self.clearScreen) self.screen.clear(self.clearColor);
 
-            self['draw']();
+            self['draw'](self.screen);
 
             frames++;
 
@@ -292,8 +292,8 @@ function loadKeyMap() {
         'left': ['KeyA', 'ArrowLeft'],
         'right': ['KeyD', 'ArrowRight'],
 
-        'action1': ['KeyZ', 'KeyN'],
-        'action2': ['KeyX', 'KeyM'],
+        'action1': ['KeyZ', 'KeyN', 'KeyC'],
+        'action2': ['KeyX', 'KeyM', 'KeyV'],
         //'action3': ['KeyK'],
         //'action4': ['KeyL']
     }

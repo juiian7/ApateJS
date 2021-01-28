@@ -66,7 +66,14 @@ export default class Screen {
         this.sprite(x, y, animSpriteObj[frame], scale);
     }
 
-
+/**
+ * 
+ * @param {number} x 
+ * @param {number} y 
+ * @param {string} text 
+ * @param {{r,g,b}} c color of the text
+ * @param {*} options 
+ */
     text(x, y, text, c, options) {
         options = {
             ...defaultTextOptions,

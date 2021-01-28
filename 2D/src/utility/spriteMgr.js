@@ -84,17 +84,17 @@ export default class SpriteMgr {
                         b = image.data[i + 2],
                         a = image.data[i + 3];
 
-                    if (a == 0) continue;
-
-                    sprite.push({
-                        x: x - frameWidth * frame,
-                        y,
-                        c: {
-                            r,
-                            g,
-                            b
-                        }
-                    });
+                    if (a != 0) {
+                        sprite.push({
+                            x: x - frameWidth * frame,
+                            y,
+                            c: {
+                                r,
+                                g,
+                                b
+                            }
+                        });
+                    }
                 }
 
                 x++;
