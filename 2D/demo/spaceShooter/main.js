@@ -84,6 +84,12 @@ engine.on("update", (delta) => {
         if (engine.isButtonPressed('Left')) ship.x -= delta * ship.speed;
         if (engine.isButtonPressed('Right')) ship.x += delta * ship.speed;
 
+        if (ship.x  < -8) {
+            ship.x = 128;
+        } else if (ship.x > 128) {
+            ship.x = -8;
+        }
+
         for (let i = 0; i < bullets.length; i++) {
             // update
             bullets[i].y -= bulletSpeed * delta;
@@ -149,6 +155,7 @@ engine.on('draw', () => {
         for (let i = 0; i < bullets.length; i++) {
             engine.screen.sprite(bullets[i].x, bullets[i].y, coloredBulletSprite, 1);
         }
+
         // draw player
         engine.screen.sprite(ship.x, ship.y, shipSprite, ship.scale);
 
