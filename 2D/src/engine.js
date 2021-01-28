@@ -107,12 +107,12 @@ export default class Engine {
 
         //start render loop
         let renderLoop = function () {
-            if (!self.IsRunning) drawPause(6, 6, 4, 10, self);
-            if (self.IsRunning && self.ShowMouse) drawMouse(self.mouseX, self.mouseY, 3, self);
-
             if (self.clearScreen) self.screen.clear(self.clearColor);
 
             self['draw'](self.screen);
+
+            if (!self.IsRunning) drawPause(6, 6, 4, 10, self);
+            if (self.IsRunning && self.ShowMouse) drawMouse(self.mouseX, self.mouseY, 3, self);
 
             frames++;
 
