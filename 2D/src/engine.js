@@ -4,9 +4,6 @@ import ApateUI from './apateUI.js';
 import ECS from './ECS/ECS.js';
 import Screen from './screen/screen.js';
 import Random from './utility/random.js';
-import SpriteMgr from './utility/spriteMgr.js';
-
-export var spriteMgr = new SpriteMgr();
 
 export default class Engine {
     constructor() {

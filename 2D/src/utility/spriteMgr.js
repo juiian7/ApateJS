@@ -109,4 +109,23 @@ export default class SpriteMgr {
 
         return sprites;
     }
+
+    subSprite(sprite, x, y, w, h) {
+        let newSprite = [];
+
+        for (let i = 0; i < w; i++) {
+            for (let j = 0; j < h; j++) {
+                let pixel = sprite.find(p => p.x == x + i && p.y == y + j);
+                if (pixel) {
+                    newSprite.push({
+                        x: x + i - 1,
+                        y: y + j,
+                        c: pixel.c
+                    });
+                }
+                
+            }
+        }
+        return newSprite;
+    }
 }

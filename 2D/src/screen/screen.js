@@ -1,3 +1,4 @@
+import Tilemap from "../utility/tilemap.js";
 import {
     charSpriteMap
 } from "./asciiSprites.js";
@@ -50,6 +51,23 @@ export default class Screen {
     }
 
     /**
+     * 
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} x2 
+     * @param {number} y2 
+     * @param {{r,g,b}} c 
+     */
+    line(x1, y1, x2, y2, c) {
+        //let dx = x2 - x1;
+        //let dy = y2 - y1;
+
+        //for (let i = x1; i < x2; i++) {
+        //this.pixel(i, Math.round(y1 + dy * (i - x1) / dx), c);
+        //}
+    }
+
+    /**
      * @param {number} x x-coord
      * @param {number} y y-coord
      * @param {any} spriteObj sprite format: [{x,y,hex},...]
@@ -66,14 +84,14 @@ export default class Screen {
         this.sprite(x, y, animSpriteObj[frame], scale);
     }
 
-/**
- * 
- * @param {number} x 
- * @param {number} y 
- * @param {string} text 
- * @param {{r,g,b}} c color of the text
- * @param {*} options 
- */
+    /**
+     * 
+     * @param {number} x 
+     * @param {number} y 
+     * @param {string} text 
+     * @param {{r,g,b}} c color of the text
+     * @param {*} options 
+     */
     text(x, y, text, c, options) {
         options = {
             ...defaultTextOptions,
@@ -100,6 +118,18 @@ export default class Screen {
                 this.rect((charSprite.pixels[j].x * options.scale) + xOffset, (charSprite.pixels[j].y * options.scale) + y, options.scale, options.scale, c);
             }
             xOffset += charSprite.len + options.leftSpace;
+        }
+    }
+
+    /**
+     * 
+     * @param {number} x 
+     * @param {number} y 
+     * @param {Tilemap} tilemap 
+     */
+    tilemap(x, y, tilemap) {
+        for (let i = 0; i < tilemap.tiles.length; i++) {
+            this.sprite(x + (tilemap.tiles[i].x * tilemap.tileWidth), y + (tilemap.tiles[i].y * tilemap.tileHeight), tilemap.tileMap[tilemap.tiles[i].name], 1);
         }
     }
 }
