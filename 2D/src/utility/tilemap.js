@@ -5,7 +5,7 @@ export default class Tilemap {
         this.tiles = [];
         this.tileMap = {};
     }
-    addTile(name, sprite) {
+    addSprite(name, sprite) {
         this.tileMap[name] = sprite;
     }
     setTile(x, y, name) {
@@ -22,4 +22,28 @@ export default class Tilemap {
     getTile(x, y) {
         return this.tiles.find(t => t.x == x && t.y == y);
     }
+    toJSON() {
+        return {
+            sprites: this.tileMap,
+            tiles: this.tiles
+        }
+    }
+    fromJSON(obj) {
+        this.tileMap = obj.sprites;
+        this.tiles = obj.tiles;
+    }
 }
+/*
+
+{
+    sprites: {
+        name: [...sprite...],
+        ...
+    },
+    tiles: [
+        {x,y,name},
+        ...
+    ]
+}
+
+*/

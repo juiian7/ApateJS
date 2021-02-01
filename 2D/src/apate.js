@@ -40,8 +40,8 @@ class Engine {
         let self = this;
 
         this.screen.pixelScreen.canvas.addEventListener('mousemove', (e) => {
-            self.mouseX = Math.round(e.offsetX / 4);
-            self.mouseY = Math.round(e.offsetY / 4);
+            self.mouseX = Math.round(e.offsetX / self.screen.pixelScreen.scale);
+            self.mouseY = Math.round(e.offsetY / self.screen.pixelScreen.scale);
         });
 
         let font = new FontFace('pixel', 'url(https://kusternigg.at/pixel.ttf)');

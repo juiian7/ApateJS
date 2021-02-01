@@ -118,8 +118,8 @@ export default class SpriteMgr {
                 let pixel = sprite.find(p => p.x == x + i && p.y == y + j);
                 if (pixel) {
                     newSprite.push({
-                        x: x + i - 1,
-                        y: y + j,
+                        x: i,
+                        y: j,
                         c: pixel.c
                     });
                 }

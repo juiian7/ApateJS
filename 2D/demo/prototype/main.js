@@ -1,4 +1,4 @@
-import Engine from "../../src/engine.js";
+import { apate } from "../../src/apate.js";
 import Tilemap from "../../src/utility/tilemap.js";
 import {
     drawBackground
@@ -9,10 +9,9 @@ import { loadScene } from "./level.js";
 
 let mainTileMap;
 
-let engine = new Engine();
-engine.clearScreen = true;
+apate.clearScreen = true;
 
-engine.on('start', async () => {
+apate.on('start', async () => {
 
     mainTileMap = await loadScene(0);
 
@@ -21,9 +20,9 @@ engine.on('start', async () => {
 
 let scroll = 0;
 
-engine.on('update', (delta) => {
+apate.on('update', (delta) => {
 
-    if (engine.isButtonPressed('Left')) {
+    if (apate.isButtonPressed('Left')) {
         scroll += 0.1;
     }
 
@@ -31,14 +30,14 @@ engine.on('update', (delta) => {
 
 let white = rgb(255, 255, 255);
 
-engine.on('draw', () => {
+apate.on('draw', () => {
     //drawBackground(engine.screen, Math.round(scroll));
 
     //engine.screen.line(64, 64, engine.mouseX, engine.mouseY, white);
-    engine.screen.tilemap(0, 0, mainTileMap);
+    apate.screen.tilemap(0, 0, mainTileMap);
 });
 
-engine.run();
+apate.run();
 
 
 

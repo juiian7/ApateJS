@@ -30,7 +30,8 @@ export default class PixelScreen {
         this.gl = this.canvas.getContext('webgl2');
         this.gl.clearColor(0, 0, 0, 1);
 
-        this.resize(4);
+        this.scale = 4;
+        this.resize(this.scale);
 
         this.initShaderProgram();
 
@@ -41,6 +42,7 @@ export default class PixelScreen {
     }
 
     resize(scale) {
+        this.scale = scale;
         this.canvas.width = this.width * scale;
         this.canvas.height = this.height * scale;
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);

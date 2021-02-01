@@ -1,8 +1,5 @@
-import Engine,{ apateConfig } from '../../src/engine.js';
+import { apate } from "../../src/apate.js";
 
-
-apateConfig.parentSelector = '#view';
-apateConfig.useUI = true;
 
 const palette = {
     black: {
@@ -87,10 +84,13 @@ const palette = {
     }
 }
 
-let engine = new Engine();
-engine.ShowMouse = true;
+apate.ShowMouse = true;
 
-let ui = engine.ui;
+apate.autoResize = false;
+apate.screen.pixelScreen.resize(4);
+
+apate.useUI();
+let ui = apate.ui;
 
 var sprite = [];
 let backgroundColor = {
@@ -99,15 +99,7 @@ let backgroundColor = {
     b: 100
 };
 
-engine.clearColor = backgroundColor;
-
-//engine.registerButton('lighter', 'ArrowUp');
-//engine.registerButton('darker', 'ArrowDown');
-
-engine.registerButton('right', 'ArrowRight');
-engine.registerButton('left', 'ArrowLeft');
-engine.registerButton('space', 'Space');
-
+apate.clearColor = backgroundColor;
 
 
 let w = 16;
@@ -124,22 +116,9 @@ let colors = Object.keys(palette);
 currentColor = palette[colors[currentSelection]];
 let nextTime = new Date().getTime() + 300;
 
-engine.on('update', () => {
+apate.on('update', () => {
 
-    /*if (engine.isButtonPressed('lighter') && backgroundColor.r < 253) {
-        backgroundColor.r += 2;
-        backgroundColor.b = backgroundColor.g = backgroundColor.r;
-
-        engine.clearColor = backgroundColor;
-
-    } else if (engine.isButtonPressed('darker') && backgroundColor.r > 2) {
-        backgroundColor.r -= 2;
-        backgroundColor.b = backgroundColor.g = backgroundColor.r;
-
-        engine.clearColor = backgroundColor;
-    }*/
-
-    if (engine.isButtonPressed('right') && nextTime < new Date().getTime()) {
+    if (apate.isButtonPressed('right') && nextTime < new Date().getTime()) {
 
         currentSelection++;
         if (currentSelection > colors.length - 1) currentSelection = 0;
@@ -147,7 +126,7 @@ engine.on('update', () => {
         currentColor = palette[colors[currentSelection]];
         nextTime = new Date().getTime() + 300;
 
-    } else if (engine.isButtonPressed('left') && nextTime < new Date().getTime()) {
+    } else if (apate.isButtonPressed('left') && nextTime < new Date().getTime()) {
 
         currentSelection--;
         if (currentSelection < 0) currentSelection = colors.length - 1;
@@ -156,16 +135,12 @@ engine.on('update', () => {
         nextTime = new Date().getTime() + 300;
     }
 
-    displayPalette(palette);
-    renderGrid();
-    renderSprite();
-
-    if (engine.IsMouseDown) {
-        if (engine.mouseY < h * ph && engine.mouseX < w * pw) {
+    if (apate.IsMouseDown) {
+        if (apate.mouseY < h * ph && apate.mouseX < w * pw) {
             let {
                 x,
                 y
-            } = screenToSprite(engine.mouseX, engine.mouseY);
+            } = screenToSprite(apate.mouseX, apate.mouseY);
             removePixelIfExists(x, y);
             if (!doRemove) sprite.push({
                 x,
@@ -173,17 +148,23 @@ engine.on('update', () => {
                 c: currentColor
             });
         } else {
-            handleClickedColor(engine.mouseX, engine.mouseY)
+            handleClickedColor(apate.mouseX, apate.mouseY)
         }
     }
 });
 
-engine.on('save', () => {
-    engine.saveObjToBrowser('sprite', sprite);
+apate.on('draw', () => {
+    displayPalette(palette);
+    renderGrid();
+    renderSprite();
+})
+
+apate.on('save', () => {
+    apate.saveObjToBrowser('sprite', sprite);
 });
 
-engine.on('load', () => {
-    let s = engine.loadObjFromBrowser('sprite');
+apate.on('load', () => {
+    let s = apate.loadObjFromBrowser('sprite');
     if (s) sprite = s;
 });
 
@@ -201,8 +182,8 @@ function displayPalette(palette) {
     let dw = 128 / Object.keys(palette).length;
     for (const color in palette) {
         if (palette[color] == currentColor) {
-            engine.screen.rect(i * dw, 128 - 8, dw, 7, palette[color]);
-        } else engine.screen.rect(i * dw, 128 - 5, dw, 5, palette[color]);
+            apate.screen.rect(i * dw, 128 - 8, dw, 7, palette[color]);
+        } else apate.screen.rect(i * dw, 128 - 5, dw, 5, palette[color]);
         i++;
     }
 }
@@ -227,16 +208,16 @@ function handleClickedColor(mx, my) {
 
 function renderGrid() {
     for (let i = 0; i < w; i++) {
-        engine.screen.rect(pw + (i * pw) - 1, 0, 1, h * ph, palette['black']);
+        apate.screen.rect(pw + (i * pw) - 1, 0, 1, h * ph, palette['black']);
     }
     for (let j = 0; j < h; j++) {
-        engine.screen.rect(0, ph + (j * ph) - 1, w * pw, 1, palette['black']);
+        apate.screen.rect(0, ph + (j * ph) - 1, w * pw, 1, palette['black']);
     }
 }
 
 function renderSprite() {
     for (const pixel of sprite) {
-        engine.screen.rect(pixel.x * pw, pixel.y * ph, pw - 1, ph - 1, pixel.c);
+        apate.screen.rect(pixel.x * pw, pixel.y * ph, pw - 1, ph - 1, pixel.c);
     }
 }
 
@@ -246,11 +227,6 @@ function screenToSprite(mouseX, mouseY) {
         y: Math.floor(mouseY / ph)
     }
 }
-
-let x = 0;
-let y = 0;
-
-var hexDigits = new Array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f");
 
 ui.setTitle('ApateJS Sprite Editor');
 ui.addControl('Download', () => {
@@ -281,7 +257,7 @@ function toggleMode() {
 ui.addControl('Erase', toggleMode);
 
 
-engine.run();
+apate.run();
 
 ui.setDescription(`#ApateJS Sprite Editor
 
