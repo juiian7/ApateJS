@@ -18,9 +18,11 @@ export default class PixelScreen {
             parentElement.appendChild(this.canvas);
         }
 
+        let scale = 4;
+
         this.canvas.id = 'pixelscreen';
-        this.canvas.width = this.width * 4;
-        this.canvas.height = this.height * 4;
+        this.canvas.width = this.width * scale;
+        this.canvas.height = this.height * scale;
         this.canvas.style.position = 'relative';
         this.canvas.style.zIndex = 1;
         this.canvas.style.cursor = 'none';

@@ -1,11 +1,11 @@
 //
 
 import ApateUI from './apateUI.js';
-import ECS from './ECS/ECS.js';
+import Scene from './scene.js';
 import Screen from './screen/screen.js';
 import Random from './utility/random.js';
 
-export default class Engine {
+/*export*/ class Engine {
     constructor() {
         this.random = new Random();
 
@@ -15,9 +15,6 @@ export default class Engine {
             b: 0
         }
         this.clearScreen = true;
-
-        this.ECS = new ECS();
-        this.ECS.loadDefaultsSystems(this);
 
         let el = document.body;
 
@@ -30,6 +27,7 @@ export default class Engine {
 
         this.IsRunning = false;
 
+        this.activeScene = new Scene();
 
         this.mouseX = 0;
         this.mouseY = 0;
@@ -89,6 +87,7 @@ export default class Engine {
         await this['load']();
         // start game (download rescources)
         await this['start']();
+        await this.activeScene.run('init');
 
         // create variables
         this.IsRunning = true;
@@ -99,6 +98,7 @@ export default class Engine {
         let time = 0;
         let delta = 0;
 
+        //let maxTicks = 80;
         let frames = 0;
         let ticks = 0;
 
@@ -107,6 +107,7 @@ export default class Engine {
             if (self.clearScreen) self.screen.clear(self.clearColor);
 
             self['draw'](self.screen);
+            self.activeScene.run('draw');
 
             if (!self.IsRunning) drawPause(6, 6, 4, 10, self);
             if (self.IsRunning && self.ShowMouse) drawMouse(self.mouseX, self.mouseY, 3, self);
@@ -131,21 +132,23 @@ export default class Engine {
             ticks = 0;
         }, 1000);
 
-
-
+        //let nextUpdate = 1000 / maxTicks;
         // set update intervall and update objects
         this.updateLoop = setInterval(() => {
 
             time = new Date().getTime();
             delta = time - lastTime;
+            //nextUpdate -= delta;
 
-            if (this.IsRunning) {
+            if (this.IsRunning/* && nextUpdate < 0*/) {
+//                nextUpdate = 1000 / maxTicks;
                 if (navigator.getGamepads()[0]) {
                     this.controllerAxes = navigator.getGamepads()[0].axes;
                 }
 
                 this['update'](delta);
-                this.ECS.updateAll(delta);
+                this.activeScene.run('update', delta);
+
                 this['lastUpdate'](delta);
 
                 ticks++;
@@ -155,15 +158,12 @@ export default class Engine {
 
 
     }
-
-
     stop() {
         clearInterval(this.updateLoop);
         clearInterval(this.infoLoop);
         this.isStopped = true;
         this['exit']();
     }
-
     /**
      * 
      * @param {'start' | 'update'| 'draw'| 'lastUpdate'| 'exit' | 'save' | 'load'} event 
@@ -172,7 +172,6 @@ export default class Engine {
     on(event, handler) {
         this[event] = handler;
     }
-
     /**
      * 
      * @param {'Up' | 'Down'| 'Left'| 'Right' | 'Action1' | 'Action2' | 'Action3' | 'Action4'} name 
@@ -197,7 +196,6 @@ export default class Engine {
 
         return false;
     }
-
     saveObjToBrowser(name, obj) {
         localStorage.setItem(name, JSON.stringify(obj));
     }
@@ -299,3 +297,5 @@ const controllerMap = {
     'action1': 0,
     'action2': 2
 }
+
+export var apate = new Engine();
