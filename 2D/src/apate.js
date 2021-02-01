@@ -5,7 +5,8 @@ import Scene from './scene.js';
 import Screen from './screen/screen.js';
 import Random from './utility/random.js';
 
-/*export*/ class Engine {
+/*export*/
+class Engine {
     constructor() {
         this.random = new Random();
 
@@ -19,7 +20,7 @@ import Random from './utility/random.js';
         let el = document.body;
 
         this.screen = new Screen(el);
-        
+
         this.keyMap = loadKeyMap();
         this.keys = [];
 
@@ -34,7 +35,7 @@ import Random from './utility/random.js';
         this.IsMouseDown = false;
 
         this.ShowMouse = false;
-
+        this.autoResize = true;
 
         let self = this;
 
@@ -69,7 +70,21 @@ import Random from './utility/random.js';
         window.addEventListener('gamepadconnected', (ev) => {
             console.log('gamepad connected!', ev);
         });
+        let resizeScreen = function () {
+            let width = window.innerWidth;
+            let height = window.innerHeight;
+            let max = width >= height ? height : width;
 
+            let scale = Math.floor(max / 128);
+            console.log(scale);
+            self.screen.pixelScreen.resize(scale);
+        }
+        window.addEventListener('resize', e => {
+            if (this.autoResize) {
+                resizeScreen();
+            }
+        });
+        resizeScreen();
 
         this['start'] = () => {};
         this['update'] = () => {};
@@ -140,8 +155,8 @@ import Random from './utility/random.js';
             delta = time - lastTime;
             //nextUpdate -= delta;
 
-            if (this.IsRunning/* && nextUpdate < 0*/) {
-//                nextUpdate = 1000 / maxTicks;
+            if (this.IsRunning /* && nextUpdate < 0*/ ) {
+                //                nextUpdate = 1000 / maxTicks;
                 if (navigator.getGamepads()[0]) {
                     this.controllerAxes = navigator.getGamepads()[0].axes;
                 }
@@ -221,9 +236,13 @@ import Random from './utility/random.js';
     }
     /**
      * 
-     * @param {Screen} screen 
+     * @param {HTMLElement} parent 
      */
-    draw(screen) {}
+    setParentElement(parent) {
+        if (!this.ui) {
+            parent.appendChild(this.screen.pixelScreen.canvas);
+        }
+    }
 }
 
 

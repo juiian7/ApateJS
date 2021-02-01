@@ -4,6 +4,8 @@ import Entity from "../../src/entity.js";
 export var starMap = new Entity();
 starMap.priority = -10;
 
+starMap.speed = .3;
+
 let starColors = [
     rgb(230, 230, 200),
     rgb(230, 230, 230),
@@ -30,7 +32,7 @@ starMap.on('init', () => {
 starMap.on('update', (d) => {
     for (let i = 0; i < starMap.stars.length; i++) {
 
-        starMap.stars[i].tmpY += 0.3;
+        starMap.stars[i].tmpY += starMap.speed;
         if (starMap.stars[i].y + starMap.stars[i].tmpY > 128) starMap.stars[i].tmpY = 0 - starMap.stars[i].y;
     };
 });

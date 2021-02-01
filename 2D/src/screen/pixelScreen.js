@@ -18,20 +18,19 @@ export default class PixelScreen {
             parentElement.appendChild(this.canvas);
         }
 
-        let scale = 4;
-
         this.canvas.id = 'pixelscreen';
-        this.canvas.width = this.width * scale;
-        this.canvas.height = this.height * scale;
-        this.canvas.style.position = 'relative';
-        this.canvas.style.zIndex = 1;
+        //this.canvas.style.position = 'relative';
+        //this.canvas.style.zIndex = 1;
         this.canvas.style.cursor = 'none';
-        this.canvas.style.borderRadius = '2px';
+        //this.canvas.style.borderRadius = '1px';
+
 
         this.pixel = new Uint8Array(this.width * this.height * 3);
 
         this.gl = this.canvas.getContext('webgl2');
         this.gl.clearColor(0, 0, 0, 1);
+
+        this.resize(4);
 
         this.initShaderProgram();
 
@@ -39,6 +38,12 @@ export default class PixelScreen {
         this.setUpAttributes();
 
         this.createTexture();
+    }
+
+    resize(scale) {
+        this.canvas.width = this.width * scale;
+        this.canvas.height = this.height * scale;
+        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     }
 
     setUpBuffers() {

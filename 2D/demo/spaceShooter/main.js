@@ -1,19 +1,13 @@
-import {
-    apate
-} from "../../src/apate.js";
-import Entity from "../../src/entity.js";
+import { apate } from "../../src/apate.js";
 import SpriteMgr from "../../src/utility/spriteMgr.js";
 import { bulletSystem } from "./bulletSystem.js";
 import { enemySystem } from "./enemySystem.js";
-import {
-    spaceShip
-} from "./spaceShip.js";
-import {
-    starMap
-} from "./starMap.js";
+import { spaceShip } from "./spaceShip.js";
+import { starMap } from "./starMap.js";
 
 let spriteMgr = new SpriteMgr();
 
+apate.setParentElement(document.querySelector('#view'));
 
 let colors = {
     white: rgb(230, 230, 230),
@@ -45,7 +39,10 @@ apate.on("update", (delta) => {
         spaceShip.reset();
         bulletSystem.clear();
         enemySystem.clear();
+        enemySystem.isActive = true;
         enemySystem.spawnRate = 2;
+
+        starMap.speed = 0.3;
 
         score = 0;
     }
@@ -91,6 +88,10 @@ apate.run();
 export function lost() {
     isAlive = false;
     spaceShip.isActive = false;
+    enemySystem.isActive = false;
+
+    starMap.speed = 0.1;
+
     highscore = score > highscore ? score : highscore;
     apate.save();
 }
