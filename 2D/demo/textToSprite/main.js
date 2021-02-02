@@ -1,19 +1,14 @@
-import Engine from "../../src/engine.js";
-import {
-    imgToSprite,
-    loadImgFromUrl
-} from "../../src/utility/spriteMgr.js";
+import { apate } from "../../src/apate.js";
 
-let engine = new Engine();
-engine.clearScreen = false;
-engine.screen.clear({
+apate.clearScreen = false;
+apate.screen.clear({
     r: 0,
     b: 255,
     g: 255
 })
-let charMap = {};
+//let charMap = {};
 
-engine.on("start", async () => {
+apate.on("start", async () => {
     //let width = 5;
     //let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ!?:+-*/=()0123456789'.split(''); // ['A', 'B', ... , '9']
     /*
@@ -46,7 +41,7 @@ engine.on("start", async () => {
         let s = JSON.stringify(charMap);
         console.log(s);*/
     //console.log(charMap);
-    engine.screen.text(1, 0, 'ABCDEFGHIJKLM\nNOPQRSTUVWXYZ\n!?:+-*/=()0123456789', {
+    apate.screen.text(1, 0, 'ABCDEFGHIJKLM\nNOPQRSTUVWXYZ\n!?:+-*/=()0123456789', {
         r: 255,
         b: 0,
         g: 0
@@ -54,7 +49,7 @@ engine.on("start", async () => {
 
 });
 
-engine.run();
+apate.run();
 /*
 function text(x, y, text, c, scale, space) {
     if (space == null || space == undefined) space = 1;

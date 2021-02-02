@@ -1,226 +1,158 @@
-
 export default class ApateUI {
 
-    constructor(engineEL) {
-        let root = document.body;
-        this.element = root.querySelector('#main');
-        if (this.element) {
-            this.element.innerText = '';
-        } else {
-            this.element = document.createElement('div');
-            root.appendChild(this.element);
+    constructor(engine) {
+        this.engine = engine
+
+        this.maxControlLength = 0;
+
+        this.controlls = [];
+        this.addControl('continue', () => {
+            this.engine.IsRunning = true;
+        });
+        /**
+         * @type {HTMLElement}
+         */
+        let el = this.engine.screen.pixelScreen.canvas;
+        let fullscreen = false;
+
+        this.addControl('fullscreen: off', (c) => {
+            fullscreen = !fullscreen;
+
+
+            let title = 'fullscreen: ';
+            title += fullscreen ? 'on' : 'off';
+            c.name = title;
+
+            // toggle fulscree
+            if (fullscreen) {
+                if (el.requestFullscreen) {
+                    el.requestFullscreen();
+                } else if (el.webkitRequestFullscreen) {
+                    /* Safari */
+                    el.webkitRequestFullscreen();
+                } else if (el.msRequestFullscreen) {
+                    /* IE11 */
+                    el.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                if (document.webkitExitFullScreen) document.webkitExitFullScreen();
+            }
+        });
+
+        this.addControl('reload page', () => {
+            window.location.reload();
+        });
+
+        this.currentIndex = 0;
+
+
+        this.backColor = {
+            r: 30,
+            g: 30,
+            b: 30
         }
 
-        let style = document.createElement('style');
-        style.innerText = stylesheet;
-        document.head.appendChild(style);   this.element.id = 'main';
-        let {
-            title,
-            screen,
-            controls,
-            description,
-            controlPause,
-            controlSave,
-            controlLoad
-        } = initEngineHTML(this.element, engineEL);
+        this.shadowColor = {
+            r: 0,
+            g: 0,
+            b: 0
+        }
+        this.fontColor = {
+            r: 255,
+            g: 255,
+            b: 255
+        }
 
-        this.uiElements = {
-            title,
-            screen, 
-            controls,
-            description,
-            controlPause,
-            controlSave,
-            controlLoad
-        };
+        this.selectedColor = {
+            r: 255,
+            g: 120,
+            b: 102
+        }
+
+        this.isFirstPress = true;
+        this.keyDelay = 100;
+        this.nextListen = 0;
     }
-    setTitle(title) {
-        this.uiElements.title.innerText = title;
+
+    update(delta) {
+
+        this.nextListen -= delta;
+
+        if (this.nextListen < 0) {
+            if (this.engine.isButtonPressed('action1')) {
+                this.controlls[this.currentIndex].execute();
+
+                this.nextListen = this.isFirstPress ? this.keyDelay * 3 : this.keyDelay;
+                this.isFirstPress = false;
+            } else if (this.engine.isButtonPressed('up')) {
+                this.currentIndex--;
+                if (this.currentIndex < 0) this.currentIndex = this.controlls.length - 1;
+
+                this.nextListen = this.isFirstPress ? this.keyDelay * 3 : this.keyDelay;
+                this.isFirstPress = false;
+
+            } else if (this.engine.isButtonPressed('down')) {
+                this.currentIndex++;
+                if (this.currentIndex >= this.controlls.length) this.currentIndex = 0;
+
+                this.nextListen = this.isFirstPress ? this.keyDelay * 3 : this.keyDelay;
+                this.isFirstPress = false;
+            }
+        } else {
+            this.nextListen = this.engine.keys.length == 0 ? 0 : this.nextListen;
+        }
+        if (!this.isFirstPress && this.engine.keys.length == 0) this.isFirstPress = true;
     }
+
+    draw() {
+
+        for (let x = 0; x < 128; x++) {
+            for (let y = 0; y < 128; y++) {
+                let c = this.engine.screen.pixelScreen.getPixel(x, y);
+                c.r = c.r - 128 < 0 ? 0 : c.r - 128;
+                c.g = c.g - 128 < 0 ? 0 : c.g - 128;;
+                c.b = c.b - 128 < 0 ? 0 : c.b - 128;
+                this.engine.screen.pixel(x, y, c);
+            }
+        }
+
+        let w = this.maxControlLength * 5;
+        let h = this.controlls.length * 8;
+
+        let minX = Math.round(64 - w / 2);
+        let minY = Math.round(64 - h / 2);
+
+        this.engine.screen.rect(minX + 2, minY + 2, w, h, this.shadowColor);
+        this.engine.screen.rect(minX, minY, w, h, this.backColor);
+
+        for (let i = 0; i < this.controlls.length; i++) {
+            if (i == this.currentIndex) {
+                this.engine.screen.text(minX + 1, minY + 2 + (7 * i), this.controlls[i].name, this.selectedColor);
+            } else this.engine.screen.text(minX + 1, minY + 2 + (7 * i), this.controlls[i].name, this.fontColor);
+        }
+    }
+
 
 
     addControl(name, onClick) {
 
-        let controlEl = document.createElement('button');
+        let c = {
+            name
+        };
 
-        controlEl.innerText = name;
-        controlEl.classList.add('controlItem');
         let execute = () => {
-            let args = onClick();
+            let args = onClick(c);
             if (args) {
                 if (args.name) controlEl.innerText = args.name;
                 if (args.prevent) return true;
             }
         };
-        controlEl.onclick = execute;
+        c.execute = execute;
+        this.controlls.push(c);
 
-        this.uiElements.controls.appendChild(controlEl);
-    }
+        this.maxControlLength = name.length > this.maxControlLength ? name.length : this.maxControlLength;
 
-    
-
-    setDescription(markDown) {
-        let lines = markDown.split('\n');
-        let isList = false;
-
-        let html = '';
-
-        for (let i = 0; i < lines.length; i++) {
-            if (lines[i].trim()[0] == '#') {
-
-                if (isList) {
-                    html += '</ul>';
-                    isList = false;
-                }
-
-                let title = lines[i].slice(1).trim();
-                html += '<h1>' + title + '</h1>';
-
-            } else if (lines[i].trim()[0] == '-') {
-
-                if (!isList) {
-                    html += '<ul>';
-                    isList = true;
-                }
-
-                let item = lines[i].slice(1).trim();
-                html += '<li>' + item + '</li>';
-
-            } else {
-
-                if (isList) {
-                    html += '</ul>';
-                    isList = false;
-                }
-                html += '<p>' + lines[i] + '</p>';
-            }
-        }
-        
-        if (isList) {
-            html += '</ul>';
-            isList = false;
-        }
-
-        this.uiElements.description.innerHTML = html;
     }
 
 }
-
-
-/**
- * 
- * @param {HTMLDivElement} element 
- */
-function initEngineHTML(element, engineEL) {
-    element.classList.add('mainContent');
-    element.style.width = (128 * 4) + 20 + 'px';
-
-    let header = document.createElement('div');
-    header.id = 'header';
-    let title = document.createElement('h1');
-    header.appendChild(title);
-    title.innerText = 'ApateJS';
-    title.classList.add('title');
-
-
-    let body = document.createElement('div');
-    body.classList.add('mainDiv');
-
-    let screen = document.createElement('div');
-    screen.id = '#screen';
-    screen.style.margin = '0px auto 0px auto';
-    screen.style.width = (128 * 4) + 'px';
-    screen.style.height = (128 * 4) + 'px';
-    screen.appendChild(engineEL);
-
-    let controls = document.createElement('div');
-    controls.id = 'controls';
-    controls.classList.add('controlBox');
-
-    let controlList = ['Pause', 'Save', 'Load'];
-    let controlsArray = [];
-    for (let i = 0; i < controlList.length; i++) {
-        let controlEl = document.createElement('button');
-        controlEl.innerText = controlList[i];
-        controlEl.classList.add('controlItem');
-
-        controlsArray.push(controlEl);
-        controls.appendChild(controlEl);
-    }
-
-
-    body.appendChild(screen);
-    body.appendChild(controls);
-
-    let description = document.createElement('div');
-    description.classList.add('description');
-    body.appendChild(description);
-
-    element.appendChild(header);
-    element.appendChild(body);
-
-
-    return {
-        title,
-        screen,
-        controls,
-        description,
-        controlPause: controlsArray[0],
-        controlSave: controlsArray[1],
-        controlLoad: controlsArray[2]
-    };
-}
-
-let stylesheet = `
-.mainDiv {
-    padding: 10px;
-}
-
-.mainContent {
-    border-radius: 4px ;
-    background-color:#333333;
-}
-
-.controlBox {
-    display: flex;
-    text-align: center;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    padding: 10px;
-    margin: 0px;
-}
-
-.controlItem {
-    /*height: 40px;*/
-    background-color: #333333;
-    border: 0px;
-    border-radius: 4px;
-    font-family: pixel;
-    color: #eeeeee;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 20px;
-    margin: 0px;
-}
-
-.controlItem:hover {
-    background-color: #222222;
-}
-.title {
-    text-align: center;
-    color: #eeeeee;
-    font-family: pixel;
-    margin: 0px;
-    padding: 10px;
-}
-
-.description {
-    color: #eeeeee;
-    font-family: pixel;
-    border-radius: 8px;
-    background-color: #222222;
-}
-.description > h1 {
-    text-align: center;
-}
-`;

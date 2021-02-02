@@ -30,6 +30,8 @@ class Engine {
 
         this.activeScene = new Scene();
 
+        this.ui = new ApateUI(this);
+
         this.mouseX = 0;
         this.mouseY = 0;
         this.IsMouseDown = false;
@@ -44,10 +46,6 @@ class Engine {
             self.mouseY = Math.round(e.offsetY / self.screen.pixelScreen.scale);
         });
 
-        let font = new FontFace('pixel', 'url(https://kusternigg.at/pixel.ttf)');
-        font.load().then(() => {
-            document.fonts.add(font);
-        });
         this.screen.pixelScreen.canvas.addEventListener('click', (e) => {
             self['mouseClick']();
         });
@@ -62,6 +60,8 @@ class Engine {
 
         document.addEventListener('keydown', (ev) => {
             this.keys.push(ev.code);
+            if (this.isButtonPressed('engine_cancel')) this.IsRunning = !this.IsRunning;
+            if (!ev.metaKey) ev.preventDefault();
         });
 
         document.addEventListener('keyup', (ev) => {
@@ -99,9 +99,9 @@ class Engine {
     }
     async run() {
         // load game files
-        await this['load']();
+        if (this['load']) await this['load']();
         // start game (download rescources)
-        await this['start']();
+        if (this['start']) await this['start']();
         await this.activeScene.run('init');
 
         // create variables
@@ -121,10 +121,10 @@ class Engine {
         let renderLoop = function () {
             if (self.clearScreen) self.screen.clear(self.clearColor);
 
-            self['draw'](self.screen);
+            if (self['draw']) self['draw'](self.screen);
             self.activeScene.run('draw');
 
-            if (!self.IsRunning) drawPause(6, 6, 4, 10, self);
+            if (!self.IsRunning) self.ui.draw();
             if (self.IsRunning && self.ShowMouse) drawMouse(self.mouseX, self.mouseY, 3, self);
 
             frames++;
@@ -161,12 +161,14 @@ class Engine {
                     this.controllerAxes = navigator.getGamepads()[0].axes;
                 }
 
-                this['update'](delta);
+                if (this['update']) this['update'](delta);
                 this.activeScene.run('update', delta);
 
-                this['lastUpdate'](delta);
+                if (this['lastUpdate']) this['lastUpdate'](delta);
 
                 ticks++;
+            } else {
+                this.ui.update(delta);
             }
             lastTime = time;
         }, 0);
@@ -219,34 +221,14 @@ class Engine {
         if (objS) return JSON.parse(objS);
         return null;
     }
-
-    useUI() {
-        this.ui = new ApateUI(this.screen.pixelScreen.canvas);
-        this.ui.uiElements.controlPause.onclick = () => {
-            this.IsRunning = !this.IsRunning;
-            if (this.IsRunning) this.ui.uiElements.controlPause.innerText = 'Pause';
-            else this.ui.uiElements.controlPause.innerText = 'Resume';
-        };
-        this.ui.uiElements.controlSave.onclick = () => {
-            this.save();
-        }
-        this.ui.uiElements.controlLoad.onclick = () => {
-            this.load();
-        }
-    }
     /**
      * 
      * @param {HTMLElement} parent 
      */
     setParentElement(parent) {
-        if (!this.ui) {
-            parent.appendChild(this.screen.pixelScreen.canvas);
-        }
+        parent.appendChild(this.screen.pixelScreen.canvas);
     }
 }
-
-
-
 
 let defaultMouse = [{
     x: 0,
@@ -284,21 +266,6 @@ function drawMouse(x, y, scale, engine) {
     }
 }
 
-const white = {
-    r: 255,
-    g: 255,
-    b: 255,
-}
-
-/**
- * 
- * @param {Engine} engine 
- */
-function drawPause(x, y, w, h, engine) {
-    engine.screen.rect(x, y, w, h, white);
-    engine.screen.rect(x + w * 2, y, w, h, white);
-}
-
 function loadKeyMap() {
     return {
         'up': ['KeyW', 'ArrowUp'],
@@ -306,10 +273,10 @@ function loadKeyMap() {
         'left': ['KeyA', 'ArrowLeft'],
         'right': ['KeyD', 'ArrowRight'],
 
-        'action1': ['KeyZ', 'KeyN', 'KeyC'],
+        'action1': ['KeyZ', 'KeyN', 'KeyC', 'Enter', 'Space'],
         'action2': ['KeyX', 'KeyM', 'KeyV'],
-        //'action3': ['KeyK'],
-        //'action4': ['KeyL']
+
+        'engine_cancel': ['Escape'],
     }
 }
 const controllerMap = {

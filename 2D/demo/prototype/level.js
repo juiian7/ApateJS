@@ -26,5 +26,4 @@ export async function loadScene() {
     mainTileMap.setTile(11, 15, 'right_grass');
 
     return mainTileMap;
-
 }
