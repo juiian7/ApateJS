@@ -106,12 +106,11 @@ export default class ApateUI {
     }
 
     draw() {
-
         for (let x = 0; x < 128; x++) {
             for (let y = 0; y < 128; y++) {
                 let c = this.engine.screen.pixelScreen.getPixel(x, y);
                 c.r = c.r - 128 < 0 ? 0 : c.r - 128;
-                c.g = c.g - 128 < 0 ? 0 : c.g - 128;;
+                c.g = c.g - 128 < 0 ? 0 : c.g - 128;
                 c.b = c.b - 128 < 0 ? 0 : c.b - 128;
                 this.engine.screen.pixel(x, y, c);
             }
@@ -142,11 +141,7 @@ export default class ApateUI {
         };
 
         let execute = () => {
-            let args = onClick(c);
-            if (args) {
-                if (args.name) controlEl.innerText = args.name;
-                if (args.prevent) return true;
-            }
+            onClick(c);
         };
         c.execute = execute;
         this.controlls.push(c);

@@ -59,12 +59,22 @@ export default class Screen {
      * @param {{r,g,b}} c 
      */
     line(x1, y1, x2, y2, c) {
-        //let dx = x2 - x1;
-        //let dy = y2 - y1;
+        if (x1 == x2 && y1 == y2) {
+            this.pixel(x1, y1, c);
+            return;
+        }
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+        let l = Math.sqrt(dx * dx + dy * dy);
+        dx /= l, dy /= l;
 
-        //for (let i = x1; i < x2; i++) {
-        //this.pixel(i, Math.round(y1 + dy * (i - x1) / dx), c);
-        //}
+        let x = x1;
+        let y = y1;
+        while (true) {
+            x += dx, y += dy;
+            this.pixel(Math.round(x), Math.round(y), c);
+            if (Math.round(x) == x2 && Math.round(y) == y2) break;
+        }
     }
 
     /**

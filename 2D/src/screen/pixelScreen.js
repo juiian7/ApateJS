@@ -28,6 +28,13 @@ export default class PixelScreen {
         this.pixel = new Uint8Array(this.width * this.height * 3);
 
         this.gl = this.canvas.getContext('webgl2');
+        this.webgl2 = true;
+
+        if (!this.gl) {
+            this.gl = this.canvas.getContext('webgl');
+            this.webgl2 = false;
+        }
+        
         this.gl.clearColor(0, 0, 0, 1);
 
         this.scale = 4;
@@ -76,11 +83,13 @@ export default class PixelScreen {
 
     initShaderProgram() {
         let vertShader = this.gl.createShader(this.gl.VERTEX_SHADER);
-        this.gl.shaderSource(vertShader, vs);
+        if (this.webgl2) this.gl.shaderSource(vertShader, vs2);
+        else this.gl.shaderSource(vertShader, vs);
         this.gl.compileShader(vertShader);
 
         let fragShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
-        this.gl.shaderSource(fragShader, fs);
+        if (this.webgl2) this.gl.shaderSource(fragShader, fs2);
+        else this.gl.shaderSource(fragShader, fs);
         this.gl.compileShader(fragShader);
 
         this.shaderProgram = this.gl.createProgram();
@@ -154,9 +163,29 @@ export default class PixelScreen {
 }
 
 
+const vs = `
+attribute vec2 aVertexPosition;
+attribute vec2 aTextureCoord;
 
-const vs = `#version 300 es
+varying vec2 vTextureCoord;
 
+void main() {
+    gl_Position = vec4(aVertexPosition, 0, 1);
+    vTextureCoord = aTextureCoord;
+}
+`;
+const fs = `
+precision mediump float;
+
+varying vec2 vTextureCoord;
+uniform sampler2D uTexture;
+
+void main() {
+    gl_FragColor = texture2D(uTexture, vTextureCoord);
+}
+`;
+
+const vs2 = `#version 300 es
 in vec2 aVertexPosition;
 in vec2 aTextureCoord;
 
@@ -167,14 +196,11 @@ void main() {
     vTextureCoord = aTextureCoord;
 }
 `;
-const fs = `#version 300 es
-
+const fs2 = `#version 300 es
 precision mediump float;
 
 in vec2 vTextureCoord;
-
 uniform sampler2D uTexture;
-
 out vec4 fragColor;
 
 void main() {

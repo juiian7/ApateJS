@@ -123,9 +123,40 @@ export default class SpriteMgr {
                         c: pixel.c
                     });
                 }
-                
+
             }
         }
         return newSprite;
     }
+
+    filpH(sprite) {
+        let maxX = 0;
+        for (let i = 0; i < sprite.length; i++) {
+            maxX = sprite[i].x > maxX ? sprite[i].x : maxX;
+        }
+        let newSprite = [];
+        for (let i = 0; i < sprite.length; i++) {
+            newSprite.push({
+                x: Math.abs(sprite[i].x - maxX),
+                y: sprite[i].y,
+                c: sprite[i].c
+            });
+        }
+    }
+
+    filpV(sprite) {
+        let maxY = 0;
+        for (let i = 0; i < sprite.length; i++) {
+            maxY = sprite[i].y > maxY ? sprite[i].y : maxY;
+        }
+        let newSprite = [];
+        for (let i = 0; i < sprite.length; i++) {
+            newSprite.push({
+                x: sprite[i].x,
+                y: Math.abs(sprite[i].y - maxY),
+                c: sprite[i].c
+            });
+        }
+    }
 }
+export var spriteMgr = new SpriteMgr();

@@ -42,20 +42,20 @@ class Engine {
         let self = this;
 
         this.screen.pixelScreen.canvas.addEventListener('mousemove', (e) => {
-            self.mouseX = Math.round(e.offsetX / self.screen.pixelScreen.scale);
-            self.mouseY = Math.round(e.offsetY / self.screen.pixelScreen.scale);
+            this.mouseX = Math.round(e.offsetX / self.screen.pixelScreen.scale);
+            this.mouseY = Math.round(e.offsetY / self.screen.pixelScreen.scale);
         });
 
         this.screen.pixelScreen.canvas.addEventListener('click', (e) => {
-            self['mouseClick']();
+            this['mouseClick']();
         });
         this.screen.pixelScreen.canvas.addEventListener('mousedown', (e) => {
-            self.IsMouseDown = true;
-            self['mouseDown']();
+            this.IsMouseDown = true;
+            this['mouseDown']();
         });
         this.screen.pixelScreen.canvas.addEventListener('mouseup', (e) => {
-            self.IsMouseDown = false;
-            self['mouseUp']();
+            this.IsMouseDown = false;
+            this['mouseUp']();
         });
 
         document.addEventListener('keydown', (ev) => {
@@ -119,18 +119,19 @@ class Engine {
 
         //start render loop
         let renderLoop = function () {
-            if (self.clearScreen) self.screen.clear(self.clearColor);
 
             if (self['draw']) self['draw'](self.screen);
             self.activeScene.run('draw');
 
             if (!self.IsRunning) self.ui.draw();
-            if (self.IsRunning && self.ShowMouse) drawMouse(self.mouseX, self.mouseY, 3, self);
+            if (self.IsRunning && self.ShowMouse) drawMouse(self.mouseX, self.mouseY, 1, self);
 
             frames++;
 
             self.screen.pixelScreen.updateTexture();
             self.screen.pixelScreen.render();
+            
+            if (self.clearScreen) self.screen.clear(self.clearColor);
 
             if (!self.isStopped) window.requestAnimationFrame(renderLoop);
         }
@@ -160,7 +161,7 @@ class Engine {
                 if (navigator.getGamepads()[0]) {
                     this.controllerAxes = navigator.getGamepads()[0].axes;
                 }
-
+                
                 if (this['update']) this['update'](delta);
                 this.activeScene.run('update', delta);
 
