@@ -142,6 +142,82 @@ export default class Screen {
             this.sprite(x + (tilemap.tiles[i].x * tilemap.tileWidth), y + (tilemap.tiles[i].y * tilemap.tileHeight), tilemap.tileMap[tilemap.tiles[i].name], 1);
         }
     }
+
+    /**
+     * 
+     * @param {number} x 
+     * @param {number} y 
+     * @param {{r,g,b}} c 
+     * @param {string} func Function to draw (f(x) = Math.sin(x))
+     * @param {number} start starting x
+     * @param {number} end ending x
+     */
+    drawFunc(x, y, c, func, start, end) {
+        if (func.includes('=')) {
+            func = func.substring(func.indexOf('=') + 1);
+        }
+
+        let lastTy = eval(func.replaceAll('x', start)) + y;
+        let ty = 0;
+
+        for (let i = start + 1; i < end; i++) {
+            ty = Math.round(eval(func.replaceAll('x', i)) + y);
+
+            this.line(i - 1 + x, lastTy, x + i, ty, c);
+
+            lastTy = ty;
+        }
+    }
+
+    circle(x, y, r, c) {
+        let d = (5 - r * 4) / 4;
+        let px = 0;
+        let py = r;
+
+        do {
+            // draw
+            this.pixel(x + px, y + py, c);
+            this.pixel(x - px, y + py, c);
+            this.pixel(x + px, y - py, c);
+            this.pixel(x - px, y - py, c);
+            this.pixel(x + py, y + px, c);
+            this.pixel(x - py, y + px, c);
+            this.pixel(x + py, y - px, c);
+            this.pixel(x - py, y - px, c);
+
+            if (d < 0) {
+                d += 2 * px + 1;
+            } else {
+                d += 2 * (px - py) + 1;
+                py--;
+            }
+            px++;
+
+        } while (px <= py);
+    }
+
+    fcircle(x, y, r, c) {
+        let d = (5 - r * 4) / 4;
+        let px = 0;
+        let py = r;
+
+        do {
+            // draw
+            this.line(x - px, y + py, x + px, y + py, c);
+            this.line(x - px, y - py, x + px, y - py, c);
+            this.line(x - py, y + px, x + py, y + px, c);
+            this.line(x - py, y - px, x + py, y - px, c);
+
+            if (d < 0) {
+                d += 2 * px + 1;
+            } else {
+                d += 2 * (px - py) + 1;
+                py--;
+            }
+            px++;
+
+        } while (px <= py);
+    }
 }
 
 const defaultTextOptions = {

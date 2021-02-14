@@ -75,7 +75,7 @@ class Engine {
             let height = window.innerHeight;
             let max = width >= height ? height : width;
 
-            let scale = Math.floor(max / 128);
+            let scale = Math.floor(max / self.screen.pixelScreen.width);
             console.log(scale);
             self.screen.pixelScreen.resize(scale);
         }
