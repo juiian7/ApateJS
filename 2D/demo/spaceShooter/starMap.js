@@ -1,10 +1,8 @@
 import { apate } from "../../src/apate.js";
 import Entity from "../../src/entity.js";
+import ParticleSystem from "../../src/utility/particleSystem.js";
 
-export var starMap = new Entity();
-starMap.priority = -10;
 
-starMap.speed = .3;
 
 let starColors = [
     rgb(230, 230, 200),
@@ -13,6 +11,22 @@ let starColors = [
     rgb(215, 210, 215)
 ];
 
+
+
+let starParticles = {
+    velocity: {
+        randomMinY: 70,
+        randomMaxY: 75,
+    },
+    colors: starColors,
+    emitDelay: 20,
+    lifetime: 1000
+}
+
+export var starMap = new ParticleSystem(starParticles);
+
+starMap.start();
+/*
 starMap.on('init', () => {
     let amount = 100;
     starMap.stars = []
@@ -42,7 +56,7 @@ starMap.on('draw', () => {
         apate.screen.pixel(starMap.stars[i].x, starMap.stars[i].y + Math.round(starMap.stars[i].tmpY), starMap.stars[i].c);
     }
 });
-
+*/
 function rgb(r,g,b) {
     return {r,g,b};
 }
