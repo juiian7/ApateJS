@@ -59,8 +59,8 @@ export default class Screen {
      * @param {{r,g,b}} c 
      */
     line(x1, y1, x2, y2, c) {
+        this.pixel(x1, y1, c);
         if (x1 == x2 && y1 == y2) {
-            this.pixel(x1, y1, c);
             return;
         }
         let dx = x2 - x1;

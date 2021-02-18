@@ -25,6 +25,14 @@ export default class Random {
         return (this.next() * max) + min;
     }
 
+    betweenNegative(min, max) {
+        if (min < 0) {
+            let d = Math.abs(max) + Math.abs(min);
+            return (this.next() * d) - Math.abs(min);
+        }
+        return this.between(min, max);
+    }
+
     setSeed(seed) {
         this.a = seed
         this.b = seed

@@ -121,7 +121,7 @@ class Engine {
         let renderLoop = function () {
 
             if (self['draw']) self['draw'](self.screen);
-            self.activeScene.run('draw');
+            self.activeScene.run('draw', self.screen);
 
             if (!self.IsRunning) self.ui.draw();
             if (self.IsRunning && self.ShowMouse) drawMouse(self.mouseX, self.mouseY, 1, self);
@@ -130,7 +130,7 @@ class Engine {
 
             self.screen.pixelScreen.updateTexture();
             self.screen.pixelScreen.render();
-            
+
             if (self.clearScreen) self.screen.clear(self.clearColor);
 
             if (!self.isStopped) window.requestAnimationFrame(renderLoop);
@@ -161,7 +161,7 @@ class Engine {
                 if (navigator.getGamepads()[0]) {
                     this.controllerAxes = navigator.getGamepads()[0].axes;
                 }
-                
+
                 if (this['update']) this['update'](delta);
                 this.activeScene.run('update', delta);
 
