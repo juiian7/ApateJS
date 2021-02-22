@@ -38,7 +38,7 @@ export default class PixelScreen {
         this.gl.clearColor(0, 0, 0, 1);
 
         this.scale = 4;
-        this.resize(this.scale);
+        this.rescale(this.scale);
 
         this.initShaderProgram();
 
@@ -48,11 +48,19 @@ export default class PixelScreen {
         this.createTexture();
     }
 
-    resize(scale) {
+    rescale(scale) {
         this.scale = scale;
         this.canvas.width = this.width * scale;
         this.canvas.height = this.height * scale;
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    resize(width, height) {
+        this.width = width;
+        this.height = height;
+        this.pixel = new Uint8Array(this.width * this.height * 3);
+
+        this.rescale(4);
     }
 
     setUpBuffers() {
