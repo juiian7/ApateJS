@@ -1,7 +1,6 @@
 import Random from './random.js';
 
 export default class ParticleSystem {
-
     constructor(properties) {
         this.isActive = false;
         this.priority = 0;
@@ -58,7 +57,7 @@ export default class ParticleSystem {
 
     reset() {
         this.isActive = false;
-        loadProperties(this.backup);
+        this.loadProperties(this.backup);
     }
 
     update(delta) {
@@ -71,7 +70,6 @@ export default class ParticleSystem {
 
             let x = this.origin.x;
             let y = this.origin.y;
-
 
             if (this.origin.w) x += this.random.between(0, this.origin.w);
             if (this.origin.h) y += this.random.between(0, this.origin.h);
@@ -87,7 +85,7 @@ export default class ParticleSystem {
                 vx,
                 vy,
                 lifetime: this.lifetime,
-                c,
+                c
             });
         }
 
@@ -96,8 +94,8 @@ export default class ParticleSystem {
             this.particles[i].vx += this.gravity.x;
             this.particles[i].vy += this.gravity.y;
 
-            this.particles[i].x += this.particles[i].vx * delta / 1000;
-            this.particles[i].y += this.particles[i].vy * delta / 1000;
+            this.particles[i].x += (this.particles[i].vx * delta) / 1000;
+            this.particles[i].y += (this.particles[i].vy * delta) / 1000;
 
             this.particles[i].lifetime--;
             if (this.particles[i].lifetime <= 0) {

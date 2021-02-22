@@ -199,17 +199,17 @@ class Engine {
         this.isStopped = true;
         this['exit']();
     }
+
     /**
-     * 
      * @param {'start' | 'update' | 'draw' | 'lastUpdate' | 'exit' | 'save' | 'load' | 'click' | 'rightClick'} event
      * @param {() => void} handler
      */
     on(event, handler) {
         this[event] = handler;
     }
+
     /**
-     * 
-     * @param {'Up' | 'Down'| 'Left'| 'Right' | 'Action1' | 'Action2' | 'Action3' | 'Action4'} name 
+     * @param {'Up' | 'Down' | 'Left' | 'Right' | 'Action1' | 'Action2' | 'Action3' | 'Action4'} name 
      */
     isButtonPressed(name) {
         name = name.toLowerCase();
