@@ -1,13 +1,23 @@
 export default class Random {
     /**
-     * @param {Number?} seed 
+     * @param {Number} seed 
      */
     constructor(seed) {
-        if (!seed) seed = new Date().getTime();
-        this.setSeed(seed);
+        this.setSeed(seed ?? new Date().getTime());
     }
 
     /**
+     * @param {Number} seed 
+     */
+    setSeed(seed) {
+        this.a = seed
+        this.b = seed
+        this.c = seed
+        this.seed = seed;
+    }
+
+    /**
+     * Generates a number with the specified seed
      * @returns {Number} 
      */
     next() {
@@ -16,32 +26,20 @@ export default class Random {
         this.c = (170 * this.c) % 30323;
         return (this.a / 30269 + this.b / 30307 + this.c / 30323) % 1;
     }
+
     /**
-     * @param {Number} min
-     * @param {Number} max
+     * Generates a number with the specified seed in the given range
+     * @param {Number} min minimum
+     * @param {Number} max maximum
      * @returns {Number} 
      */
     between(min, max) {
-        return (this.next() * max) + min;
-    }
-
-    betweenNegative(min, max) {
-        if (min < 0) {
-            let d = Math.abs(max) + Math.abs(min);
-            return (this.next() * d) - Math.abs(min);
-        }
-        return this.between(min, max);
-    }
-
-    setSeed(seed) {
-        this.a = seed
-        this.b = seed
-        this.c = seed
-        this.seed = seed;
+        return (this.next() * (max - min)) + min;
     }
 }
 
 /**
+ * Generates a random number
  * @param {Number} max 
  * @returns {Number} 
  */
