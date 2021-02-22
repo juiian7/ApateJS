@@ -1,13 +1,9 @@
-import Tilemap from "../utility/tilemap.js";
-import {
-    charSpriteMap
-} from "./asciiSprites.js";
-import PixelScreen from "./pixelScreen.js";
+import Tilemap from '../utility/tilemap.js';
+import { charSpriteMap } from './asciiSprites.js';
+import PixelScreen from './pixelScreen.js';
 
 export default class Screen {
-
     constructor(element) {
-
         this.element = element;
 
         this.pixelScreen = new PixelScreen(this.element);
@@ -35,12 +31,11 @@ export default class Screen {
     }
 
     /**
-     * 
-     * @param {number} x 
-     * @param {number} y 
-     * @param {number} w 
-     * @param {number} h 
-     * @param {{r,g,b}} c 
+     * @param {number} x
+     * @param {number} y
+     * @param {number} w
+     * @param {number} h
+     * @param {{r,g,b}} c
      */
     rect(x, y, w, h, c) {
         for (let i = 0; i < w; i++) {
@@ -51,12 +46,11 @@ export default class Screen {
     }
 
     /**
-     * 
-     * @param {number} x 
-     * @param {number} y 
-     * @param {number} x2 
-     * @param {number} y2 
-     * @param {{r,g,b}} c 
+     * @param {number} x
+     * @param {number} y
+     * @param {number} x2
+     * @param {number} y2
+     * @param {{r,g,b}} c
      */
     line(x1, y1, x2, y2, c) {
         this.pixel(x1, y1, c);
@@ -66,41 +60,40 @@ export default class Screen {
         let dx = x2 - x1;
         let dy = y2 - y1;
         let l = Math.sqrt(dx * dx + dy * dy);
-        dx /= l, dy /= l;
+        (dx /= l), (dy /= l);
 
         let x = x1;
         let y = y1;
-        while (true) {
-            x += dx, y += dy;
+        do {
+            (x += dx), (y += dy);
             this.pixel(Math.round(x), Math.round(y), c);
-            if (Math.round(x) == x2 && Math.round(y) == y2) break;
-        }
+        } while (Math.round(x) == x2 && Math.round(y) == y2);
     }
 
     /**
      * @param {number} x x-coord
      * @param {number} y y-coord
      * @param {any} spriteObj sprite format: [{x,y,hex},...]
-     * @param {number} scale 
+     * @param {number} scale
      */
     sprite(x, y, spriteObj, scale) {
         x = Math.round(x);
         y = Math.round(y);
         for (let i = 0; i < spriteObj.length; i++) {
-            this.rect(x + (spriteObj[i].x * scale), y + (spriteObj[i].y * scale), scale, scale, spriteObj[i].c);
+            this.rect(x + spriteObj[i].x * scale, y + spriteObj[i].y * scale, scale, scale, spriteObj[i].c);
         }
     }
+
     animatedSprite(x, y, animSpriteObj, scale, frame) {
         this.sprite(x, y, animSpriteObj[frame], scale);
     }
 
     /**
-     * 
-     * @param {number} x 
-     * @param {number} y 
-     * @param {string} text 
+     * @param {number} x
+     * @param {number} y
+     * @param {string} text
      * @param {{r,g,b}} c color of the text
-     * @param {*} options 
+     * @param {*} options
      */
     text(x, y, text, c, options) {
         options = {
@@ -111,7 +104,6 @@ export default class Screen {
         options.topSpace *= options.scale;
         let xOffset = x;
         for (let i = 0; i < text.length; i++) {
-
             let char = text[i].toUpperCase();
             if (char == ' ') {
                 xOffset += 4 + options.leftSpace;
@@ -125,29 +117,27 @@ export default class Screen {
             let charSprite = charSpriteMap[char];
 
             for (let j = 0; j < charSprite.pixels.length; j++) {
-                this.rect((charSprite.pixels[j].x * options.scale) + xOffset, (charSprite.pixels[j].y * options.scale) + y, options.scale, options.scale, c);
+                this.rect(charSprite.pixels[j].x * options.scale + xOffset, charSprite.pixels[j].y * options.scale + y, options.scale, options.scale, c);
             }
             xOffset += charSprite.len + options.leftSpace;
         }
     }
 
     /**
-     * 
-     * @param {number} x 
-     * @param {number} y 
-     * @param {Tilemap} tilemap 
+     * @param {number} x
+     * @param {number} y
+     * @param {Tilemap} tilemap
      */
     tilemap(x, y, tilemap) {
         for (let i = 0; i < tilemap.tiles.length; i++) {
-            this.sprite(x + (tilemap.tiles[i].x * tilemap.tileWidth), y + (tilemap.tiles[i].y * tilemap.tileHeight), tilemap.tileMap[tilemap.tiles[i].name], 1);
+            this.sprite(x + tilemap.tiles[i].x * tilemap.tileWidth, y + tilemap.tiles[i].y * tilemap.tileHeight, tilemap.tileMap[tilemap.tiles[i].name], 1);
         }
     }
 
     /**
-     * 
-     * @param {number} x 
-     * @param {number} y 
-     * @param {{r,g,b}} c 
+     * @param {number} x
+     * @param {number} y
+     * @param {{r,g,b}} c
      * @param {string} func Function to draw (f(x) = Math.sin(x))
      * @param {number} start starting x
      * @param {number} end ending x
@@ -192,7 +182,6 @@ export default class Screen {
                 py--;
             }
             px++;
-
         } while (px <= py);
     }
 
@@ -215,7 +204,6 @@ export default class Screen {
                 py--;
             }
             px++;
-
         } while (px <= py);
     }
 }
@@ -223,8 +211,8 @@ export default class Screen {
 const defaultTextOptions = {
     scale: 1,
     leftSpace: 1,
-    topSpace: 1,
+    topSpace: 1
     //align
     //autoNewLine
     //maxX
-}
+};

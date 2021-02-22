@@ -2,11 +2,9 @@
 
 export default class PixelScreen {
     /**
-     * 
-     * @param {HTMLElement} parentElement 
+     * @param {HTMLElement} parentElement
      */
     constructor(parentElement) {
-
         const el = parentElement.querySelector('#pixelscreen');
 
         this.width = 128;
@@ -24,7 +22,6 @@ export default class PixelScreen {
         this.canvas.style.cursor = 'none';
         //this.canvas.style.borderRadius = '1px';
 
-
         this.pixel = new Uint8Array(this.width * this.height * 3);
 
         this.gl = this.canvas.getContext('webgl2');
@@ -34,7 +31,7 @@ export default class PixelScreen {
             this.gl = this.canvas.getContext('webgl');
             this.webgl2 = false;
         }
-        
+
         this.gl.clearColor(0, 0, 0, 1);
 
         this.scale = 4;
@@ -111,7 +108,6 @@ export default class PixelScreen {
     }
 
     createTexture() {
-
         this.texture = this.gl.createTexture();
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
 
@@ -169,7 +165,6 @@ export default class PixelScreen {
         return c;
     }
 }
-
 
 const vs = `
 attribute vec2 aVertexPosition;

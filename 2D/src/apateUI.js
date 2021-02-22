@@ -1,7 +1,8 @@
-export default class ApateUI {
+//
 
+export default class ApateUI {
     constructor(engine) {
-        this.engine = engine
+        this.engine = engine;
 
         this.maxControlLength = 0;
 
@@ -9,6 +10,7 @@ export default class ApateUI {
         this.addControl('continue', () => {
             this.engine.IsRunning = true;
         });
+
         /**
          * @type {HTMLElement}
          */
@@ -18,10 +20,7 @@ export default class ApateUI {
         this.addControl('fullscreen: off', (c) => {
             fullscreen = !fullscreen;
 
-
-            let title = 'fullscreen: ';
-            title += fullscreen ? 'on' : 'off';
-            c.name = title;
+            c.name = `fullscreen: ${fullscreen ? 'on' : 'off'}`;
 
             // toggle fulscree
             if (fullscreen) {
@@ -46,29 +45,28 @@ export default class ApateUI {
 
         this.currentIndex = 0;
 
-
         this.backColor = {
             r: 30,
             g: 30,
             b: 30
-        }
+        };
 
         this.shadowColor = {
             r: 0,
             g: 0,
             b: 0
-        }
+        };
         this.fontColor = {
             r: 255,
             g: 255,
             b: 255
-        }
+        };
 
         this.selectedColor = {
             r: 255,
             g: 120,
             b: 102
-        }
+        };
 
         this.isFirstPress = true;
         this.keyDelay = 100;
@@ -76,7 +74,6 @@ export default class ApateUI {
     }
 
     update(delta) {
-
         this.nextListen -= delta;
 
         if (this.nextListen < 0) {
@@ -91,7 +88,6 @@ export default class ApateUI {
 
                 this.nextListen = this.isFirstPress ? this.keyDelay * 3 : this.keyDelay;
                 this.isFirstPress = false;
-
             } else if (this.engine.isButtonPressed('down')) {
                 this.currentIndex++;
                 if (this.currentIndex >= this.controlls.length) this.currentIndex = 0;
@@ -127,27 +123,22 @@ export default class ApateUI {
 
         for (let i = 0; i < this.controlls.length; i++) {
             if (i == this.currentIndex) {
-                this.engine.screen.text(minX + 1, minY + 2 + (7 * i), this.controlls[i].name, this.selectedColor);
-            } else this.engine.screen.text(minX + 1, minY + 2 + (7 * i), this.controlls[i].name, this.fontColor);
+                this.engine.screen.text(minX + 1, minY + 2 + 7 * i, this.controlls[i].name, this.selectedColor);
+            } else {
+                this.engine.screen.text(minX + 1, minY + 2 + 7 * i, this.controlls[i].name, this.fontColor);
+            }
         }
     }
 
-
-
     addControl(name, onClick) {
+        let c = { name };
 
-        let c = {
-            name
-        };
-
-        let execute = () => {
+        c.execute = () => {
             onClick(c);
         };
-        c.execute = execute;
+
         this.controlls.push(c);
 
         this.maxControlLength = name.length > this.maxControlLength ? name.length : this.maxControlLength;
-
     }
-
 }

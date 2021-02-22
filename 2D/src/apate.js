@@ -1,5 +1,3 @@
-//
-
 import ApateUI from './apateUI.js';
 import AudioController from './audio/audioController.js';
 import Scene from './scene.js';
@@ -15,7 +13,7 @@ class Engine {
             r: 0,
             g: 0,
             b: 0
-        }
+        };
         this.clearScreen = true;
 
         let el = document.body;
@@ -94,25 +92,25 @@ class Engine {
             let scale = Math.floor(max / maxScreen);
             console.log(scale);
             self.screen.pixelScreen.rescale(scale);
-        }
-        window.addEventListener('resize', e => {
+        };
+        window.addEventListener('resize', (e) => {
             if (this.autoResize) {
                 resizeScreen();
             }
         });
         resizeScreen();
 
-        this['start'] = () => { };
-        this['update'] = () => { };
-        this['lastUpdate'] = () => { };
-        this['save'] = () => { };
-        this['load'] = () => { };
-        this['exit'] = () => { };
+        this['start'] = () => {};
+        this['update'] = () => {};
+        this['lastUpdate'] = () => {};
+        this['save'] = () => {};
+        this['load'] = () => {};
+        this['exit'] = () => {};
 
-        this['click'] = () => { };
-        this['rightClick'] = () => { };
-        this['mouseDown'] = () => { };
-        this['mouseUp'] = () => { };
+        this['click'] = () => {};
+        this['rightClick'] = () => {};
+        this['mouseDown'] = () => {};
+        this['mouseUp'] = () => {};
     }
     async run() {
         // load game files
@@ -136,7 +134,6 @@ class Engine {
 
         //start render loop
         let renderLoop = function () {
-
             if (self['draw']) self['draw'](self.screen);
             self.activeScene.run('draw', self.screen);
 
@@ -151,7 +148,7 @@ class Engine {
             if (self.clearScreen) self.screen.clear(self.clearColor);
 
             if (!self.isStopped) window.requestAnimationFrame(renderLoop);
-        }
+        };
         window.requestAnimationFrame(renderLoop);
 
         // draw info
@@ -168,7 +165,6 @@ class Engine {
         //let nextUpdate = 1000 / maxTicks;
         // set update intervall and update objects
         this.updateLoop = setInterval(() => {
-
             time = new Date().getTime();
             delta = time - lastTime;
             //nextUpdate -= delta;
@@ -190,8 +186,6 @@ class Engine {
             }
             lastTime = time;
         }, 0);
-
-
     }
     stop() {
         clearInterval(this.updateLoop);
@@ -209,21 +203,18 @@ class Engine {
     }
 
     /**
-     * @param {'Up' | 'Down' | 'Left' | 'Right' | 'Action1' | 'Action2' | 'Action3' | 'Action4'} name 
+     * @param {'Up' | 'Down' | 'Left' | 'Right' | 'Action1' | 'Action2' | 'Action3' | 'Action4'} name
      */
     isButtonPressed(name) {
         name = name.toLowerCase();
 
         if (navigator.getGamepads()[0]) {
-
             if (name == 'up' && this.controllerAxes[1] < -0.3) return true;
             else if (name == 'down' && this.controllerAxes[1] > 0.3) return true;
             else if (name == 'left' && this.controllerAxes[0] < -0.3) return true;
             else if (name == 'right' && this.controllerAxes[0] > 0.3) return true;
-
             else if (name == 'action1' && navigator.getGamepads()[0].buttons[controllerMap['action1']].pressed) return true;
             else if (name == 'action2' && navigator.getGamepads()[0].buttons[controllerMap['action2']].pressed) return true;
-
             else if (name == 'engine_menu' && navigator.getGamepads()[0].buttons[controllerMap['engine_menu']].pressed) return true;
         }
 
@@ -242,30 +233,33 @@ class Engine {
         return null;
     }
     /**
-     * 
-     * @param {HTMLElement} parent 
+     *
+     * @param {HTMLElement} parent
      */
     setParentElement(parent) {
         parent.appendChild(this.screen.pixelScreen.canvas);
     }
 }
 
-let defaultMouse = [{
-    x: 0,
-    y: 0,
-}, {
-    x: 0,
-    y: 1,
-}, {
-    x: 1,
-    y: 0,
-}]
+let defaultMouse = [
+    {
+        x: 0,
+        y: 0
+    },
+    {
+        x: 0,
+        y: 1
+    },
+    {
+        x: 1,
+        y: 0
+    }
+];
 /**
- * 
- * @param {Engine} engine 
+ *
+ * @param {Engine} engine
  */
 function drawMouse(x, y, scale, engine) {
-
     for (let mp = 0; mp < defaultMouse.length; mp++) {
         for (let i = 0; i < scale; i++) {
             for (let j = 0; j < scale; j++) {
@@ -288,21 +282,21 @@ function drawMouse(x, y, scale, engine) {
 
 function loadKeyMap() {
     return {
-        'up': ['KeyW', 'ArrowUp'],
-        'down': ['KeyS', 'ArrowDown'],
-        'left': ['KeyA', 'ArrowLeft'],
-        'right': ['KeyD', 'ArrowRight'],
+        up: ['KeyW', 'ArrowUp'],
+        down: ['KeyS', 'ArrowDown'],
+        left: ['KeyA', 'ArrowLeft'],
+        right: ['KeyD', 'ArrowRight'],
 
-        'action1': ['KeyZ', 'KeyN', 'KeyC', 'Enter', 'Space'],
-        'action2': ['KeyX', 'KeyM', 'KeyV'],
+        action1: ['KeyZ', 'KeyN', 'KeyC', 'Enter', 'Space'],
+        action2: ['KeyX', 'KeyM', 'KeyV'],
 
-        'engine_menu': ['Escape'],
-    }
+        engine_menu: ['Escape']
+    };
 }
 const controllerMap = {
-    'action1': 0,
-    'action2': 2,
-    'engine_menu': 1
-}
+    action1: 0,
+    action2: 2,
+    engine_menu: 1
+};
 
 export var apate = new Engine();

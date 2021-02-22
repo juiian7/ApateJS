@@ -1,5 +1,6 @@
-export default class AudioController {
+//
 
+export default class AudioController {
     constructor() {
         this.audios = {};
 
@@ -11,12 +12,11 @@ export default class AudioController {
         this.audioCtx = new AudioContext();
     }
     /**
-     * 
-     * @param {string} name 
-     * @param {string} info 
+     *
+     * @param {string} name
+     * @param {string} info
      */
     createAudio(name, info) {
-
         let a = stringToAudio(info);
         let noteDuration = 1000 / a.notesPerSecond;
 
@@ -34,13 +34,12 @@ export default class AudioController {
             tracks: a.tracks,
             oscillators,
             gain,
-            noteDuration,
+            noteDuration
         };
     }
 
     play(name) {
         if (this.audios[name]) {
-
             let audio = this.audios[name];
 
             audio.gain.connect(this.audioCtx.destination);
@@ -65,12 +64,10 @@ export default class AudioController {
                     }
                 }
             }, audio.noteDuration);
-
         } else {
             console.error('No audio found with the name: ' + name);
         }
     }
-
 }
 
 const pianoKeys = {
@@ -78,15 +75,15 @@ const pianoKeys = {
     cs: 17.32,
     d: 18.35,
     ds: 19.45,
-    e: 20.60,
+    e: 20.6,
     f: 21.83,
     fs: 23.12,
-    g: 24.50,
+    g: 24.5,
     gs: 25.96,
-    a: 27.50,
+    a: 27.5,
     as: 29.14,
     h: 30.87,
-    b: 30.87,
+    b: 30.87
 };
 
 function stringToAudio(s) {
@@ -108,7 +105,6 @@ function stringToAudio(s) {
     }
 
     for (let i = 0; i < stringTracks.length; i++) {
-
         let st = stringTracks[i].split(' ');
         let track = [];
 

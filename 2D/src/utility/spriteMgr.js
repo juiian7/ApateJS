@@ -1,8 +1,10 @@
-export default class SpriteMgr {
+//
 
+export default class SpriteMgr {
     constructor() {
         this.canvas = document.createElement('canvas');
     }
+
     async loadSpriteFromURL(url) {
         var res = await fetch(url);
         let json = await res.json();
@@ -14,14 +16,13 @@ export default class SpriteMgr {
         return new Promise((res, rej) => {
             img.onload = () => {
                 res(img);
-            }
+            };
             img.src = url;
         });
     }
 
     /**
-     * 
-     * @param {HTMLImageElement} img 
+     * @param {HTMLImageElement} img
      */
     imgToSprite(img) {
         this.canvas.width = img.width;
@@ -57,9 +58,9 @@ export default class SpriteMgr {
         }
         return sprite;
     }
+
     /**
-     * 
-     * @param {HTMLImageElement} img 
+     * @param {HTMLImageElement} img
      */
     imgToAnimatedSprite(img, frameWidth) {
         this.canvas.width = img.width;
@@ -115,7 +116,7 @@ export default class SpriteMgr {
 
         for (let i = 0; i < w; i++) {
             for (let j = 0; j < h; j++) {
-                let pixel = sprite.find(p => p.x == x + i && p.y == y + j);
+                let pixel = sprite.find((p) => p.x == x + i && p.y == y + j);
                 if (pixel) {
                     newSprite.push({
                         x: i,
@@ -123,7 +124,6 @@ export default class SpriteMgr {
                         c: pixel.c
                     });
                 }
-
             }
         }
         return newSprite;
@@ -159,4 +159,5 @@ export default class SpriteMgr {
         }
     }
 }
+
 export var spriteMgr = new SpriteMgr();

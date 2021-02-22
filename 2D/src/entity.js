@@ -1,19 +1,20 @@
+//
 
-
-export default class Entity {
+export default class Entity {
     constructor() {
         this.isInitialized = false;
         this.isActive = true;
         this.priority = 0;
     }
+
     /**
-     * 
-     * @param {'init' | 'update' | 'draw'} event 
-     * @param {() => {}} callback 
+     * @param {'init' | 'update' | 'draw'} event
+     * @param {() => {}} callback
      */
-    on(event, callback){
+    on(event, callback) {
         this[event] = callback;
     }
+
     loadAttributes(obj) {
         this.backup = obj;
         let keys = Object.keys(obj);
@@ -21,7 +22,8 @@ export default class Entity {
             this[keys[i]] = obj[keys[i]];
         }
     }
-    reset(){
+
+    reset() {
         this.isInitialized = false;
         this.isActive = true;
 
