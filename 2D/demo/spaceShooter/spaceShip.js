@@ -1,10 +1,6 @@
-import {
-    apate
-} from "../../src/apate.js";
-import Entity from "../../src/entity.js";
-import {
-    bulletSystem
-} from "./bulletSystem.js";
+import { apate } from '../../src/apate.js';
+import Entity from '../../src/entity.js';
+import { bulletSystem } from './bulletSystem.js';
 
 export var spaceShip = new Entity();
 spaceShip.priority = 10;
@@ -21,14 +17,12 @@ let nextShoot = 1000 / shootsPerSec;
 
 spaceShip.on('init', () => {
     console.log('initialized');
-})
+});
 
 spaceShip.on('update', (delta) => {
-
     // movement
     if (apate.isButtonPressed('Left')) spaceShip.x -= delta * spaceShip.speed;
     if (apate.isButtonPressed('Right')) spaceShip.x += delta * spaceShip.speed;
-
 
     if (spaceShip.x < -8) {
         spaceShip.x = 128;
@@ -42,7 +36,6 @@ spaceShip.on('update', (delta) => {
         nextShoot = 1000 / shootsPerSec;
     }
 });
-
 
 spaceShip.on('draw', () => {
     apate.screen.sprite(spaceShip.x, spaceShip.y, spaceShip.shipSprite, spaceShip.scale);

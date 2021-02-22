@@ -1,10 +1,8 @@
-import {
-    apate
-} from "../../src/apate.js";
-import Entity from "../../src/entity.js";
-import SpriteMgr from "../../src/utility/spriteMgr.js";
-import { enemySystem } from "./enemySystem.js";
-import { destroyedEnemy } from "./main.js";
+import { apate } from '../../src/apate.js';
+import Entity from '../../src/entity.js';
+import SpriteMgr from '../../src/utility/spriteMgr.js';
+import { enemySystem } from './enemySystem.js';
+import { destroyedEnemy } from './main.js';
 
 let spriteMgr = new SpriteMgr();
 
@@ -25,7 +23,8 @@ bulletSystem.on('update', (delta) => {
     for (let i = 0; i < bulletSystem.bullets.length; i++) {
         // update
         bulletSystem.bullets[i].y -= bulletSystem.speed * delta;
-        if (bulletSystem.bullets[i].y < -10) { // clean far bullets
+        if (bulletSystem.bullets[i].y < -10) {
+            // clean far bullets
             bulletSystem.bullets.splice(i, 1);
             i--;
             continue;
@@ -52,10 +51,9 @@ bulletSystem.on('shoot', (x, y) => {
 
 bulletSystem.on('clear', () => {
     bulletSystem.bullets = [];
-})
+});
 
 bulletSystem.on('draw', () => {
-    
     for (let i = 0; i < bulletSystem.bullets.length; i++) {
         apate.screen.sprite(bulletSystem.bullets[i].x, bulletSystem.bullets[i].y, bulletSystem.bulletSprite, 1);
     }

@@ -1,11 +1,7 @@
-import {
-    apate
-} from "../../src/apate.js";
-import Entity from "../../src/entity.js";
-import SpriteMgr from "../../src/utility/spriteMgr.js";
-import {
-    lost
-} from "./main.js";
+import { apate } from '../../src/apate.js';
+import Entity from '../../src/entity.js';
+import SpriteMgr from '../../src/utility/spriteMgr.js';
+import { lost } from './main.js';
 
 let spriteMgr = new SpriteMgr();
 
@@ -27,7 +23,6 @@ enemySystem.on('init', async () => {
 });
 
 enemySystem.on('update', (delta) => {
-
     nextAnimFrame -= delta;
     if (nextAnimFrame <= 0) {
         nextAnimFrame = 1000 / 20;
@@ -45,14 +40,14 @@ enemySystem.on('update', (delta) => {
     for (let i = 0; i < enemySystem.enemies.length; i++) {
         enemySystem.enemies[i].y += enemySystem.enemies[i].speed * delta;
 
-        if (enemySystem.enemies[i].y > 120) { // lost
+        if (enemySystem.enemies[i].y > 120) {
+            // lost
             lost();
         }
     }
 });
 
 enemySystem.on('spawn', (x, y, speed) => {
-
     enemySystem.enemies.push({
         x,
         y,
@@ -62,7 +57,7 @@ enemySystem.on('spawn', (x, y, speed) => {
 
 enemySystem.on('clear', () => {
     enemySystem.enemies = [];
-})
+});
 
 enemySystem.on('draw', () => {
     for (let i = 0; i < enemySystem.enemies.length; i++) {

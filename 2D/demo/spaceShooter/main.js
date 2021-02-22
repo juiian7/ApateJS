@@ -1,16 +1,16 @@
-import { apate } from "../../src/apate.js";
-import SpriteMgr from "../../src/utility/spriteMgr.js";
-import { bulletSystem } from "./bulletSystem.js";
-import { enemySystem } from "./enemySystem.js";
-import { spaceShip } from "./spaceShip.js";
-import { starMap } from "./starMap.js";
+import { apate } from '../../src/apate.js';
+import SpriteMgr from '../../src/utility/spriteMgr.js';
+import { bulletSystem } from './bulletSystem.js';
+import { enemySystem } from './enemySystem.js';
+import { spaceShip } from './spaceShip.js';
+import { starMap } from './starMap.js';
 
 let spriteMgr = new SpriteMgr();
 
 apate.setParentElement(document.querySelector('#view'));
 
 let colors = {
-    white: rgb(230, 230, 230),
+    white: rgb(230, 230, 230)
 };
 
 //let apate = new apate();
@@ -24,18 +24,16 @@ let highscore = 0;
 
 let isAlive = true;
 
-
-apate.on("start", async () => {
+apate.on('start', async () => {
     spaceShip.shipSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/ship.png'));
 
     apate.clearColor = rgb(0, 0, 55);
 });
 
-apate.on("update", (delta) => {
+apate.on('update', (delta) => {
     if (!isAlive && apate.isButtonPressed('Action2')) {
-
         isAlive = true; // Restart
-        
+
         spaceShip.reset();
         bulletSystem.clear();
         enemySystem.clear();
