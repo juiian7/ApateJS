@@ -1,8 +1,6 @@
-import {
-    apate
-} from "../../src/apate.js";
-import Entity from "../../src/entity.js";
-import ParticleSystem from "../../src/utility/particleSystem.js";
+import { apate } from '../../src/apate.js';
+import Entity from '../../src/entity.js';
+import ParticleSystem from '../../src/utility/particleSystem.js';
 
 let width = 128;
 let height = 128;
@@ -38,7 +36,6 @@ let acorn = `
     .
  ..  ...`;
 
-
 cellsMgr.on('init', () => {
     cellsMgr.isRunning = false;
     cellsMgr.state = 'create';
@@ -47,7 +44,7 @@ cellsMgr.on('init', () => {
     cellsMgr.nextUpdate = 1000 / cellsMgr.updateRate;
 
     //createPattern(64, 64, acorn);
-/*    createPattern(30, 90, acorn);
+    /*    createPattern(30, 90, acorn);
     createPattern(90, 30, acorn);
     createPattern(90, 90, acorn);
 
@@ -55,9 +52,9 @@ cellsMgr.on('init', () => {
 });
 
 cellsMgr.on('update', (delta) => {
-    setCell(64,61,1);
-    setCell(62,63,1);
-    setCell(62,62,1);
+    setCell(64, 61, 1);
+    setCell(62, 63, 1);
+    setCell(62, 62, 1);
 
     if (apate.isButtonPressed('Right')) {
         if (cellsMgr.updateRate < 100) cellsMgr.updateRate += 0.1;
@@ -65,19 +62,18 @@ cellsMgr.on('update', (delta) => {
         if (cellsMgr.updateRate > 2) cellsMgr.updateRate -= 0.1;
     }
     if (apate.IsMouseDown) {
-        let index = (width * apate.mouseY + apate.mouseX);
+        let index = width * apate.mouseY + apate.mouseX;
 
         cellsMgr.cells[index] = cellsMgr.state == 'create' ? 1 : 0;
     }
     cellsMgr.nextUpdate -= delta;
     if (cellsMgr.nextUpdate < 0 && cellsMgr.isRunning) {
-
         cellsMgr.lastCells = new Uint8Array(cellsMgr.cells);
 
         // update cells
         for (let x = 0; x < width; x++) {
             for (let y = 0; y < height; y++) {
-                let c = getCell(x,y)
+                let c = getCell(x, y);
                 let sum = countNeighbours(x, y);
 
                 if (c > 0) {
@@ -87,7 +83,7 @@ cellsMgr.on('update', (delta) => {
                     if (sum == 3) c = 1;
                 }
 
-                setCell(x,y, c);
+                setCell(x, y, c);
             }
         }
         cellsMgr.nextUpdate = 1000 / cellsMgr.updateRate;
@@ -98,7 +94,6 @@ function createPattern(x, y, pattern) {
     let oX = 0;
     let oY = 0;
     for (let i = 0; i < pattern.length; i++) {
-
         if (pattern[i] == '.') {
             setCell(oX + x, oY + y, 1);
         }
@@ -145,7 +140,7 @@ let white = {
     r: 255,
     g: 255,
     b: 255
-}
+};
 
 cellsMgr.on('draw', () => {
     for (let x = xOffset; x < 128 + xOffset; x++) {
