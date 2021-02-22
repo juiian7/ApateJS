@@ -1,6 +1,7 @@
 //
 
 import ApateUI from './apateUI.js';
+import AudioController from './audio/audioController.js';
 import Scene from './scene.js';
 import Screen from './screen/screen.js';
 import Random from './utility/random.js';
@@ -30,6 +31,8 @@ class Engine {
 
         this.activeScene = new Scene();
 
+        this.audio = new AudioController();
+
         this.ui = new ApateUI(this);
 
         this.mouseX = 0;
@@ -47,7 +50,12 @@ class Engine {
         });
 
         this.screen.pixelScreen.canvas.addEventListener('click', (e) => {
-            this['mouseClick']();
+            this['click']();
+        });
+        this.screen.pixelScreen.canvas.addEventListener('contextmenu', (e) => {
+            this['rightClick']();
+            e.preventDefault();
+            return false;
         });
         this.screen.pixelScreen.canvas.addEventListener('mousedown', (e) => {
             this.IsMouseDown = true;
@@ -58,9 +66,15 @@ class Engine {
             this['mouseUp']();
         });
 
+        document.addEventListener('blur', () => {
+            // pause everything
+        });
+        document.addEventListener('focus', () => {
+            // resume everything
+        });
         document.addEventListener('keydown', (ev) => {
             this.keys.push(ev.code);
-            if (this.isButtonPressed('engine_cancel')) this.IsRunning = !this.IsRunning;
+            if (this.isButtonPressed('engine_menu')) this.IsRunning = !this.IsRunning;
             if (!ev.metaKey) ev.preventDefault();
         });
 
@@ -75,9 +89,11 @@ class Engine {
             let height = window.innerHeight;
             let max = width >= height ? height : width;
 
-            let scale = Math.floor(max / self.screen.pixelScreen.width);
+            let maxScreen = self.screen.pixelScreen.width >= self.screen.pixelScreen.height ? self.screen.pixelScreen.width : self.screen.pixelScreen.height;
+
+            let scale = Math.floor(max / maxScreen);
             console.log(scale);
-            self.screen.pixelScreen.resize(scale);
+            self.screen.pixelScreen.rescale(scale);
         }
         window.addEventListener('resize', e => {
             if (this.autoResize) {
@@ -86,16 +102,17 @@ class Engine {
         });
         resizeScreen();
 
-        this['start'] = () => {};
-        this['update'] = () => {};
-        this['lastUpdate'] = () => {};
-        this['save'] = () => {};
-        this['load'] = () => {};
-        this['exit'] = () => {};
+        this['start'] = () => { };
+        this['update'] = () => { };
+        this['lastUpdate'] = () => { };
+        this['save'] = () => { };
+        this['load'] = () => { };
+        this['exit'] = () => { };
 
-        this['mouseClick'] = () => {};
-        this['mouseDown'] = () => {};
-        this['mouseUp'] = () => {};
+        this['click'] = () => { };
+        this['rightClick'] = () => { };
+        this['mouseDown'] = () => { };
+        this['mouseUp'] = () => { };
     }
     async run() {
         // load game files
@@ -156,7 +173,7 @@ class Engine {
             delta = time - lastTime;
             //nextUpdate -= delta;
 
-            if (this.IsRunning /* && nextUpdate < 0*/ ) {
+            if (this.IsRunning /* && nextUpdate < 0*/) {
                 //                nextUpdate = 1000 / maxTicks;
                 if (navigator.getGamepads()[0]) {
                     this.controllerAxes = navigator.getGamepads()[0].axes;
@@ -184,8 +201,8 @@ class Engine {
     }
     /**
      * 
-     * @param {'start' | 'update'| 'draw'| 'lastUpdate'| 'exit' | 'save' | 'load'} event 
-     * @param {() => void} handler 
+     * @param {'start' | 'update' | 'draw' | 'lastUpdate' | 'exit' | 'save' | 'load' | 'click' | 'rightClick'} event
+     * @param {() => void} handler
      */
     on(event, handler) {
         this[event] = handler;
@@ -206,6 +223,8 @@ class Engine {
 
             else if (name == 'action1' && navigator.getGamepads()[0].buttons[controllerMap['action1']].pressed) return true;
             else if (name == 'action2' && navigator.getGamepads()[0].buttons[controllerMap['action2']].pressed) return true;
+
+            else if (name == 'engine_menu' && navigator.getGamepads()[0].buttons[controllerMap['engine_menu']].pressed) return true;
         }
 
         for (let i = 0; i < this.keyMap[name].length; i++) {
@@ -277,12 +296,13 @@ function loadKeyMap() {
         'action1': ['KeyZ', 'KeyN', 'KeyC', 'Enter', 'Space'],
         'action2': ['KeyX', 'KeyM', 'KeyV'],
 
-        'engine_cancel': ['Escape'],
+        'engine_menu': ['Escape'],
     }
 }
 const controllerMap = {
     'action1': 0,
-    'action2': 2
+    'action2': 2,
+    'engine_menu': 1
 }
 
 export var apate = new Engine();
