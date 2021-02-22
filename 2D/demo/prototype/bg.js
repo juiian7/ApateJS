@@ -1,5 +1,5 @@
-import Screen from "../../src/screen/screen.js";
-import Random from "../../src/utility/random.js";
+import Screen from '../../src/screen/screen.js';
+import Random from '../../src/utility/random.js';
 
 let random = new Random();
 
@@ -17,10 +17,9 @@ let colors = {
     house: rgb(0, 0, 60),
     //house_gray: rgb(40, 40, 40),
 
-
     window_dark: rgb(50, 50, 100),
-    window_light: rgb(210, 190, 50),
-}
+    window_light: rgb(210, 190, 50)
+};
 
 let blue_falloff = 64 * 2;
 let blue_falloff_steps = 8;
@@ -87,14 +86,12 @@ function lightUpWindows() {
 createHouses(40, 182 * 2);
 lightUpWindows();
 
-
 /**
- * 
- * @param {Screen} screen 
+ *
+ * @param {Screen} screen
  */
 export function drawBackground(screen, scroll) {
-
-    // background 
+    // background
     screen.rect(0, blue_falloff, 128, 128 - blue_falloff, colors.night_blue);
     for (let i = 0; i < blue_falloff_steps; i++) {
         screen.rect(0, i * blue_falloff_height, 128, blue_falloff_height, {
@@ -110,13 +107,13 @@ export function drawBackground(screen, scroll) {
         screen.pixel(stars[i].x + stars[i].x_offset, stars[i].y, stars[i].c);
     }
 
-    // houses 
+    // houses
     for (let i = 0; i < houses.length; i++) {
         houses[i].x_offset = -scroll * 2;
-        let hy = 128 - houses[i].height
-        screen.rect(houses[i].x + houses[i].x_offset, hy, houses[i].width, houses[i].height, houses[i].c)
+        let hy = 128 - houses[i].height;
+        screen.rect(houses[i].x + houses[i].x_offset, hy, houses[i].width, houses[i].height, houses[i].c);
 
-        // windows 
+        // windows
         let win_id = 0;
         for (let y = 1; y < houses[i].height; y += 4) {
             for (let x = 1; x < houses[i].width; x += 3) {
@@ -136,7 +133,7 @@ export function drawBackground(screen, scroll) {
                 r: (c.r + colors.fog.r) / 2,
                 g: (c.g + colors.fog.g) / 2,
                 b: (c.b + colors.fog.b) / 2
-            }
+            };
             screen.pixel(x, y, c);
         }
     }
