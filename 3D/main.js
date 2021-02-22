@@ -10,7 +10,7 @@ const config = {
     width: 800,
     height: 640,
     tickspeed: 30,
-    fps: 500000,
+    fps: 200,
     webglOptions: {
         antialias: true
     }
@@ -103,46 +103,40 @@ function main() {
         camera.lookAt(0, 0, 0);
     };
 
+    var tickes = 0;
+
     setInterval(() => {
         //mat4.rotate(modelMat, modelMat, rotSpeedRange.value / 180 * Math.PI, [xRotRange.value, yRotRange.value, zRotRange.value]);
         mat4.rotateX(modelMat, modelMat, (((xRotRange.value / config.tickspeed) * 500) / 180) * Math.PI);
         mat4.rotateY(modelMat, modelMat, (((yRotRange.value / config.tickspeed) * 500) / 180) * Math.PI);
         mat4.rotateZ(modelMat, modelMat, (((zRotRange.value / config.tickspeed) * 500) / 180) * Math.PI);
+
+        tickes++;
     }, 1000 / config.tickspeed);
 
-    var dateAtBegin = Date.now();
-    var timePassed, averageTimePerFrame, currentfps;
-    var fpsCouter = 0;
+    var frames = 0;
 
     setInterval(() => {
-        timePassed = Date.now() - dateAtBegin;
-        if (timePassed > 5000) {
-            averageTimePerFrame = timePassed / fpsCouter;
-            currentfps = timePassed / averageTimePerFrame;
-            console.log('current fps: ', currentfps);
-
-            fpsCouter = 0;
-            dateAtBegin = Date.now();
-        } else {
-            fpsCouter++;
-        }
-
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         texture.activate(gl.TEXTURE0);
-
         shaderProgram.setUniform1i('uSampler', 0);
         shaderProgram.setUniformMat4f('uModel', modelMat);
-
         camera.render(mesh, shaderProgram);
 
         texture2.activate(gl.TEXTURE0);
-
         shaderProgram.setUniform1i('uSampler', 0);
         shaderProgram.setUniformMat4f('uModel', modelMat2);
-
         camera.render(mesh2, shaderProgram);
+
+        frames++;
     }, 1000 / config.fps);
+
+    setInterval(() => {
+        console.log(`f${frames}, t${tickes}`);
+        frames = 0;
+        tickes = 0;
+    }, 1000);
 }
 
 /**
