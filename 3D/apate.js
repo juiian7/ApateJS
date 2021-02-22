@@ -90,13 +90,13 @@ class ShaderProgram {
     }
 }
 
-
 class VertexBuffer {
     constructor(buffer) {
         this.type = gl.ARRAY_BUFFER;
         this.id = gl.createBuffer();
         if (buffer) this.setData(buffer);
     }
+
     setData(data) {
         this.bind();
         gl.bufferData(this.type, new Float32Array(data), gl.STATIC_DRAW);
@@ -120,7 +120,7 @@ class IndexBuffer {
         this.type = gl.ELEMENT_ARRAY_BUFFER;
         this.id = gl.createBuffer();
         this.bind();
-        gl.bufferData(this.type, new Uint16Array(buffer), gl.STATIC_DRAW)
+        gl.bufferData(this.type, new Uint16Array(buffer), gl.STATIC_DRAW);
     }
 
     bind() {
@@ -138,8 +138,7 @@ class IndexBuffer {
 
 class BufferLayout {
     /**
-     * 
-     * @param {ShaderProgram} shaderProgram 
+     * @param {ShaderProgram} shaderProgram
      */
     constructor(shaderProgram) {
         this.shaderProgram = shaderProgram;
@@ -151,7 +150,6 @@ class BufferLayout {
         let typeSize = 4;
         if (type == gl.FLOAT) typeSize = 4;
         this.stride += typeSize * size;
-
 
         this.layouts.push({
             location,
@@ -173,9 +171,10 @@ class VertexArray {
     constructor() {
         this.id = gl.createVertexArray();
     }
+
     /**
-     * @param {VertexBuffer} buffer 
-     * @param {BufferLayout} layout 
+     * @param {VertexBuffer} buffer
+     * @param {BufferLayout} layout
      */
     addBuffer(buffer, layout) {
         buffer.bind();
@@ -207,7 +206,6 @@ class VertexArray {
 function powerOfTwo(x) {
     return (Math.log(x) / Math.log(2)) % 1 === 0;
 }
-
 
 class Texture2D {
     constructor() {
@@ -277,16 +275,16 @@ class Camera {
     rotate(x, y, z, angle) {
         mat4.rotate(this.viewMat, this.viewMat, [x, y, z], angle);
     }
+
     lookAt(x, y, z) {
         mat4.lookAt(this.viewMat, this.position, [x, y, z], [0, 1, 0]);
     }
+
     /**
-     * 
      * @param {Mesh} mesh
-     * @param {ShaderProgram} shaderProgram 
+     * @param {ShaderProgram} shaderProgram
      */
     render(mesh, shaderProgram) {
-
         shaderProgram.bind();
         mesh.bind();
 
@@ -296,9 +294,7 @@ class Camera {
         gl.drawArrays(gl.TRIANGLES, 0, mesh.VerticesCount);
     }
 
-    renderToTarget(mesh, shaderProgram, renderTarget) {
-        
-    }
+    renderToTarget(mesh, shaderProgram, renderTarget) {}
 }
 
 class Mesh {
@@ -308,18 +304,14 @@ class Mesh {
     }
 
     loadFromObj(text) {
-        let {
-            vertices,
-            includesNormals,
-            includesTextureCoords
-        } = loadObj(text);
+        let { vertices, includesNormals, includesTextureCoords } = loadObj(text);
 
         this.vao = new VertexArray();
         this.includesNormals = includesNormals;
         this.includesTextureCoords = includesTextureCoords;
 
         let vertexSize = 3;
-        if (includesTextureCoords) vertexSize += 2
+        if (includesTextureCoords) vertexSize += 2;
         if (includesNormals) vertexSize += 3;
         this.count = vertices.length / vertexSize;
 
@@ -327,11 +319,10 @@ class Mesh {
     }
 
     /**
-     * 
-     * @param {Shader} shaderProgram 
-     * @param {String} position 
-     * @param {String?} texture 
-     * @param {String?} normal 
+     * @param {Shader} shaderProgram
+     * @param {String} position
+     * @param {String?} texture
+     * @param {String?} normal
      */
     bindShaderLayout(shaderProgram, position, texture, normal) {
         this.vao.delete();
@@ -348,8 +339,9 @@ class Mesh {
         if (this.includesTextureCoords) layout.push(attrTex, 2, gl.FLOAT, false);
         if (this.includesNormals) layout.push(attrNor, 3, gl.FLOAT, false);
 
-        this.vao.addBuffer(this.buffer, layout)
+        this.vao.addBuffer(this.buffer, layout);
     }
+    
     bind() {
         this.vao.bind();
     }
