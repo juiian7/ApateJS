@@ -2,9 +2,7 @@ import { apate } from '../../src/apate.js';
 import Entity from '../../src/entity.js';
 import SpriteMgr from '../../src/utility/spriteMgr.js';
 import { enemySystem } from './enemySystem.js';
-import { destroyedEnemy } from './main.js';
-
-let spriteMgr = new SpriteMgr();
+import { destroyedEnemy, rgb } from './main.js';
 
 export var bulletSystem = new Entity();
 bulletSystem.priority = 0;
@@ -13,6 +11,8 @@ bulletSystem.loadAttributes({
     bullets: [],
     speed: 0.5
 });
+
+var spriteMgr = new SpriteMgr();
 
 bulletSystem.on('init', async () => {
     bulletSystem.bulletSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/bullet.png'));
@@ -43,10 +43,7 @@ bulletSystem.on('update', (delta) => {
 });
 
 bulletSystem.on('shoot', (x, y) => {
-    bulletSystem.bullets.push({
-        x,
-        y
-    });
+    bulletSystem.bullets.push({ x, y });
 });
 
 bulletSystem.on('clear', () => {
@@ -62,14 +59,10 @@ bulletSystem.on('draw', () => {
 function colorSprite(sprite, r, g, b) {
     let coloredSprite = [];
     for (let i = 0; i < sprite.length; i++) {
-        let c = sprite[i].c;
-        c.r = (c.r + r) / 2;
-        c.g = (c.g + g) / 2;
-        c.b = (c.b + b) / 2;
         coloredSprite.push({
             x: sprite[i].x,
             y: sprite[i].y,
-            c
+            c: rgb((sprite[i].c.r + r) / 2, (sprite[i].c.g + g) / 2, (sprite[i].c.b + b) / 2)
         });
     }
     return coloredSprite;
@@ -79,10 +72,5 @@ function isCollision(obj1, obj2) {
     obj1.w = obj1.h = 8;
     obj2.w = obj2.h = 8;
 
-    if (obj1.x + obj1.w <= obj2.x ||
-        obj2.x + obj2.w <= obj1.x ||
-        obj1.y + obj1.h <= obj2.y ||
-        obj2.y + obj2.h <= obj1.y
-    ) return false;
-    return true;
+    return !(obj1.x + obj1.w <= obj2.x || obj2.x + obj2.w <= obj1.x || obj1.y + obj1.h <= obj2.y || obj2.y + obj2.h <= obj1.y);
 }

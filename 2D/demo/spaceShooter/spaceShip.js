@@ -12,11 +12,11 @@ spaceShip.loadAttributes({
     speed: 0.1
 });
 
-let shootsPerSec = 5;
-let nextShoot = 1000 / shootsPerSec;
+var shootsPerSec = 5;
+var nextShoot = 1000 / shootsPerSec;
 
 spaceShip.on('init', () => {
-    console.log('initialized');
+    console.log('Initialized SpaceShip');
 });
 
 spaceShip.on('update', (delta) => {
@@ -24,11 +24,8 @@ spaceShip.on('update', (delta) => {
     if (apate.isButtonPressed('Left')) spaceShip.x -= delta * spaceShip.speed;
     if (apate.isButtonPressed('Right')) spaceShip.x += delta * spaceShip.speed;
 
-    if (spaceShip.x < -8) {
-        spaceShip.x = 128;
-    } else if (spaceShip.x > 128) {
-        spaceShip.x = -8;
-    }
+    if (spaceShip.x < -8) spaceShip.x = 128;
+    else if (spaceShip.x > 128) spaceShip.x = -8;
 
     nextShoot -= delta;
     if (apate.isButtonPressed('Action1') && nextShoot < 0) {

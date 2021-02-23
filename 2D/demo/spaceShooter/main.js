@@ -13,7 +13,6 @@ let colors = {
     white: rgb(230, 230, 230)
 };
 
-//let apate = new apate();
 apate.random.setSeed(6942007);
 
 //apate.useUI();
@@ -48,18 +47,14 @@ apate.on('update', (delta) => {
 
 apate.on('draw', () => {
     if (isAlive) {
-        apate.screen.text(2, 120, 'Score: ' + score + ' - Best: ' + highscore, colors.white);
+        apate.screen.text(2, 120, `Score: ${score} - Best: ${highscore}`, colors.white);
     } else {
-        apate.screen.text(20, 35, 'Game Over', colors.white, {
-            scale: 2,
-            leftSpace: 3
-        });
-        apate.screen.text(36, 100, 'Restart (X/V)', colors.white, 1);
+        apate.screen.text(20, 35, 'Game Over', colors.white, { scale: 2, leftSpace: 3 });
 
-        let msg = 'Score: ' + score + '\nHighscore: ' + highscore;
-        apate.screen.text(36, 128 / 2, msg, colors.white, {
-            topSpace: 4
-        });
+        let msg = `Score: ${score} \nHighscore: ${highscore}`;
+        apate.screen.text(30, 128 / 2, msg, colors.white, { topSpace: 4 });
+
+        apate.screen.text(36, 100, 'Restart (X/V)', colors.white);
     }
 });
 
@@ -69,9 +64,7 @@ apate.on('load', () => {
 });
 
 apate.on('save', () => {
-    apate.saveObjToBrowser('spaceShooter', {
-        score: highscore
-    });
+    apate.saveObjToBrowser('spaceShooter', { score: highscore });
 });
 
 apate.activeScene.init(spaceShip);
@@ -98,10 +91,6 @@ export function destroyedEnemy() {
     return ++score;
 }
 
-function rgb(r, g, b) {
-    return {
-        r,
-        g,
-        b
-    };
+export function rgb(r, g, b) {
+    return { r, g, b };
 }

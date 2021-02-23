@@ -3,11 +3,6 @@ import Entity from '../../src/entity.js';
 import SpriteMgr from '../../src/utility/spriteMgr.js';
 import { lost } from './main.js';
 
-let spriteMgr = new SpriteMgr();
-
-let nextAnimFrame = 1000 / 20;
-let animFrame = 0;
-
 export var enemySystem = new Entity();
 enemySystem.priority = 5;
 
@@ -16,7 +11,12 @@ enemySystem.loadAttributes({
     spawnRate: 2
 });
 
-let nextSpawn = 1000 / enemySystem.spawnRate;
+var spriteMgr = new SpriteMgr();
+
+var nextAnimFrame = 1000 / 20;
+var animFrame = 0;
+
+var nextSpawn = 1000 / enemySystem.spawnRate;
 
 enemySystem.on('init', async () => {
     enemySystem.enemySprite = spriteMgr.imgToAnimatedSprite(await spriteMgr.loadImgFromUrl('./images/enemy.png'), 8);
@@ -41,18 +41,13 @@ enemySystem.on('update', (delta) => {
         enemySystem.enemies[i].y += enemySystem.enemies[i].speed * delta;
 
         if (enemySystem.enemies[i].y > 120) {
-            // lost
             lost();
         }
     }
 });
 
 enemySystem.on('spawn', (x, y, speed) => {
-    enemySystem.enemies.push({
-        x,
-        y,
-        speed
-    });
+    enemySystem.enemies.push({ x, y, speed });
 });
 
 enemySystem.on('clear', () => {
