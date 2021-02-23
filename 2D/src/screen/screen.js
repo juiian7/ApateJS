@@ -67,7 +67,7 @@ export default class Screen {
         do {
             (x += dx), (y += dy);
             this.pixel(Math.round(x), Math.round(y), c);
-        } while (Math.round(x) == x2 && Math.round(y) == y2);
+        } while (!(Math.round(x) == x2 && Math.round(y) == y2));
     }
 
     /**
