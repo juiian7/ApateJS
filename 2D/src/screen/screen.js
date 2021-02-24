@@ -10,11 +10,7 @@ export default class Screen {
         //this.asciiScreen = new AsciiScreen(element);
 
         //this.tmpColor = new Color(0, 0, 0);
-        this.clear({
-            r: 0,
-            g: 0,
-            b: 0
-        });
+        this.clear({ r: 0, g: 0, b: 0 });
     }
 
     clear(c) {

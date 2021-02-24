@@ -79,14 +79,7 @@ export default class ParticleSystem {
 
             let c = this.colors[Math.floor(this.random.between(0, this.colors.length))];
 
-            this.particles.push({
-                x,
-                y,
-                vx,
-                vy,
-                lifetime: this.lifetime,
-                c
-            });
+            this.particles.push({ x, y, vx, vy, lifetime: this.lifetime, c });
         }
 
         // update all particles
@@ -105,9 +98,12 @@ export default class ParticleSystem {
         }
     }
 
+    /**
+     * @param {Screen} screen
+     */
     draw(screen) {
-        for (let i = 0; i < this.particles.length; i++) {
-            screen.pixel(Math.round(this.particles[i].x), Math.round(this.particles[i].y), this.particles[i].c);
+        for (const parti of this.particles) {
+            screen.pixel(Math.floor(parti.x), Math.floor(parti.y), parti.c);
         }
     }
 }

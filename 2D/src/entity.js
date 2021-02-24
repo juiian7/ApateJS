@@ -9,7 +9,7 @@ export default class Entity {
 
     /**
      * @param {'init' | 'update' | 'draw'} event
-     * @param {() => {}} callback
+     * @param {Function} callback
      */
     on(event, callback) {
         this[event] = callback;

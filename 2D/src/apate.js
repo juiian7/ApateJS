@@ -9,16 +9,10 @@ class Engine {
     constructor() {
         this.random = new Random();
 
-        this.clearColor = {
-            r: 0,
-            g: 0,
-            b: 0
-        };
+        this.clearColor = { r: 0, g: 0, b: 0 };
         this.clearScreen = true;
 
-        let el = document.body;
-
-        this.screen = new Screen(el);
+        this.screen = new Screen(document.body);
 
         this.keyMap = loadKeyMap();
         this.keys = [];
@@ -40,11 +34,9 @@ class Engine {
         this.ShowMouse = false;
         this.autoResize = true;
 
-        let self = this;
-
         this.screen.pixelScreen.canvas.addEventListener('mousemove', (e) => {
-            this.mouseX = Math.round(e.offsetX / self.screen.pixelScreen.scale);
-            this.mouseY = Math.round(e.offsetY / self.screen.pixelScreen.scale);
+            this.mouseX = Math.round(e.offsetX / this.screen.pixelScreen.scale);
+            this.mouseY = Math.round(e.offsetY / this.screen.pixelScreen.scale);
         });
 
         this.screen.pixelScreen.canvas.addEventListener('click', (e) => {
@@ -70,33 +62,33 @@ class Engine {
         document.addEventListener('focus', () => {
             // resume everything
         });
-        document.addEventListener('keydown', (ev) => {
-            this.keys.push(ev.code);
+
+        document.addEventListener('keydown', (e) => {
+            this.keys.push(e.code);
             if (this.isButtonPressed('engine_menu')) this.IsRunning = !this.IsRunning;
-            if (!ev.metaKey) ev.preventDefault();
+            if (!e.metaKey) e.preventDefault();
         });
 
-        document.addEventListener('keyup', (ev) => {
-            this.keys = this.keys.filter((code) => code != ev.code);
+        document.addEventListener('keyup', (e) => {
+            this.keys = this.keys.filter((code) => code != e.code);
         });
-        window.addEventListener('gamepadconnected', (ev) => {
-            console.log('gamepad connected!', ev);
+        window.addEventListener('gamepadconnected', (e) => {
+            console.log('gamepad connected!', e);
         });
-        let resizeScreen = function () {
+
+        let resizeScreen = () => {
             let width = window.innerWidth;
             let height = window.innerHeight;
             let max = width >= height ? height : width;
 
-            let maxScreen = self.screen.pixelScreen.width >= self.screen.pixelScreen.height ? self.screen.pixelScreen.width : self.screen.pixelScreen.height;
+            let maxScreen = this.screen.pixelScreen.width >= this.screen.pixelScreen.height ? this.screen.pixelScreen.width : this.screen.pixelScreen.height;
 
             let scale = Math.floor(max / maxScreen);
-            console.log(scale);
-            self.screen.pixelScreen.rescale(scale);
+            console.log('scale: ', scale);
+            this.screen.pixelScreen.rescale(scale);
         };
         window.addEventListener('resize', (e) => {
-            if (this.autoResize) {
-                resizeScreen();
-            }
+            if (this.autoResize) resizeScreen();
         });
         resizeScreen();
 
@@ -112,6 +104,7 @@ class Engine {
         this['mouseDown'] = () => {};
         this['mouseUp'] = () => {};
     }
+
     async run() {
         // load game files
         if (this['load']) await this['load']();
@@ -153,16 +146,12 @@ class Engine {
 
         // draw info
         this.infoLoop = setInterval(() => {
-            console.log({
-                frames,
-                ticks
-            });
-
+            console.log({ frames, ticks });
             frames = 0;
             ticks = 0;
         }, 1000);
 
-        //let nextUpdate = 1000 / maxTicks;
+        // let nextUpdate = 1000 / maxTicks;
         // set update intervall and update objects
         this.updateLoop = setInterval(() => {
             time = new Date().getTime();
@@ -224,16 +213,26 @@ class Engine {
 
         return false;
     }
+
+    /**
+     * Saves an object to the local storage
+     * @param {String} name
+     * @param {*} obj
+     */
     saveObjToBrowser(name, obj) {
         localStorage.setItem(name, JSON.stringify(obj));
     }
-    loadObjFromBrowser(name) {
-        let objS = localStorage.getItem(name);
-        if (objS) return JSON.parse(objS);
-        return null;
-    }
+
     /**
-     *
+     * Loads an object from the local storage
+     * @param {String} name
+     */
+    loadObjFromBrowser(name) {
+        let obj = localStorage.getItem(name);
+        return obj ? JSON.parse(obj) : null;
+    }
+
+    /**
      * @param {HTMLElement} parent
      */
     setParentElement(parent) {
@@ -242,21 +241,15 @@ class Engine {
 }
 
 let defaultMouse = [
-    {
-        x: 0,
-        y: 0
-    },
-    {
-        x: 0,
-        y: 1
-    },
-    {
-        x: 1,
-        y: 0
-    }
+    { x: 0, y: 0 },
+    { x: 0, y: 1 },
+    { x: 1, y: 0 }
 ];
+
 /**
- *
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} scale
  * @param {Engine} engine
  */
 function drawMouse(x, y, scale, engine) {
@@ -270,11 +263,7 @@ function drawMouse(x, y, scale, engine) {
                 let f = (c.r + c.g + c.b) / 3;
                 f = (f - 255) * -1;
                 //f = f < 128 ? f/2 : f*3;
-                engine.screen.pixel(x + i + defaultMouse[mp].x * scale, y + j + defaultMouse[mp].y * scale, {
-                    r: f,
-                    g: f,
-                    b: f
-                });
+                engine.screen.pixel(x + i + defaultMouse[mp].x * scale, y + j + defaultMouse[mp].y * scale, { r: f, g: f, b: f });
             }
         }
     }
@@ -293,6 +282,7 @@ function loadKeyMap() {
         engine_menu: ['Escape']
     };
 }
+
 const controllerMap = {
     action1: 0,
     action2: 2,
