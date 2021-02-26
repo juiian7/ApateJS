@@ -41,19 +41,23 @@ class Engine {
 
         this.screen.pixelScreen.canvas.addEventListener('click', (e) => {
             this['click']();
+            this.activeScene.run('click');
         });
         this.screen.pixelScreen.canvas.addEventListener('contextmenu', (e) => {
             this['rightClick']();
+            this.activeScene.run('rightClick');
             e.preventDefault();
             return false;
         });
         this.screen.pixelScreen.canvas.addEventListener('mousedown', (e) => {
             this.IsMouseDown = true;
             this['mouseDown']();
+            this.activeScene.run('mouseDown');
         });
         this.screen.pixelScreen.canvas.addEventListener('mouseup', (e) => {
             this.IsMouseDown = false;
             this['mouseUp']();
+            this.activeScene.run('mouseUp');
         });
 
         document.addEventListener('blur', () => {
