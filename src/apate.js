@@ -96,19 +96,25 @@ class Engine {
         });
         resizeScreen();
 
-        this['start'] = () => {};
-        this['update'] = () => {};
-        this['lastUpdate'] = () => {};
-        this['save'] = () => {};
-        this['load'] = () => {};
-        this['exit'] = () => {};
+        this['start'] = () => { };
+        this['update'] = () => { };
+        this['lastUpdate'] = () => { };
+        this['save'] = () => { };
+        this['load'] = () => { };
+        this['exit'] = () => { };
 
-        this['click'] = () => {};
-        this['rightClick'] = () => {};
-        this['mouseDown'] = () => {};
-        this['mouseUp'] = () => {};
+        this['click'] = () => { };
+        this['rightClick'] = () => { };
+        this['mouseDown'] = () => { };
+        this['mouseUp'] = () => { };
     }
 
+    /**
+     * Starts the current instance
+     * 
+     * Calls update every tick (max. ~230 ticks per browser)
+     * Calls draw evrey frame (depends on monitors refresh rate)
+     */
     async run() {
         // load game files
         if (this['load']) await this['load']();
@@ -131,7 +137,7 @@ class Engine {
 
         //start render loop
         let renderLoop = function () {
-            if (self['draw']) self['draw'](self.screen);
+            self['draw']?.(self.screen);
             self.activeScene.run('draw', self.screen);
 
             if (!self.IsRunning) self.ui.draw();
@@ -180,6 +186,10 @@ class Engine {
             lastTime = time;
         }, 0);
     }
+
+    /**
+     * Stops the current running instance
+     */
     stop() {
         clearInterval(this.updateLoop);
         clearInterval(this.infoLoop);
@@ -192,11 +202,12 @@ class Engine {
      * @param {() => void} handler
      */
     on(event, handler) {
-        this[event] = handler;
+        this[event.toLowerCase()] = handler;
     }
 
     /**
      * @param {'Up' | 'Down' | 'Left' | 'Right' | 'Action1' | 'Action2' | 'Action3' | 'Action4'} name
+     * @returns {boolean} 
      */
     isButtonPressed(name) {
         name = name.toLowerCase();
@@ -237,6 +248,7 @@ class Engine {
     }
 
     /**
+     * Sets the root element where the main canvas is located 
      * @param {HTMLElement} parent
      */
     setParentElement(parent) {
@@ -244,7 +256,7 @@ class Engine {
     }
 }
 
-let defaultMouse = [
+const defaultMouse = [
     { x: 0, y: 0 },
     { x: 0, y: 1 },
     { x: 1, y: 0 }

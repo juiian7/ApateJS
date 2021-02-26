@@ -1,3 +1,5 @@
+//
+
 export default class VirtualButtons {
     constructor(engine) {
         this.engine = engine;
@@ -33,6 +35,9 @@ export default class VirtualButtons {
         }
     }
 
+    /**
+     * @returns {Boolean}
+     */
     isMobile() {
         let check = false;
 

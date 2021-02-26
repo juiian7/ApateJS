@@ -8,13 +8,16 @@ export default class Entity {
     }
 
     /**
-     * @param {'init' | 'update' | 'draw'} event
-     * @param {Function} callback
+     * @param {'start' | 'update' | 'draw' | 'lastUpdate' | 'exit' | 'save' | 'load' | 'click' | 'rightClick'} event
+     * @param {() => void} callback
      */
     on(event, callback) {
         this[event] = callback;
     }
 
+    /**
+     * @param {any} obj loads a object into the entity and make a 'backup'
+     */
     loadAttributes(obj) {
         this.backup = obj;
         let keys = Object.keys(obj);
@@ -23,6 +26,9 @@ export default class Entity {
         }
     }
 
+    /**
+     * Jump back to the last 'backup'
+     */
     reset() {
         this.isInitialized = false;
         this.isActive = true;

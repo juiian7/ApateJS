@@ -9,6 +9,7 @@ export default class Random {
     }
 
     /**
+     * Set the seed with is used by the random generator
      * @param {Number} seed
      */
     setSeed(seed) {

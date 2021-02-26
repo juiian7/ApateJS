@@ -129,7 +129,11 @@ export default class ApateUI {
             }
         }
     }
-
+    /**
+     * 
+     * @param {string} name Name of the control to add
+     * @param {() => void} onClick Event which is triggered when control is clicked
+     */
     addControl(name, onClick) {
         let c = { name };
 

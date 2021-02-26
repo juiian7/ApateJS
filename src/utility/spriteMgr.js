@@ -1,16 +1,32 @@
 //
 
+/**
+ * @typedef Sprite
+ * @type {object}
+ * @property {any[]} pixels
+ */
+
 export default class SpriteMgr {
     constructor() {
         this.canvas = document.createElement('canvas');
     }
 
+    /**
+     * Loads a sprite object from a given url
+     * @param {string} url 
+     * @returns {Sprite}
+     */
     async loadSpriteFromURL(url) {
         var res = await fetch(url);
         let json = await res.json();
         return json;
     }
 
+    /**
+     * Loads a image from a given url
+     * @param {string} url
+     * @returns {Sprite}
+     */
     loadImgFromUrl(url) {
         let img = new Image();
         return new Promise((res, rej) => {
@@ -22,7 +38,9 @@ export default class SpriteMgr {
     }
 
     /**
+     * Converts an image to a sprite object
      * @param {HTMLImageElement} img
+     * @returns {Sprite}
      */
     imgToSprite(img) {
         this.canvas.width = img.width;
@@ -47,20 +65,17 @@ export default class SpriteMgr {
             if (a == 0) continue;
 
             sprite.push({
-                x,
-                y,
-                c: {
-                    r,
-                    g,
-                    b
-                }
+                x, y, c: { r, g, b }
             });
         }
         return sprite;
     }
 
     /**
+     * Converts an image to an aminated sprite object
      * @param {HTMLImageElement} img
+     * @param {number} frameWidth
+     * @returns {Sprite[]}
      */
     imgToAnimatedSprite(img, frameWidth) {
         this.canvas.width = img.width;
@@ -89,11 +104,7 @@ export default class SpriteMgr {
                         sprite.push({
                             x: x - frameWidth * frame,
                             y,
-                            c: {
-                                r,
-                                g,
-                                b
-                            }
+                            c: { r, g, b }
                         });
                     }
                 }
@@ -107,10 +118,17 @@ export default class SpriteMgr {
 
             sprites.push(sprite);
         }
-
         return sprites;
     }
 
+    /**
+     * Cuts a part out of a bigger Sprite 
+     * @param {Sprite} sprite 
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} w 
+     * @param {number} h 
+     */
     subSprite(sprite, x, y, w, h) {
         let newSprite = [];
 
@@ -149,6 +167,7 @@ export default class SpriteMgr {
         for (let i = 0; i < sprite.length; i++) {
             maxY = sprite[i].y > maxY ? sprite[i].y : maxY;
         }
+        
         let newSprite = [];
         for (let i = 0; i < sprite.length; i++) {
             newSprite.push({
