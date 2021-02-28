@@ -147,16 +147,26 @@ cellsMgr.on('draw', () => {
         for (let y = yOffset; y < 128 + yOffset; y++) {
             let c = cellsMgr.cells[128 * y + x];
             if (c > 0) {
-                apate.screen.pixel(x - xOffset, y - yOffset, white);
+                apate.screen.pixel(x - xOffset, y - yOffset, apate.colors.white);
             }
         }
     }
 });
 
+let mouse = new Entity();
+mouse.priority = 10;
+
+mouse.on('draw', () => {
+    apate.screen.pixel(apate.mouseX, apate.mouseY, apate.colors.red);
+    apate.screen.pixel(apate.mouseX, apate.mouseY+1, apate.colors.dark_red);
+    apate.screen.pixel(apate.mouseX+1, apate.mouseY, apate.colors.dark_red);
+});
+
+apate.activeScene.init(mouse);
 apate.activeScene.init(cellsMgr);
 apate.run();
 
-apate.ShowMouse = true;
+apate.ShowMouse = false;
 
 apate.ui.addControl('run', (control) => {
     cellsMgr.isRunning = !cellsMgr.isRunning;
