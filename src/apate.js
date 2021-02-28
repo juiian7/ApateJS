@@ -9,7 +9,8 @@ class Engine {
     constructor() {
         this.random = new Random();
 
-        this.clearColor = { r: 0, g: 0, b: 0 };
+        this.colors = defaultColors;
+        this.clearColor = defaultColors.black;
         this.clearScreen = true;
 
         this.screen = new Screen(document.body);
@@ -303,6 +304,44 @@ const controllerMap = {
     action1: 0,
     action2: 2,
     engine_menu: 1
+};
+
+export function color(r, g, b) {
+    return { r, g, b };
+}
+
+const defaultColors = {
+    white: color(230, 230, 230),
+    black: color(20, 20, 20),
+    gray: color(40, 40, 40),
+    light_gray: color(60, 60, 60),
+
+    yellow: color(255, 215, 0),
+    ocher: color(190, 150, 0),
+    orange: color(255, 155, 0),
+    brown: color(165, 110, 30),
+    red: color(255, 75, 75),
+    dark_red: color(170, 50, 50),
+    pink: color(230, 85, 150),
+    magenta: color(185, 50, 110),
+
+    light_purple: color(170, 90, 190),
+    purple: color(110, 50, 120),
+    indigo: color(100, 100, 190),
+    dark_indigo: color(70, 70, 140),
+    blue: color(65, 90, 160),
+    dark_blue: color(50, 70, 120),
+    agua: color(80, 170, 220),
+    dark_agua: color(50, 135, 180),
+
+    cyan: color(60, 220, 200),
+    dark_cyan: color(40, 170, 155),
+    mint: color(70, 200, 140),
+    jade: color(40, 145, 100),
+    light_green: color(100, 220, 100),
+    green: color(50, 165, 50),
+    lime: color(190, 220, 90),
+    avocado: color(160, 190, 50),
 };
 
 export var apate = new Engine();
