@@ -19,6 +19,7 @@ let highscore = 0;
 
 let isAlive = true;
 
+
 apate.on('start', async () => {
     spaceShip.shipSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/ship.png'));
     apate.clearColor = color(0, 0, 55);
@@ -75,6 +76,7 @@ export function lost() {
     isAlive = false;
     spaceShip.isActive = false;
     enemySystem.isActive = false;
+    bulletSystem.clear();
 
     starMap.speed = 0.1;
 
