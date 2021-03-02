@@ -13,11 +13,7 @@ export default class Tilemap {
     }
 
     setTile(x, y, name) {
-        this.tiles.push({
-            x,
-            y,
-            name
-        });
+        this.tiles.push({ x, y, name });
     }
 
     removeTile(x, y) {
@@ -35,7 +31,7 @@ export default class Tilemap {
             tiles: this.tiles
         };
     }
-    
+
     fromJSON(obj) {
         this.tileMap = obj.sprites;
         this.tiles = obj.tiles;

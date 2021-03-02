@@ -15,7 +15,7 @@ class Engine {
 
         this.screen = new Screen(document.body);
 
-        this.keyMap = loadKeyMap();
+        this.keyMap = defaultKeyMap;
         this.keys = [];
 
         this.controllerAxes = [];
@@ -62,20 +62,20 @@ class Engine {
         });
 
         document.addEventListener('blur', () => {
-            // pause everything
+            this.IsRunning = false;
         });
         document.addEventListener('focus', () => {
-            // resume everything
+            //this.IsRunning = true;
         });
 
         document.addEventListener('keydown', (e) => {
-            this.keys.push(e.code);
+            this.keys.push(e.code.toLowerCase());
             if (this.isButtonPressed('engine_menu')) this.IsRunning = !this.IsRunning;
             if (!e.metaKey) e.preventDefault();
         });
 
         document.addEventListener('keyup', (e) => {
-            this.keys = this.keys.filter((code) => code != e.code);
+            this.keys = this.keys.filter((code) => code != e.code.toLowerCase());
         });
         window.addEventListener('gamepadconnected', (e) => {
             console.log('gamepad connected!', e);
@@ -207,7 +207,7 @@ class Engine {
     }
 
     /**
-     * @param {'Up' | 'Down' | 'Left' | 'Right' | 'Action1' | 'Action2' | 'Action3' | 'Action4'} name
+     * @param {'Up' | 'Down' | 'Left' | 'Right' | 'Action1' | 'Action2'} name
      * @returns {boolean} 
      */
     isButtonPressed(name) {
@@ -221,10 +221,15 @@ class Engine {
             else if (name == 'action1' && navigator.getGamepads()[0].buttons[controllerMap['action1']].pressed) return true;
             else if (name == 'action2' && navigator.getGamepads()[0].buttons[controllerMap['action2']].pressed) return true;
             else if (name == 'engine_menu' && navigator.getGamepads()[0].buttons[controllerMap['engine_menu']].pressed) return true;
+            else if (name == 'engine_submit' && navigator.getGamepads()[0].buttons[controllerMap['engine_submit']].pressed) return true;
         }
 
-        for (let i = 0; i < this.keyMap[name].length; i++) {
-            if (this.keys.includes(this.keyMap[name][i])) return true;
+        if (this.keyMap[name]) {
+            for (let i = 0; i < this.keyMap[name].length; i++) {
+                if (this.keys.includes(this.keyMap[name][i].toLowerCase())) return true;
+            }
+        } else {
+            if (this.keys.includes(name)) return true;
         }
 
         return false;
@@ -286,24 +291,24 @@ function drawMouse(x, y, scale, engine) {
     }
 }
 
-function loadKeyMap() {
-    return {
-        up: ['KeyW', 'ArrowUp'],
-        down: ['KeyS', 'ArrowDown'],
-        left: ['KeyA', 'ArrowLeft'],
-        right: ['KeyD', 'ArrowRight'],
+const defaultKeyMap = {
+    up: ['KeyW', 'ArrowUp'],
+    down: ['KeyS', 'ArrowDown'],
+    left: ['KeyA', 'ArrowLeft'],
+    right: ['KeyD', 'ArrowRight'],
 
-        action1: ['KeyZ', 'KeyN', 'KeyC', 'Enter', 'Space'],
-        action2: ['KeyX', 'KeyM', 'KeyV'],
+    action1: ['KeyZ', 'KeyN', 'KeyC'],
+    action2: ['KeyX', 'KeyM', 'KeyV'],
 
-        engine_menu: ['Escape']
-    };
-}
+    engine_menu: ['Escape'],
+    engine_sumbit: ['Enter']
+};
 
 const controllerMap = {
     action1: 0,
     action2: 2,
-    engine_menu: 1
+    engine_menu: 1,
+    engine_submit: 0
 };
 
 export function color(r, g, b) {
