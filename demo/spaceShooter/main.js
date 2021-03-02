@@ -19,7 +19,6 @@ let highscore = 0;
 
 let isAlive = true;
 
-
 apate.on('start', async () => {
     spaceShip.shipSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/ship.png'));
     apate.clearColor = color(0, 0, 55);
@@ -34,8 +33,6 @@ apate.on('update', (delta) => {
         enemySystem.clear();
         enemySystem.isActive = true;
         enemySystem.spawnRate = 2;
-
-        starMap.speed = 0.3;
 
         score = 0;
     }
@@ -78,7 +75,11 @@ export function lost() {
     enemySystem.isActive = false;
     bulletSystem.clear();
 
-    starMap.speed = 0.1;
+    starMap.changeVelocity({
+        randomMinY: 40,
+        randomMaxY: 45
+    });
+    starMap.lifetime = 5000;
 
     highscore = score > highscore ? score : highscore;
     apate.save();
