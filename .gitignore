@@ -1,6 +1,5 @@
 # Mac OS
 .DS_Store
-build/
 
 # Node
 node_modules/
@@ -9,3 +8,7 @@ package-lock.json
 
 # VS code
 .vscode
+
+# Other
+build/
+tests/

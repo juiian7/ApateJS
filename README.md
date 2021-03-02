@@ -20,14 +20,8 @@ import { apate } from './apatejs/apate.js';
 ```js
 import { apate } from './apatejs/apate.js';
 
-let white = {
-    r: 255,
-    g: 255,
-    b: 255
-}
-
 apate.on('draw', () => {
-  apate.screen.text(1, 1, 'Hello World!', white);
+  apate.screen.text(1, 1, 'Hello World!', apate.colors.white);
 });
 
 apate.run();

@@ -60,11 +60,18 @@ export default class ParticleSystem {
         this.loadProperties(this.backup);
     }
 
+    setVelocity(vel) {
+        this.velocity = {
+            ...this.velocity,
+            ...vel
+        };
+    }
+
     update(delta) {
         this.nextEmit -= delta;
 
         // create particle
-        if (this.amount && this.nextEmit < 0) {
+        if (this.amount && this.nextEmit < 0 && this.isActive) {
             this.amount--;
             this.nextEmit = this.emitDelay;
 
@@ -74,12 +81,12 @@ export default class ParticleSystem {
             if (this.origin.w) x += this.random.between(0, this.origin.w);
             if (this.origin.h) y += this.random.between(0, this.origin.h);
 
-            let vx = this.velocity.randomMinX ? this.random.between(this.velocity.randomMinX, this.velocity.randomMaxX) : this.velocity.x;
-            let vy = this.velocity.randomMinY ? this.random.between(this.velocity.randomMinY, this.velocity.randomMaxY) : this.velocity.y;
+            let velx = this.velocity.randomMinX ? this.random.between(this.velocity.randomMinX, this.velocity.randomMaxX) : this.velocity.x;
+            let vely = this.velocity.randomMinY ? this.random.between(this.velocity.randomMinY, this.velocity.randomMaxY) : this.velocity.y;
 
             let c = this.colors[Math.floor(this.random.between(0, this.colors.length))];
 
-            this.particles.push({ x, y, vx, vy, lifetime: this.lifetime, c });
+            this.particles.push({ x, y, vx: velx, vy: vely, lifetime: this.lifetime, c });
         }
 
         // update all particles

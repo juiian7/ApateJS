@@ -1,8 +1,8 @@
-import { apate } from '../../src/apate.js';
+import { apate, color } from '../../src/apate.js';
 import Entity from '../../src/entity.js';
 import SpriteMgr from '../../src/utility/spriteMgr.js';
 import { enemySystem } from './enemySystem.js';
-import { destroyedEnemy, rgb } from './main.js';
+import { destroyedEnemy } from './main.js';
 
 export var bulletSystem = new Entity();
 bulletSystem.priority = 0;
@@ -62,7 +62,7 @@ function colorSprite(sprite, r, g, b) {
         coloredSprite.push({
             x: sprite[i].x,
             y: sprite[i].y,
-            c: rgb((sprite[i].c.r + r) / 2, (sprite[i].c.g + g) / 2, (sprite[i].c.b + b) / 2)
+            c: color((sprite[i].c.r + r) / 2, (sprite[i].c.g + g) / 2, (sprite[i].c.b + b) / 2)
         });
     }
     return coloredSprite;

@@ -77,7 +77,7 @@ export default class ApateUI {
         this.nextListen -= delta;
 
         if (this.nextListen < 0) {
-            if (this.engine.isButtonPressed('action1')) {
+            if (this.engine.isButtonPressed('engine_submit')) {
                 this.controlls[this.currentIndex].execute();
 
                 this.nextListen = this.isFirstPress ? this.keyDelay * 3 : this.keyDelay;

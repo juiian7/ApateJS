@@ -1,4 +1,4 @@
-import { apate } from '../../src/apate.js';
+import { apate, color } from '../../src/apate.js';
 import SpriteMgr from '../../src/utility/spriteMgr.js';
 import { bulletSystem } from './bulletSystem.js';
 import { enemySystem } from './enemySystem.js';
@@ -8,10 +8,6 @@ import { starMap } from './starMap.js';
 let spriteMgr = new SpriteMgr();
 
 apate.setParentElement(document.querySelector('#view'));
-
-let colors = {
-    white: rgb(230, 230, 230)
-};
 
 apate.random.setSeed(6942007);
 
@@ -25,8 +21,7 @@ let isAlive = true;
 
 apate.on('start', async () => {
     spaceShip.shipSprite = spriteMgr.imgToSprite(await spriteMgr.loadImgFromUrl('./images/ship.png'));
-
-    apate.clearColor = rgb(0, 0, 55);
+    apate.clearColor = color(0, 0, 55);
 });
 
 apate.on('update', (delta) => {
@@ -39,7 +34,14 @@ apate.on('update', (delta) => {
         enemySystem.isActive = true;
         enemySystem.spawnRate = 2;
 
-        starMap.speed = 0.3;
+        starMap.particles.forEach(p => {
+            p.vy = 75;
+        })
+    
+        starMap.setVelocity({
+            randomMinY: 70,
+            randomMaxY: 75
+        });
 
         score = 0;
     }
@@ -47,14 +49,13 @@ apate.on('update', (delta) => {
 
 apate.on('draw', () => {
     if (isAlive) {
-        apate.screen.text(2, 120, `Score: ${score} - Best: ${highscore}`, colors.white);
+        apate.screen.text(2, 120, `Score: ${score} - Best: ${highscore}`, apate.colors.white);
     } else {
-        apate.screen.text(20, 35, 'Game Over', colors.white, { scale: 2, leftSpace: 3 });
+        apate.screen.text(20, 35, 'Game Over', apate.colors.white, { scale: 2, leftSpace: 3 });
 
-        let msg = `Score: ${score} \nHighscore: ${highscore}`;
-        apate.screen.text(30, 128 / 2, msg, colors.white, { topSpace: 4 });
+        apate.screen.text(30, 128 / 2, `Score: ${score}\nHighscore: ${highscore}`, apate.colors.white, { topSpace: 4 });
 
-        apate.screen.text(36, 100, 'Restart (X/V)', colors.white);
+        apate.screen.text(36, 100, 'Restart (X/V)', apate.colors.white);
     }
 });
 
@@ -80,8 +81,17 @@ export function lost() {
     isAlive = false;
     spaceShip.isActive = false;
     enemySystem.isActive = false;
+    bulletSystem.clear();
 
-    starMap.speed = 0.1;
+  
+    starMap.particles.forEach(p => {
+        p.vy = 40;
+    })
+
+    starMap.setVelocity({
+        randomMinY: 40,
+        randomMaxY: 45
+    });
 
     highscore = score > highscore ? score : highscore;
     apate.save();
@@ -89,8 +99,4 @@ export function lost() {
 
 export function destroyedEnemy() {
     return ++score;
-}
-
-export function rgb(r, g, b) {
-    return { r, g, b };
 }

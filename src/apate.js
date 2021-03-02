@@ -9,12 +9,13 @@ class Engine {
     constructor() {
         this.random = new Random();
 
-        this.clearColor = { r: 0, g: 0, b: 0 };
+        this.colors = defaultColors;
+        this.clearColor = defaultColors.black;
         this.clearScreen = true;
 
         this.screen = new Screen(document.body);
 
-        this.keyMap = loadKeyMap();
+        this.keyMap = defaultKeyMap;
         this.keys = [];
 
         this.controllerAxes = [];
@@ -61,20 +62,20 @@ class Engine {
         });
 
         document.addEventListener('blur', () => {
-            // pause everything
+            this.IsRunning = false;
         });
         document.addEventListener('focus', () => {
-            // resume everything
+            //this.IsRunning = true;
         });
 
         document.addEventListener('keydown', (e) => {
-            this.keys.push(e.code);
+            this.keys.push(e.code.toLowerCase());
             if (this.isButtonPressed('engine_menu')) this.IsRunning = !this.IsRunning;
             if (!e.metaKey) e.preventDefault();
         });
 
         document.addEventListener('keyup', (e) => {
-            this.keys = this.keys.filter((code) => code != e.code);
+            this.keys = this.keys.filter((code) => code != e.code.toLowerCase());
         });
         window.addEventListener('gamepadconnected', (e) => {
             console.log('gamepad connected!', e);
@@ -206,7 +207,7 @@ class Engine {
     }
 
     /**
-     * @param {'Up' | 'Down' | 'Left' | 'Right' | 'Action1' | 'Action2' | 'Action3' | 'Action4'} name
+     * @param {'Up' | 'Down' | 'Left' | 'Right' | 'Action1' | 'Action2'} name
      * @returns {boolean} 
      */
     isButtonPressed(name) {
@@ -220,10 +221,15 @@ class Engine {
             else if (name == 'action1' && navigator.getGamepads()[0].buttons[controllerMap['action1']].pressed) return true;
             else if (name == 'action2' && navigator.getGamepads()[0].buttons[controllerMap['action2']].pressed) return true;
             else if (name == 'engine_menu' && navigator.getGamepads()[0].buttons[controllerMap['engine_menu']].pressed) return true;
+            else if (name == 'engine_submit' && navigator.getGamepads()[0].buttons[controllerMap['engine_submit']].pressed) return true;
         }
 
-        for (let i = 0; i < this.keyMap[name].length; i++) {
-            if (this.keys.includes(this.keyMap[name][i])) return true;
+        if (this.keyMap[name]) {
+            for (let i = 0; i < this.keyMap[name].length; i++) {
+                if (this.keys.includes(this.keyMap[name][i].toLowerCase())) return true;
+            }
+        } else {
+            if (this.keys.includes(name)) return true;
         }
 
         return false;
@@ -285,24 +291,62 @@ function drawMouse(x, y, scale, engine) {
     }
 }
 
-function loadKeyMap() {
-    return {
-        up: ['KeyW', 'ArrowUp'],
-        down: ['KeyS', 'ArrowDown'],
-        left: ['KeyA', 'ArrowLeft'],
-        right: ['KeyD', 'ArrowRight'],
+const defaultKeyMap = {
+    up: ['KeyW', 'ArrowUp'],
+    down: ['KeyS', 'ArrowDown'],
+    left: ['KeyA', 'ArrowLeft'],
+    right: ['KeyD', 'ArrowRight'],
 
-        action1: ['KeyZ', 'KeyN', 'KeyC', 'Enter', 'Space'],
-        action2: ['KeyX', 'KeyM', 'KeyV'],
+    action1: ['KeyZ', 'KeyN', 'KeyC'],
+    action2: ['KeyX', 'KeyM', 'KeyV'],
 
-        engine_menu: ['Escape']
-    };
-}
+    engine_menu: ['Escape'],
+    engine_submit: ['Enter', 'NumpadEnter']
+};
 
 const controllerMap = {
     action1: 0,
     action2: 2,
-    engine_menu: 1
+    engine_menu: 1,
+    engine_submit: 0
+};
+
+export function color(r, g, b) {
+    return { r, g, b };
+}
+
+const defaultColors = {
+    white: color(230, 230, 230),
+    black: color(20, 20, 20),
+    gray: color(40, 40, 40),
+    light_gray: color(60, 60, 60),
+
+    yellow: color(255, 215, 0),
+    ocher: color(190, 150, 0),
+    orange: color(255, 155, 0),
+    brown: color(165, 110, 30),
+    red: color(255, 75, 75),
+    dark_red: color(170, 50, 50),
+    pink: color(230, 85, 150),
+    magenta: color(185, 50, 110),
+
+    light_purple: color(170, 90, 190),
+    purple: color(110, 50, 120),
+    indigo: color(100, 100, 190),
+    dark_indigo: color(70, 70, 140),
+    blue: color(65, 90, 160),
+    dark_blue: color(50, 70, 120),
+    agua: color(80, 170, 220),
+    dark_agua: color(50, 135, 180),
+
+    cyan: color(60, 220, 200),
+    dark_cyan: color(40, 170, 155),
+    mint: color(70, 200, 140),
+    jade: color(40, 145, 100),
+    light_green: color(100, 220, 100),
+    green: color(50, 165, 50),
+    lime: color(190, 220, 90),
+    avocado: color(160, 190, 50),
 };
 
 export var apate = new Engine();
