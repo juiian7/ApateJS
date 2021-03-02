@@ -1,13 +1,12 @@
-import { apate } from '../../src/apate.js';
+import { apate, color } from '../../src/apate.js';
 import Entity from '../../src/entity.js';
 import ParticleSystem from '../../src/utility/particleSystem.js';
-import { rgb } from './main.js';
 
 let starColors = [
-    rgb(230, 230, 200),
-    rgb(230, 230, 230),
-    rgb(165, 165, 165),
-    rgb(215, 210, 215)
+    color(230, 230, 200),
+    color(230, 230, 230),
+    color(165, 165, 165),
+    color(215, 210, 215)
 ];
 
 let starParticles = {
