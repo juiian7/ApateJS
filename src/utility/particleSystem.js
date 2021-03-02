@@ -60,10 +60,10 @@ export default class ParticleSystem {
         this.loadProperties(this.backup);
     }
 
-    changeVelocity(newVelocity) {
+    setVelocity(vel) {
         this.velocity = {
             ...this.velocity,
-            ...newVelocity
+            ...vel
         };
     }
 

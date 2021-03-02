@@ -34,6 +34,15 @@ apate.on('update', (delta) => {
         enemySystem.isActive = true;
         enemySystem.spawnRate = 2;
 
+        starMap.particles.forEach(p => {
+            p.vy = 75;
+        })
+    
+        starMap.setVelocity({
+            randomMinY: 70,
+            randomMaxY: 75
+        });
+
         score = 0;
     }
 });
@@ -44,8 +53,7 @@ apate.on('draw', () => {
     } else {
         apate.screen.text(20, 35, 'Game Over', apate.colors.white, { scale: 2, leftSpace: 3 });
 
-        let msg = `Score: ${score} \nHighscore: ${highscore}`;
-        apate.screen.text(30, 128 / 2, msg, apate.colors.white, { topSpace: 4 });
+        apate.screen.text(30, 128 / 2, `Score: ${score}\nHighscore: ${highscore}`, apate.colors.white, { topSpace: 4 });
 
         apate.screen.text(36, 100, 'Restart (X/V)', apate.colors.white);
     }
@@ -75,11 +83,15 @@ export function lost() {
     enemySystem.isActive = false;
     bulletSystem.clear();
 
-    starMap.changeVelocity({
+  
+    starMap.particles.forEach(p => {
+        p.vy = 40;
+    })
+
+    starMap.setVelocity({
         randomMinY: 40,
         randomMaxY: 45
     });
-    starMap.lifetime = 5000;
 
     highscore = score > highscore ? score : highscore;
     apate.save();
