@@ -301,7 +301,7 @@ const defaultKeyMap = {
     action2: ['KeyX', 'KeyM', 'KeyV'],
 
     engine_menu: ['Escape'],
-    engine_submit: ['Enter']
+    engine_submit: ['Enter', 'NumpadEnter']
 };
 
 const controllerMap = {
