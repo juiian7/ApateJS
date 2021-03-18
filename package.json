@@ -1,0 +1,22 @@
+{
+    "name": "apatejs",
+    "version": "0.1.1",
+    "description": "A little 2D retro browser game engine",
+    "main": "./src/apate.js",
+    "scripts": {
+        "test": "eslint ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/juiian7/ApateJS.git"
+    },
+    "contributors": [
+        "ZupaJul",
+        "Grayray75"
+    ],
+    "license": "GPL-3.0",
+    "dependencies": {},
+    "devDependencies": {
+        "eslint": "^7.21.0"
+    }
+}
