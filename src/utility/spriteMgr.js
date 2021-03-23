@@ -14,7 +14,7 @@ export default class SpriteMgr {
     /**
      * Loads a sprite object from a given url
      * @param {string} url 
-     * @returns {Sprite}
+     * @returns {Promise<Sprite>}
      */
     async loadSpriteFromURL(url) {
         var res = await fetch(url);
@@ -25,7 +25,7 @@ export default class SpriteMgr {
     /**
      * Loads a image from a given url
      * @param {string} url
-     * @returns {Sprite}
+     * @returns {Promise<HTMLImageElement>}
      */
     loadImgFromUrl(url) {
         let img = new Image();
