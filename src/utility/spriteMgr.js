@@ -160,6 +160,7 @@ export default class SpriteMgr {
                 c: sprite[i].c
             });
         }
+        return newSprite;
     }
 
     filpV(sprite) {
@@ -176,6 +177,7 @@ export default class SpriteMgr {
                 c: sprite[i].c
             });
         }
+        return newSprite;
     }
 }
 
