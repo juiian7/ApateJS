@@ -1,5 +1,5 @@
 # ApateJS
-A simple 2D retro game engine with runs directly in your browser.
+A simple 2D retro game engine which runs directly in your browser.
 
 ## Usage
 
@@ -8,7 +8,7 @@ import { apate } from './apatejs/apate.js';
 ```
 
 **NOTE:**
-* Include javascript game file as module
+* Include javascript game file as a module
 * Import after body or use defer
 
 ```html
