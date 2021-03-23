@@ -28,7 +28,7 @@ spaceShip.on('update', (delta) => {
     else if (spaceShip.x > 128) spaceShip.x = -8;
 
     nextShoot -= delta;
-    if ((apate.isButtonPressed('Action1') || apate.isButtonPressed('Space')) && nextShoot < 0) {
+    if ((apate.isButtonPressed('Action1') || apate.isButtonPressed('Space')) && nextShoot < 0) {
         bulletSystem.shoot(spaceShip.x, spaceShip.y);
         nextShoot = 1000 / shootsPerSec;
     }
