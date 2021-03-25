@@ -8,7 +8,7 @@ export default class Entity {
     }
 
     /**
-     * @param {'start' | 'update' | 'draw' | 'lastUpdate' | 'exit' | 'save' | 'load' | 'click' | 'rightClick'} event
+     * @param {'init' | 'update' | 'draw' | 'lastUpdate' | 'exit' | 'save' | 'load' | 'click' | 'rightClick'} event
      * @param {() => void} callback
      */
     on(event, callback) {
