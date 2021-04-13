@@ -70,12 +70,19 @@ class Engine {
 
         document.addEventListener('keydown', (e) => {
             this.keys.push(e.code.toLowerCase());
+            
+            this.activeScene.run('btnDown', e.code.toLowerCase());
+            if (this['btnDown']) this['btnDown'](e.code.toLowerCase());
+
             if (this.isButtonPressed('engine_menu')) this.IsRunning = !this.IsRunning;
             if (!e.metaKey) e.preventDefault();
         });
 
         document.addEventListener('keyup', (e) => {
             this.keys = this.keys.filter((code) => code != e.code.toLowerCase());
+
+            this.activeScene.run('btnUp', e.code.toLowerCase());
+            if (this['btnUp']) this['btnUp'](e.code.toLowerCase())
         });
         window.addEventListener('gamepadconnected', (e) => {
             console.log('gamepad connected!', e);
@@ -117,6 +124,8 @@ class Engine {
      * Calls draw evrey frame (depends on monitors refresh rate)
      */
     async run() {
+        this.IsRunning = true;
+
         // load game files
         if (this['load']) await this['load']();
         // start game (download rescources)
@@ -124,7 +133,6 @@ class Engine {
         await this.activeScene.run('init');
 
         // create variables
-        this.IsRunning = true;
         let self = this;
 
         // timing
@@ -168,7 +176,7 @@ class Engine {
             time = new Date().getTime();
             delta = time - lastTime;
             //nextUpdate -= delta;
-
+        
             if (this.IsRunning /* && nextUpdate < 0*/) {
                 //                nextUpdate = 1000 / maxTicks;
                 if (navigator.getGamepads()[0]) {
@@ -297,7 +305,7 @@ const defaultKeyMap = {
     left: ['KeyA', 'ArrowLeft'],
     right: ['KeyD', 'ArrowRight'],
 
-    action1: ['KeyZ', 'KeyN', 'KeyC'],
+    action1: ['KeyZ', 'KeyN', 'KeyC', 'Space'],
     action2: ['KeyX', 'KeyM', 'KeyV'],
 
     engine_menu: ['Escape'],
