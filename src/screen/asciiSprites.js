@@ -1474,5 +1474,4 @@ export var charSpriteMap = {
             "y": 4
         }]
     },
-
 }

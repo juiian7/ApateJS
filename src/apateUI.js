@@ -102,8 +102,11 @@ export default class ApateUI {
     }
 
     draw() {
-        for (let x = 0; x < 128; x++) {
-            for (let y = 0; y < 128; y++) {
+        let width = this.engine.screen.pixelScreen.width;
+        let height = this.engine.screen.pixelScreen.height;
+
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
                 let c = this.engine.screen.pixelScreen.getPixel(x, y);
                 c.r = c.r - 128 < 0 ? 0 : c.r - 128;
                 c.g = c.g - 128 < 0 ? 0 : c.g - 128;
@@ -115,8 +118,8 @@ export default class ApateUI {
         let w = this.maxControlLength * 5;
         let h = this.controlls.length * 8;
 
-        let minX = Math.round(64 - w / 2);
-        let minY = Math.round(64 - h / 2);
+        let minX = Math.round((width / 2) - w / 2);
+        let minY = Math.round((height / 2) - h / 2);
 
         this.engine.screen.rect(minX + 2, minY + 2, w, h, this.shadowColor);
         this.engine.screen.rect(minX, minY, w, h, this.backColor);

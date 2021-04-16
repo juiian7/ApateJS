@@ -8,7 +8,7 @@ export default class Entity {
     }
 
     /**
-     * @param {'init' | 'update' | 'draw' | 'lastUpdate' | 'exit' | 'save' | 'load' | 'click' | 'rightClick'} event
+     * @param {'start' | 'update' | 'draw' | 'click' | 'mouseDown' | 'mouseUp'  | 'btnDown' | 'btnUp'} event
      * @param {() => void} callback
      */
     on(event, callback) {
@@ -35,4 +35,40 @@ export default class Entity {
 
         this.loadAttributes(this.backup);
     }
+
+    /**
+     * Once called on start
+     */
+    start() { }
+    /**
+     * Called every tick
+     * @param {number} delta Time since last call
+     */
+    update(delta) { }
+    /**
+     * Called every frame
+     */
+    draw() { }
+    /** 
+     * @param {{isLeftClick: boolean}} clickInfo 
+     */
+    click(clickInfo) { }
+    /**
+     * Triggered when left mouse button is pressed down
+     */
+    mouseDown() { }
+    /**
+     * Triggered when left mouse button is released
+     */
+    mouseUp() { }
+    /**
+     * Triggered when any key pressed down
+     * @param {{key: string, shift: boolean, metaKey: boolean}} keyInfo 
+     */
+    btnDown(keyInfo) { }
+    /**
+     * Triggered when any key is released
+     * @param {{key: string, shift: boolean, metaKey: boolean}} keyInfo 
+     */
+    btnUp(keyInfo) { }
 }

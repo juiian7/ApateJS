@@ -1,9 +1,10 @@
+import Entity from '../entity.js';
 import Random from './random.js';
 
-export default class ParticleSystem {
+export default class ParticleSystem extends Entity {
     constructor(properties) {
+        super();
         this.isActive = false;
-        this.priority = 0;
 
         this.random = new Random();
 
@@ -114,27 +115,3 @@ export default class ParticleSystem {
         }
     }
 }
-
-/*
-let blood = {
-    amount: 20,
-    origin: {
-        x: 64,
-        y: 64
-    },
-    lifetime: 1000,
-    velocity: {
-        x: 0,
-        y: 3
-    },
-    emitDelay: 0,
-    gravity: {
-        x: 0,
-        y: 0.6
-    },
-    color: {
-        r: 255,
-        g: 0,
-        b: 0
-    }
-};*/

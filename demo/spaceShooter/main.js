@@ -5,18 +5,14 @@ import { enemySystem } from './enemySystem.js';
 import { spaceShip } from './spaceShip.js';
 import { starMap } from './starMap.js';
 
-let spriteMgr = new SpriteMgr();
+var spriteMgr = new SpriteMgr();
 
 apate.setParentElement(document.querySelector('#view'));
 
 apate.random.setSeed(6942007);
 
-//apate.useUI();
-//apate.ui.setTitle('Space Shooter');
-
 let score = 0;
 let highscore = 0;
-
 let isAlive = true;
 
 apate.on('start', async () => {
@@ -34,13 +30,13 @@ apate.on('update', (delta) => {
         enemySystem.isActive = true;
         enemySystem.spawnRate = 2;
 
-        starMap.particles.forEach(p => {
-            p.vy = 75;
-        })
-    
         starMap.setVelocity({
             randomMinY: 70,
             randomMaxY: 75
+        });
+
+        starMap.particles.forEach((p) => {
+            p.vy = 75;
         });
 
         score = 0;
@@ -73,8 +69,6 @@ apate.activeScene.init(starMap);
 apate.activeScene.init(bulletSystem);
 apate.activeScene.init(enemySystem);
 
-console.log(apate.activeScene.entities);
-
 apate.run();
 
 export function lost() {
@@ -83,14 +77,13 @@ export function lost() {
     enemySystem.isActive = false;
     bulletSystem.clear();
 
-  
-    starMap.particles.forEach(p => {
-        p.vy = 40;
-    })
-
     starMap.setVelocity({
         randomMinY: 40,
         randomMaxY: 45
+    });
+
+    starMap.particles.forEach((p) => {
+        p.vy = 40;
     });
 
     highscore = score > highscore ? score : highscore;
