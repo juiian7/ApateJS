@@ -17,10 +17,7 @@ export default class PixelScreen {
         }
 
         this.canvas.id = 'pixelscreen';
-        //this.canvas.style.position = 'relative';
-        //this.canvas.style.zIndex = 1;
         this.canvas.style.cursor = 'none';
-        //this.canvas.style.borderRadius = '1px';
 
         this.pixel = new Uint8Array(this.width * this.height * 3);
 

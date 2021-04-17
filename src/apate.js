@@ -21,6 +21,7 @@ class Engine {
         this.controllerAxes = [];
 
         this.IsRunning = false;
+        this.IsDebug = false;
 
         this.activeScene = new Scene();
 
@@ -41,12 +42,12 @@ class Engine {
         });
 
         this.screen.pixelScreen.canvas.addEventListener('click', (e) => {
-            this['click']();
-            this.activeScene.run('click');
+            this['click']({ isLeftClick: false });
+            this.activeScene.run('click', { isLeftClick: false });
         });
         this.screen.pixelScreen.canvas.addEventListener('contextmenu', (e) => {
-            this['rightClick']();
-            this.activeScene.run('rightClick');
+            this['click']({ isLeftClick: true });
+            this.activeScene.run('click', { isLeftClick: true });
             e.preventDefault();
             return false;
         });
@@ -70,53 +71,86 @@ class Engine {
 
         document.addEventListener('keydown', (e) => {
             this.keys.push(e.code.toLowerCase());
+
+            this.activeScene.run('btnDown', { key: e.code.toLowerCase(), shift: e.shiftKey, metaKey: e.metaKey });
+            if (this['btnDown']) this['btnDown']({ key: e.code.toLowerCase(), shift: e.shiftKey, metaKey: e.metaKey });
+
             if (this.isButtonPressed('engine_menu')) this.IsRunning = !this.IsRunning;
             if (!e.metaKey) e.preventDefault();
         });
 
         document.addEventListener('keyup', (e) => {
             this.keys = this.keys.filter((code) => code != e.code.toLowerCase());
+
+            this.activeScene.run('btnUp', { key: e.code.toLowerCase(), shift: e.shiftKey, metaKey: e.metaKey });
+            if (this['btnUp']) this['btnUp']({ key: e.code.toLowerCase(), shift: e.shiftKey, metaKey: e.metaKey });
         });
         window.addEventListener('gamepadconnected', (e) => {
             console.log('gamepad connected!', e);
         });
 
-        let resizeScreen = () => {
-            let width = window.innerWidth;
-            let height = window.innerHeight;
-            let max = width >= height ? height : width;
-
-            let maxScreen = this.screen.pixelScreen.width >= this.screen.pixelScreen.height ? this.screen.pixelScreen.width : this.screen.pixelScreen.height;
-
-            let scale = Math.floor(max / maxScreen);
-            console.log('scale: ', scale);
-            this.screen.pixelScreen.rescale(scale);
-        };
         window.addEventListener('resize', (e) => {
-            if (this.autoResize) resizeScreen();
+            if (this.autoResize) this.screen.pixelScreen.rescale(this.maxScreenScale);
         });
-        resizeScreen();
-
-        this['start'] = () => { };
-        this['update'] = () => { };
-        this['lastUpdate'] = () => { };
-        this['save'] = () => { };
-        this['load'] = () => { };
-        this['exit'] = () => { };
-
-        this['click'] = () => { };
-        this['rightClick'] = () => { };
-        this['mouseDown'] = () => { };
-        this['mouseUp'] = () => { };
+        if (this.autoResize) this.screen.pixelScreen.rescale(this.maxScreenScale);
     }
+
+    get maxScreenScale() {
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        let max = width >= height ? height : width;
+
+        let maxScreen = this.screen.pixelScreen.width >= this.screen.pixelScreen.height ? this.screen.pixelScreen.width : this.screen.pixelScreen.height;
+
+        let scale = Math.floor(max / maxScreen);
+        return scale;
+    }
+
+    /**
+     * Once called on start
+     */
+    start() { }
+    /**
+     * Called every tick
+     * @param {number} delta Time since last call
+     */
+    update(delta) { }
+    /**
+     * Called every frame
+     */
+    draw() { }
+    /** 
+     * @param {{isLeftClick: boolean}} clickInfo 
+     */
+    click(clickInfo) { }
+    /**
+     * Triggered when left mouse button is pressed down
+     */
+    mouseDown() { }
+    /**
+     * Triggered when left mouse button is released
+     */
+    mouseUp() { }
+    /**
+     * Triggered when any key pressed down
+     * @param {{key: string, shift: boolean, metaKey: boolean}} keyInfo 
+     */
+    btnDown(keyInfo) { }
+    /**
+     * Triggered when any key is released
+     * @param {{key: string, shift: boolean, metaKey: boolean}} keyInfo 
+     */
+    btnUp(keyInfo) { }
 
     /**
      * Starts the current instance
      * 
-     * Calls update every tick (max. ~230 ticks per browser)
-     * Calls draw evrey frame (depends on monitors refresh rate)
+     * Calls update every tick (max. ~230 ticks per second, depending on browser limit)
+     * Calls draw evrey frame (depends on browsers refresh rate)
      */
     async run() {
+        this.IsRunning = true;
+
         // load game files
         if (this['load']) await this['load']();
         // start game (download rescources)
@@ -124,7 +158,6 @@ class Engine {
         await this.activeScene.run('init');
 
         // create variables
-        this.IsRunning = true;
         let self = this;
 
         // timing
@@ -132,7 +165,6 @@ class Engine {
         let time = 0;
         let delta = 0;
 
-        //let maxTicks = 80;
         let frames = 0;
         let ticks = 0;
 
@@ -157,7 +189,7 @@ class Engine {
 
         // draw info
         this.infoLoop = setInterval(() => {
-            console.log({ frames, ticks });
+            if (this.IsDebug) console.log({ frames, ticks });
             frames = 0;
             ticks = 0;
         }, 1000);
@@ -170,15 +202,10 @@ class Engine {
             //nextUpdate -= delta;
 
             if (this.IsRunning /* && nextUpdate < 0*/) {
-                //                nextUpdate = 1000 / maxTicks;
-                if (navigator.getGamepads()[0]) {
-                    this.controllerAxes = navigator.getGamepads()[0].axes;
-                }
+                // nextUpdate = 1000 / maxTicks;
 
                 if (this['update']) this['update'](delta);
                 this.activeScene.run('update', delta);
-
-                if (this['lastUpdate']) this['lastUpdate'](delta);
 
                 ticks++;
             } else {
@@ -195,11 +222,10 @@ class Engine {
         clearInterval(this.updateLoop);
         clearInterval(this.infoLoop);
         this.isStopped = true;
-        this['exit']();
     }
 
     /**
-     * @param {'start' | 'update' | 'draw' | 'lastUpdate' | 'exit' | 'save' | 'load' | 'click' | 'rightClick'} event
+     * @param {'start' | 'update' | 'draw' | 'click' | 'mouseDown' | 'mouseUp'  | 'btnDown' | 'btnUp'} event
      * @param {() => void} handler
      */
     on(event, handler) {
@@ -214,10 +240,10 @@ class Engine {
         name = name.toLowerCase();
 
         if (navigator.getGamepads()[0]) {
-            if (name == 'up' && this.controllerAxes[1] < -0.3) return true;
-            else if (name == 'down' && this.controllerAxes[1] > 0.3) return true;
-            else if (name == 'left' && this.controllerAxes[0] < -0.3) return true;
-            else if (name == 'right' && this.controllerAxes[0] > 0.3) return true;
+            if (name == 'up' && navigator.getGamepads()[0].axes[1] < -0.3) return true;
+            else if (name == 'down' && navigator.getGamepads()[0].axes[1] > 0.3) return true;
+            else if (name == 'left' && navigator.getGamepads()[0].axes[0] < -0.3) return true;
+            else if (name == 'right' && navigator.getGamepads()[0].axes[0] > 0.3) return true;
             else if (name == 'action1' && navigator.getGamepads()[0].buttons[controllerMap['action1']].pressed) return true;
             else if (name == 'action2' && navigator.getGamepads()[0].buttons[controllerMap['action2']].pressed) return true;
             else if (name == 'engine_menu' && navigator.getGamepads()[0].buttons[controllerMap['engine_menu']].pressed) return true;
@@ -278,14 +304,11 @@ function drawMouse(x, y, scale, engine) {
     for (let mp = 0; mp < defaultMouse.length; mp++) {
         for (let i = 0; i < scale; i++) {
             for (let j = 0; j < scale; j++) {
-                // getcolor set color
 
-                //engine.screen.pixel()
-                let c = engine.screen.pixelScreen.getPixel(x + i + defaultMouse[mp].x * scale, y + j + defaultMouse[mp].y * scale);
-                let f = (c.r + c.g + c.b) / 3;
-                f = (f - 255) * -1;
-                //f = f < 128 ? f/2 : f*3;
-                engine.screen.pixel(x + i + defaultMouse[mp].x * scale, y + j + defaultMouse[mp].y * scale, { r: f, g: f, b: f });
+                let pixel = engine.screen.pixelScreen.getPixel(x + i + defaultMouse[mp].x * scale, y + j + defaultMouse[mp].y * scale);
+                let mousePixel = 255 - ((pixel.r + pixel.g + pixel.b) / 3);
+
+                engine.screen.pixel(x + i + defaultMouse[mp].x * scale, y + j + defaultMouse[mp].y * scale, color(mousePixel, mousePixel, mousePixel));
             }
         }
     }
@@ -297,7 +320,7 @@ const defaultKeyMap = {
     left: ['KeyA', 'ArrowLeft'],
     right: ['KeyD', 'ArrowRight'],
 
-    action1: ['KeyZ', 'KeyN', 'KeyC'],
+    action1: ['KeyZ', 'KeyN', 'KeyC', 'Space'],
     action2: ['KeyX', 'KeyM', 'KeyV'],
 
     engine_menu: ['Escape'],
@@ -315,6 +338,9 @@ export function color(r, g, b) {
     return { r, g, b };
 }
 
+/**
+ * A collection of the best colors
+ */
 const defaultColors = {
     white: color(230, 230, 230),
     black: color(20, 20, 20),
