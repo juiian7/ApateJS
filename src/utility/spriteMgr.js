@@ -13,7 +13,7 @@ export default class SpriteMgr {
 
     /**
      * Loads a sprite object from a given url
-     * @param {string} url 
+     * @param {string} url
      * @returns {Promise<Sprite>}
      */
     async loadSpriteFromURL(url) {
@@ -65,7 +65,9 @@ export default class SpriteMgr {
             if (a == 0) continue;
 
             sprite.push({
-                x, y, c: { r, g, b }
+                x,
+                y,
+                c: { r, g, b }
             });
         }
         return sprite;
@@ -122,12 +124,12 @@ export default class SpriteMgr {
     }
 
     /**
-     * Cuts a part out of a bigger Sprite 
-     * @param {Sprite} sprite 
-     * @param {number} x 
-     * @param {number} y 
-     * @param {number} w 
-     * @param {number} h 
+     * Cuts a part out of a bigger Sprite
+     * @param {Sprite} sprite
+     * @param {number} x
+     * @param {number} y
+     * @param {number} w
+     * @param {number} h
      */
     subSprite(sprite, x, y, w, h) {
         let newSprite = [];
@@ -168,7 +170,7 @@ export default class SpriteMgr {
         for (let i = 0; i < sprite.length; i++) {
             maxY = sprite[i].y > maxY ? sprite[i].y : maxY;
         }
-        
+
         let newSprite = [];
         for (let i = 0; i < sprite.length; i++) {
             newSprite.push({
