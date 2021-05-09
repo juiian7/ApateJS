@@ -83,7 +83,7 @@ export default class Screen {
      * @param {any} spriteObj sprite format: [{x,y,hex},...]
      * @param {number} scale
      */
-    sprite(x, y, spriteObj, scale) {
+    drawSprite(x, y, spriteObj, scale) {
         x = Math.round(x);
         y = Math.round(y);
         for (let i = 0; i < spriteObj.length; i++) {
@@ -91,8 +91,8 @@ export default class Screen {
         }
     }
 
-    animatedSprite(x, y, animSpriteObj, scale, frame) {
-        this.sprite(x, y, animSpriteObj[frame], scale);
+    drawAnimatedSprite(x, y, animSpriteObj, scale, frame) {
+        this.drawSprite(x, y, animSpriteObj[frame], scale);
     }
 
     /**
@@ -139,7 +139,7 @@ export default class Screen {
      */
     tilemap(x, y, tilemap) {
         for (let i = 0; i < tilemap.tiles.length; i++) {
-            this.sprite(x + tilemap.tiles[i].x * tilemap.tileWidth, y + tilemap.tiles[i].y * tilemap.tileHeight, tilemap.tileMap[tilemap.tiles[i].name], 1);
+            this.drawSprite(x + tilemap.tiles[i].x * tilemap.tileWidth, y + tilemap.tiles[i].y * tilemap.tileHeight, tilemap.tileMap[tilemap.tiles[i].name], 1);
         }
     }
 
@@ -207,7 +207,7 @@ export default class Screen {
      * @param {number} r radius
      * @param {{r,g,b}} c color
      */
-    drawfcircle(x, y, r, c) {
+    drawFilledCircle(x, y, r, c) {
         let d = (5 - r * 4) / 4;
         let px = 0;
         let py = r;
