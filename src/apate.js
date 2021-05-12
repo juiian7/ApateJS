@@ -225,7 +225,7 @@ class Engine {
     }
 
     /**
-     * @param {'start' | 'update' | 'draw' | 'click' | 'mouseDown' | 'mouseUp'  | 'btnDown' | 'btnUp'} event
+     * @param {'start' | 'update' | 'draw' | 'click' | 'mouseDown' | 'mouseUp'  | 'btnDown' | 'btnUp'} event
      * @param {() => void} handler
      */
     on(event, handler) {
@@ -233,7 +233,7 @@ class Engine {
     }
 
     /**
-     * @param {'Up' | 'Down' | 'Left' | 'Right' | 'Action1' | 'Action2'} name
+     * @param {'Up' | 'Down' | 'Left' | 'Right' | 'Action1' | 'Action2'} name
      * @returns {boolean} 
      */
     isButtonPressed(name) {
