@@ -8,7 +8,7 @@ export default class Entity {
     }
 
     /**
-     * @param {'start' | 'update' | 'draw' | 'click' | 'mouseDown' | 'mouseUp'  | 'btnDown' | 'btnUp'} event
+     * @param {'init' | 'update' | 'draw' | 'click' | 'mouseDown' | 'mouseUp'  | 'btnDown' | 'btnUp'} event
      * @param {() => void} callback
      */
     on(event, callback) {
@@ -39,7 +39,7 @@ export default class Entity {
     /**
      * Once called on start
      */
-    start() {}
+    init() {}
     /**
      * Called every tick
      * @param {number} delta Time since last call
