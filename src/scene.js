@@ -25,6 +25,16 @@ export default class Scene {
     }
 
     /**
+     * Copies all entities from another scene to this scene
+     * @param {Scene} scene Scene to copy from
+     */
+    merge(scene) {
+        for (let i = 0; i < scene.entities.length; i++) {
+            this.entities.push(scene.entities[i]);
+        }
+    }
+
+    /**
      * Executes the given event for all currently active entities with the given args
      * TODO: Fix (async)'init' being called mutliple times
      * @param {string} event
