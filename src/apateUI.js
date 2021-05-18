@@ -73,6 +73,9 @@ export default class ApateUI {
         this.nextListen = 0;
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         this.nextListen -= delta;
 
@@ -132,10 +135,11 @@ export default class ApateUI {
             }
         }
     }
+
     /**
-     * 
+     * TODO: rethink this code
      * @param {string} name Name of the control to add
-     * @param {() => void} onClick Event which is triggered when control is clicked
+     * @param {(obj: {name: string}) => void} onClick Event which is triggered when control is clicked
      */
     addControl(name, onClick) {
         let c = { name };

@@ -20,7 +20,7 @@ export default class Random {
     }
 
     /**
-     * Generates a number with the specified seed
+     * Generates a random number
      * @returns {number}
      */
     next() {
@@ -31,7 +31,7 @@ export default class Random {
     }
 
     /**
-     * Generates a number with the specified seed in the given range
+     * Generates a random number in the given range
      * @param {number} min minimum
      * @param {number} max maximum
      * @returns {number}

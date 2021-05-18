@@ -61,23 +61,11 @@ export default class PixelScreen {
     }
 
     setUpBuffers() {
-        let vertices = [
-            -1,
-            1,
-            0,
-            0, // top left
-            1,
-            1,
-            1,
-            0, // top right
-            -1,
-            -1,
-            0,
-            1, // bottom left
-            1,
-            -1,
-            1,
-            1 // bottom right
+        const vertices = [
+            -1, 1, 0, 0, // top left
+            1, 1, 1, 0, // top right
+            -1, -1, 0, 1, // bottom left
+            1, -1, 1, 1 // bottom right
         ];
 
         this.vbuffer = this.gl.createBuffer();

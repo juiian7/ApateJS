@@ -16,7 +16,7 @@ export default class Entity {
     }
 
     /**
-     * @param {any} obj loads a object into the entity and make a 'backup'
+     * @param {any} obj loads a object into the entity and makes a 'backup'
      */
     loadAttributes(obj) {
         this.backup = obj;
@@ -39,36 +39,36 @@ export default class Entity {
     /**
      * Once called on start
      */
-    start() { }
+    start() {}
     /**
      * Called every tick
      * @param {number} delta Time since last call
      */
-    update(delta) { }
+    update(delta) {}
     /**
      * Called every frame
      */
-    draw() { }
-    /** 
-     * @param {{isLeftClick: boolean}} clickInfo 
+    draw() {}
+    /**
+     * @param {{isLeftClick: boolean}} clickInfo
      */
-    click(clickInfo) { }
+    click(clickInfo) {}
     /**
      * Triggered when left mouse button is pressed down
      */
-    mouseDown() { }
+    mouseDown() {}
     /**
      * Triggered when left mouse button is released
      */
-    mouseUp() { }
+    mouseUp() {}
     /**
      * Triggered when any key pressed down
-     * @param {{key: string, shift: boolean, metaKey: boolean}} keyInfo 
+     * @param {{key: string, shift: boolean, metaKey: boolean}} keyInfo
      */
-    btnDown(keyInfo) { }
+    btnDown(keyInfo) {}
     /**
      * Triggered when any key is released
-     * @param {{key: string, shift: boolean, metaKey: boolean}} keyInfo 
+     * @param {{key: string, shift: boolean, metaKey: boolean}} keyInfo
      */
-    btnUp(keyInfo) { }
+    btnUp(keyInfo) {}
 }

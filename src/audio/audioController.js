@@ -11,8 +11,8 @@ export default class AudioController {
          */
         this.audioCtx = new AudioContext();
     }
+
     /**
-     *
      * @param {string} name
      * @param {string} info
      */

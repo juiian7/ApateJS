@@ -36,7 +36,7 @@ export default class VirtualButtons {
     }
 
     /**
-     * @returns {Boolean}
+     * @returns {boolean}
      */
     isMobile() {
         let check = false;

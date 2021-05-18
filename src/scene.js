@@ -1,4 +1,4 @@
-//
+import Entity from './entity';
 
 export default class Scene {
     constructor() {
@@ -7,7 +7,7 @@ export default class Scene {
 
     /**
      * Instanciates an entity in a current scene
-     * @param {Entity} entity 
+     * @param {Entity} entity
      */
     init(entity) {
         this.entities.push(entity);
@@ -17,7 +17,7 @@ export default class Scene {
 
     /**
      * Destroys the gives entity
-     * @param {Entity} entity 
+     * @param {Entity} entity
      */
     delete(entity) {
         let i = this.entities.findIndex((e) => e == entity);
@@ -26,8 +26,9 @@ export default class Scene {
 
     /**
      * Executes the given event for all currently active entities with the given args
-     * @param {string} event 
-     * @param {*} args 
+     * TODO: Fix (async)'init' being called mutliple times
+     * @param {string} event
+     * @param {*} args
      */
     async run(event, args) {
         for (let i = 0; i < this.entities.length; i++) {

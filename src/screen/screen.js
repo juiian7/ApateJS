@@ -100,7 +100,7 @@ export default class Screen {
      * @param {number} y y-coord
      * @param {{r,g,b}} c color of the text
      * @param {string} text
-     * @param {*} options
+     * @param {{scale: number, leftSpace: number, topSpace: number}} options
      */
     drawText(x, y, c, text, options) {
         options = {

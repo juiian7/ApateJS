@@ -1,12 +1,12 @@
 //
 
-/**
- * @typedef Sprite
- * @type {object}
- * @property {any[]} pixels
- */
-
 export default class SpriteMgr {
+    /**
+     * @typedef Sprite
+     * @type {object}
+     * @property {{r: number, g: number, b: number}[]} pixels
+     */
+
     constructor() {
         this.canvas = document.createElement('canvas');
     }
@@ -17,13 +17,13 @@ export default class SpriteMgr {
      * @returns {Promise<Sprite>}
      */
     async loadSpriteFromURL(url) {
-        var res = await fetch(url);
+        let res = await fetch(url);
         let json = await res.json();
         return json;
     }
 
     /**
-     * Loads a image from a given url
+     * Loads an image from a given url
      * @param {string} url
      * @returns {Promise<HTMLImageElement>}
      */
@@ -39,14 +39,14 @@ export default class SpriteMgr {
 
     /**
      * Converts an image to a sprite object
-     * @param {HTMLImageElement} img
+     * @param {HTMLImageElement} image
      * @returns {Sprite}
      */
-    imgToSprite(img) {
-        this.canvas.width = img.width;
-        this.canvas.height = img.height;
+    imgToSprite(image) {
+        this.canvas.width = image.width;
+        this.canvas.height = image.height;
         let ctx = this.canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(image, 0, 0);
         let image = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
         let sprite = [];
         let x = -1;
@@ -75,15 +75,15 @@ export default class SpriteMgr {
 
     /**
      * Converts an image to an aminated sprite object
-     * @param {HTMLImageElement} img
+     * @param {HTMLImageElement} image
      * @param {number} frameWidth
      * @returns {Sprite[]}
      */
-    imgToAnimatedSprite(img, frameWidth) {
-        this.canvas.width = img.width;
-        this.canvas.height = img.height;
+    imgToAnimatedSprite(image, frameWidth) {
+        this.canvas.width = image.width;
+        this.canvas.height = image.height;
         let ctx = this.canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(image, 0, 0);
 
         let image = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
         let sprites = [];
@@ -126,10 +126,10 @@ export default class SpriteMgr {
     /**
      * Cuts a part out of a bigger Sprite
      * @param {Sprite} sprite
-     * @param {number} x
-     * @param {number} y
-     * @param {number} w
-     * @param {number} h
+     * @param {number} x x-pos
+     * @param {number} y x-pos
+     * @param {number} w width
+     * @param {number} h height
      */
     subSprite(sprite, x, y, w, h) {
         let newSprite = [];
@@ -149,7 +149,11 @@ export default class SpriteMgr {
         return newSprite;
     }
 
-    filpH(sprite) {
+    /**
+     * @param {Sprite} sprite
+     * @returns {Sprite}
+     */
+    filpHorizontal(sprite) {
         let maxX = 0;
         for (let i = 0; i < sprite.length; i++) {
             maxX = sprite[i].x > maxX ? sprite[i].x : maxX;
@@ -165,7 +169,11 @@ export default class SpriteMgr {
         return newSprite;
     }
 
-    filpV(sprite) {
+    /**
+     * @param {Sprite} sprite
+     * @returns {Sprite}
+     */
+    filpVertical(sprite) {
         let maxY = 0;
         for (let i = 0; i < sprite.length; i++) {
             maxY = sprite[i].y > maxY ? sprite[i].y : maxY;

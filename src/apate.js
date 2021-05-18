@@ -263,7 +263,7 @@ class Engine {
 
     /**
      * Saves an object to the local storage
-     * @param {String} name
+     * @param {string} name
      * @param {*} obj
      */
     saveObjToBrowser(name, obj) {
@@ -272,7 +272,7 @@ class Engine {
 
     /**
      * Loads an object from the local storage
-     * @param {String} name
+     * @param {string} name
      */
     loadObjFromBrowser(name) {
         let obj = localStorage.getItem(name);
@@ -295,9 +295,9 @@ const defaultMouse = [
 ];
 
 /**
- * @param {Number} x
- * @param {Number} y
- * @param {Number} scale
+ * @param {number} x
+ * @param {number} y
+ * @param {number} scale
  * @param {Engine} engine
  */
 function drawMouse(x, y, scale, engine) {
