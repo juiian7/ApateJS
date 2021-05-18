@@ -39,6 +39,16 @@ export default class Random {
     between(min, max) {
         return this.next() * (max - min) + min;
     }
+
+    /**
+     * Generates an random Integer in the given range
+     * @param {number} min minimum
+     * @param {number} max maximum
+     * @returns {number}
+     */
+    betweenInt(min, max) {
+        return Math.round(this.between(min, max));
+    }
 }
 
 /**
