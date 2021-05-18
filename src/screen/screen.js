@@ -104,7 +104,9 @@ export default class Screen {
      */
     drawText(x, y, c, text, options) {
         options = {
-            ...defaultTextOptions,
+            scale: 1,
+            leftSpace: 1,
+            topSpace: 1,
             ...options
         };
         options.leftSpace *= options.scale;
@@ -137,7 +139,7 @@ export default class Screen {
      * @param {number} y y-coord
      * @param {Tilemap} tilemap
      */
-    tilemap(x, y, tilemap) {
+    drawTilemap(x, y, tilemap) {
         for (let i = 0; i < tilemap.tiles.length; i++) {
             this.drawSprite(x + tilemap.tiles[i].x * tilemap.tileWidth, y + tilemap.tiles[i].y * tilemap.tileHeight, tilemap.tileMap[tilemap.tiles[i].name], 1);
         }
@@ -151,7 +153,7 @@ export default class Screen {
      * @param {number} start starting x
      * @param {number} end ending x
      */
-    drawFunc(x, y, c, func, start, end) {
+    drawFunction(x, y, c, func, start, end) {
         if (func.includes('=')) {
             func = func.substring(func.indexOf('=') + 1);
         }
@@ -228,9 +230,3 @@ export default class Screen {
         } while (px <= py);
     }
 }
-
-const defaultTextOptions = {
-    scale: 1,
-    leftSpace: 1,
-    topSpace: 1
-};
