@@ -1,15 +1,18 @@
 import SpriteMgr from './spriteMgr';
 
 export default class Tilemap {
-    constructor(w, h) {
-        this.tileWidth = w;
-        this.tileHeight = h;
+    /**
+     * @param {number} width
+     * @param {number} height
+     */
+    constructor(width, height) {
+        this.tileWidth = width;
+        this.tileHeight = height;
         this.tiles = [];
         this.tileMap = {};
     }
 
     /**
-     *
      * @param {string} name
      * @param {SpriteMgr} sprite
      */
@@ -55,7 +58,7 @@ export default class Tilemap {
     }
 
     /**
-     * @param {JSON} json 
+     * @param {JSON} json
      */
     fromJSON(json) {
         this.tileMap = json.sprites;
