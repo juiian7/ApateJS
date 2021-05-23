@@ -3,27 +3,30 @@
 export default class PixelScreen {
     /**
      * @param {HTMLElement} parentElement
+     * @param {number} width screen width
+     * @param {number} height screen height
      */
-    constructor(parentElement) {
-        const el = parentElement.querySelector('#pixelscreen');
-
-        this.width = 128;
-        this.height = 128;
-        if (el) {
-            this.canvas = el;
+    constructor(parentElement, width, height) {
+        const element = parentElement.querySelector('#pixelscreen');
+        if (element) {
+            this.canvas = element;
         } else {
             this.canvas = document.createElement('canvas');
             parentElement.appendChild(this.canvas);
         }
-
         this.canvas.id = 'pixelscreen';
         this.canvas.style.cursor = 'none';
 
+        this.width = width ?? 128;
+        this.height = height ?? 128;
         this.pixel = new Uint8Array(this.width * this.height * 3);
 
-        this.gl = this.canvas.getContext('webgl2');
-        this.webgl2 = true;
-
+        try {
+            this.gl = this.canvas.getContext('webgl2');
+            this.webgl2 = true;
+        } catch {
+            this.gl = null;
+        }
         if (!this.gl) {
             this.gl = this.canvas.getContext('webgl');
             this.webgl2 = false;
@@ -58,8 +61,7 @@ export default class PixelScreen {
     }
 
     setUpBuffers() {
-
-        let vertices = [
+        const vertices = [
             -1, 1, 0, 0, // top left
             1, 1, 1, 0, // top right
             -1, -1, 0, 1, // bottom left
@@ -128,6 +130,15 @@ export default class PixelScreen {
         this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
     }
 
+    /**
+     * Changes the color of a pixel
+     * @param {number} x x-coord
+     * @param {number} y y-coord
+     * @param {number} r
+     * @param {number} g
+     * @param {number} b
+     * @returns
+     */
     setPixel(x, y, r, g, b) {
         if (x >= 0 && x < this.width && y >= 0 && this.height) {
             let index = (this.width * y + x) * 3;
@@ -138,20 +149,19 @@ export default class PixelScreen {
         }
     }
 
-    clear(r, g, b) {
-        for (let i = 0; i < this.pixel.length; i += 3) {
-            this.pixel[i] = r;
-            this.pixel[i + 1] = g;
-            this.pixel[i + 2] = b;
-        }
-    }
-
+    /**
+     * Get the color of a pixel
+     * @param {number} x
+     * @param {number} y
+     * @returns {{r,g,b}} color-object
+     */
     getPixel(x, y) {
         let c = {
             r: 255,
             g: 255,
             b: 255
         };
+
         if (x >= 0 && x < this.width && y >= 0 && this.height) {
             let index = (this.width * y + x) * 3;
             if (index > this.pixel.length) return c;
@@ -161,7 +171,17 @@ export default class PixelScreen {
         }
         return c;
     }
+
+    clear(r, g, b) {
+        for (let i = 0; i < this.pixel.length; i += 3) {
+            this.pixel[i] = r;
+            this.pixel[i + 1] = g;
+            this.pixel[i + 2] = b;
+        }
+    }
 }
+
+//#region Shader
 
 const vs = `
 attribute vec2 aVertexPosition;
@@ -174,6 +194,7 @@ void main() {
     vTextureCoord = aTextureCoord;
 }
 `;
+
 const fs = `
 precision mediump float;
 
@@ -196,6 +217,7 @@ void main() {
     vTextureCoord = aTextureCoord;
 }
 `;
+
 const fs2 = `#version 300 es
 precision mediump float;
 
@@ -207,3 +229,5 @@ void main() {
     fragColor = vec4(texture(uTexture, vTextureCoord).xyz,1);
 }
 `;
+
+//#endregion

@@ -2,7 +2,7 @@
 
 export default class Random {
     /**
-     * @param {Number} seed
+     * @param {number} seed
      */
     constructor(seed) {
         this.setSeed(seed ?? new Date().getTime());
@@ -10,7 +10,7 @@ export default class Random {
 
     /**
      * Set the seed with is used by the random generator
-     * @param {Number} seed
+     * @param {number} seed
      */
     setSeed(seed) {
         this.a = seed;
@@ -20,8 +20,8 @@ export default class Random {
     }
 
     /**
-     * Generates a number with the specified seed
-     * @returns {Number}
+     * Generates a random number
+     * @returns {number}
      */
     next() {
         this.a = (171 * this.a) % 30269;
@@ -31,20 +31,30 @@ export default class Random {
     }
 
     /**
-     * Generates a number with the specified seed in the given range
-     * @param {Number} min minimum
-     * @param {Number} max maximum
-     * @returns {Number}
+     * Generates a random number in the given range
+     * @param {number} min minimum
+     * @param {number} max maximum
+     * @returns {number}
      */
     between(min, max) {
         return this.next() * (max - min) + min;
     }
+
+    /**
+     * Generates an random Integer in the given range
+     * @param {number} min minimum
+     * @param {number} max maximum
+     * @returns {number}
+     */
+    betweenInt(min, max) {
+        return Math.round(this.between(min, max));
+    }
 }
 
 /**
- * Generates a random number
- * @param {Number} max
- * @returns {Number}
+ * Generates a random number with JS random
+ * @param {number} max
+ * @returns {number}
  */
 export function seedlessRand(max) {
     return Math.floor(Math.random() * (max + 1));

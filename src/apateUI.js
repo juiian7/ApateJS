@@ -1,4 +1,4 @@
-//
+import { color } from './apate';
 
 export default class ApateUI {
     constructor(engine) {
@@ -45,34 +45,19 @@ export default class ApateUI {
 
         this.currentIndex = 0;
 
-        this.backColor = {
-            r: 30,
-            g: 30,
-            b: 30
-        };
-
-        this.shadowColor = {
-            r: 0,
-            g: 0,
-            b: 0
-        };
-        this.fontColor = {
-            r: 255,
-            g: 255,
-            b: 255
-        };
-
-        this.selectedColor = {
-            r: 255,
-            g: 120,
-            b: 102
-        };
+        this.backColor = color(30, 30, 30);
+        this.shadowColor = color(0, 0, 0);
+        this.fontColor = color(255, 255, 255);
+        this.selectedColor = color(255, 120, 102);
 
         this.isFirstPress = true;
         this.keyDelay = 100;
         this.nextListen = 0;
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         this.nextListen -= delta;
 
@@ -118,8 +103,8 @@ export default class ApateUI {
         let w = this.maxControlLength * 5;
         let h = this.controlls.length * 8;
 
-        let minX = Math.round((width / 2) - w / 2);
-        let minY = Math.round((height / 2) - h / 2);
+        let minX = Math.round(width / 2 - w / 2);
+        let minY = Math.round(height / 2 - h / 2);
 
         this.engine.screen.rect(minX + 2, minY + 2, w, h, this.shadowColor);
         this.engine.screen.rect(minX, minY, w, h, this.backColor);
@@ -132,10 +117,11 @@ export default class ApateUI {
             }
         }
     }
+
     /**
-     * 
+     * TODO: rethink this code
      * @param {string} name Name of the control to add
-     * @param {() => void} onClick Event which is triggered when control is clicked
+     * @param {(obj: {name: string}) => void} onClick Event which is triggered when control is clicked
      */
     addControl(name, onClick) {
         let c = { name };

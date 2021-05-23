@@ -1,4 +1,5 @@
 import Entity from '../entity.js';
+import Screen from '../screen/screen.js';
 import Random from './random.js';
 
 export default class ParticleSystem extends Entity {
@@ -111,7 +112,7 @@ export default class ParticleSystem extends Entity {
      */
     draw(screen) {
         for (const parti of this.particles) {
-            screen.pixel(Math.floor(parti.x), Math.floor(parti.y), parti.c);
+            screen.drawPixel(Math.floor(parti.x), Math.floor(parti.y), parti.c);
         }
     }
 }

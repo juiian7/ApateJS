@@ -65,8 +65,12 @@ class Engine {
         document.addEventListener('blur', () => {
             this.IsRunning = false;
         });
+
+        this.autoResumeOnFocus = false;
         document.addEventListener('focus', () => {
-            //this.IsRunning = true;
+            if (this.autoResumeOnFocus) {
+                this.IsRunning = true;
+            }
         });
 
         document.addEventListener('keydown', (e) => {
@@ -109,42 +113,42 @@ class Engine {
     /**
      * Once called on start
      */
-    start() { }
+    start() {}
     /**
      * Called every tick
      * @param {number} delta Time since last call
      */
-    update(delta) { }
+    update(delta) {}
     /**
      * Called every frame
      */
-    draw() { }
-    /** 
-     * @param {{isLeftClick: boolean}} clickInfo 
+    draw() {}
+    /**
+     * @param {{isLeftClick: boolean}} clickInfo
      */
-    click(clickInfo) { }
+    click(clickInfo) {}
     /**
      * Triggered when left mouse button is pressed down
      */
-    mouseDown() { }
+    mouseDown() {}
     /**
      * Triggered when left mouse button is released
      */
-    mouseUp() { }
+    mouseUp() {}
     /**
      * Triggered when any key pressed down
-     * @param {{key: string, shift: boolean, metaKey: boolean}} keyInfo 
+     * @param {{key: string, shift: boolean, metaKey: boolean}} keyInfo
      */
-    btnDown(keyInfo) { }
+    btnDown(keyInfo) {}
     /**
      * Triggered when any key is released
-     * @param {{key: string, shift: boolean, metaKey: boolean}} keyInfo 
+     * @param {{key: string, shift: boolean, metaKey: boolean}} keyInfo
      */
-    btnUp(keyInfo) { }
+    btnUp(keyInfo) {}
 
     /**
      * Starts the current instance
-     * 
+     *
      * Calls update every tick (max. ~230 ticks per second, depending on browser limit)
      * Calls draw evrey frame (depends on browsers refresh rate)
      */
@@ -234,7 +238,7 @@ class Engine {
 
     /**
      * @param {'Up' | 'Down' | 'Left' | 'Right' | 'Action1' | 'Action2'} name
-     * @returns {boolean} 
+     * @returns {boolean}
      */
     isButtonPressed(name) {
         name = name.toLowerCase();
@@ -263,7 +267,7 @@ class Engine {
 
     /**
      * Saves an object to the local storage
-     * @param {String} name
+     * @param {string} name
      * @param {*} obj
      */
     saveObjToBrowser(name, obj) {
@@ -272,7 +276,7 @@ class Engine {
 
     /**
      * Loads an object from the local storage
-     * @param {String} name
+     * @param {string} name
      */
     loadObjFromBrowser(name) {
         let obj = localStorage.getItem(name);
@@ -280,7 +284,7 @@ class Engine {
     }
 
     /**
-     * Sets the root element where the main canvas is located 
+     * Sets the root element where the main canvas is located
      * @param {HTMLElement} parent
      */
     setParentElement(parent) {
@@ -295,18 +299,17 @@ const defaultMouse = [
 ];
 
 /**
- * @param {Number} x
- * @param {Number} y
- * @param {Number} scale
+ * @param {number} x
+ * @param {number} y
+ * @param {number} scale
  * @param {Engine} engine
  */
 function drawMouse(x, y, scale, engine) {
     for (let mp = 0; mp < defaultMouse.length; mp++) {
         for (let i = 0; i < scale; i++) {
             for (let j = 0; j < scale; j++) {
-
                 let pixel = engine.screen.pixelScreen.getPixel(x + i + defaultMouse[mp].x * scale, y + j + defaultMouse[mp].y * scale);
-                let mousePixel = 255 - ((pixel.r + pixel.g + pixel.b) / 3);
+                let mousePixel = 255 - (pixel.r + pixel.g + pixel.b) / 3;
 
                 engine.screen.pixel(x + i + defaultMouse[mp].x * scale, y + j + defaultMouse[mp].y * scale, color(mousePixel, mousePixel, mousePixel));
             }
@@ -372,7 +375,7 @@ const defaultColors = {
     light_green: color(100, 220, 100),
     green: color(50, 165, 50),
     lime: color(190, 220, 90),
-    avocado: color(160, 190, 50),
+    avocado: color(160, 190, 50)
 };
 
 export var apate = new Engine();
