@@ -311,7 +311,7 @@ function drawMouse(x, y, scale, engine) {
                 let pixel = engine.screen.pixelScreen.getPixel(x + i + defaultMouse[mp].x * scale, y + j + defaultMouse[mp].y * scale);
                 let mousePixel = 255 - (pixel.r + pixel.g + pixel.b) / 3;
 
-                engine.screen.pixel(x + i + defaultMouse[mp].x * scale, y + j + defaultMouse[mp].y * scale, color(mousePixel, mousePixel, mousePixel));
+                engine.screen.drawPixel(x + i + defaultMouse[mp].x * scale, y + j + defaultMouse[mp].y * scale, color(mousePixel, mousePixel, mousePixel));
             }
         }
     }

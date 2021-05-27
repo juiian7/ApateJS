@@ -147,7 +147,7 @@ cellsMgr.on('draw', () => {
         for (let y = yOffset; y < 128 + yOffset; y++) {
             let c = cellsMgr.cells[128 * y + x];
             if (c > 0) {
-                apate.screen.pixel(x - xOffset, y - yOffset, apate.colors.white);
+                apate.screen.drawPixel(x - xOffset, y - yOffset, apate.colors.white);
             }
         }
     }
@@ -157,9 +157,9 @@ let mouse = new Entity();
 mouse.priority = 10;
 
 mouse.on('draw', () => {
-    apate.screen.pixel(apate.mouseX, apate.mouseY, apate.colors.red);
-    apate.screen.pixel(apate.mouseX, apate.mouseY+1, apate.colors.dark_red);
-    apate.screen.pixel(apate.mouseX+1, apate.mouseY, apate.colors.dark_red);
+    apate.screen.drawPixel(apate.mouseX, apate.mouseY, apate.colors.red);
+    apate.screen.drawPixel(apate.mouseX, apate.mouseY+1, apate.colors.dark_red);
+    apate.screen.drawPixel(apate.mouseX+1, apate.mouseY, apate.colors.dark_red);
 });
 
 apate.activeScene.init(mouse);

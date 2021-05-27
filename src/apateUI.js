@@ -1,4 +1,4 @@
-import { color } from './apate';
+import { color } from './apate.js';
 
 export default class ApateUI {
     constructor(engine) {
@@ -96,7 +96,7 @@ export default class ApateUI {
                 c.r = c.r - 128 < 0 ? 0 : c.r - 128;
                 c.g = c.g - 128 < 0 ? 0 : c.g - 128;
                 c.b = c.b - 128 < 0 ? 0 : c.b - 128;
-                this.engine.screen.pixel(x, y, c);
+                this.engine.screen.drawPixel(x, y, c);
             }
         }
 
@@ -106,14 +106,14 @@ export default class ApateUI {
         let minX = Math.round(width / 2 - w / 2);
         let minY = Math.round(height / 2 - h / 2);
 
-        this.engine.screen.rect(minX + 2, minY + 2, w, h, this.shadowColor);
-        this.engine.screen.rect(minX, minY, w, h, this.backColor);
+        this.engine.screen.drawRect(minX + 2, minY + 2, w, h, this.shadowColor);
+        this.engine.screen.drawRect(minX, minY, w, h, this.backColor);
 
         for (let i = 0; i < this.controlls.length; i++) {
             if (i == this.currentIndex) {
-                this.engine.screen.text(minX + 1, minY + 2 + 7 * i, this.controlls[i].name, this.selectedColor);
+                this.engine.screen.drawText(minX + 1, minY + 2 + 7 * i, this.controlls[i].name, this.selectedColor);
             } else {
-                this.engine.screen.text(minX + 1, minY + 2 + 7 * i, this.controlls[i].name, this.fontColor);
+                this.engine.screen.drawText(minX + 1, minY + 2 + 7 * i, this.controlls[i].name, this.fontColor);
             }
         }
     }

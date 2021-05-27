@@ -102,7 +102,7 @@ export default class Screen {
      * @param {string} text
      * @param {{scale: number, leftSpace: number, topSpace: number}} options
      */
-    drawText(x, y, c, text, options) {
+    drawText(x, y, text, c, options) {
         options = {
             scale: 1,
             leftSpace: 1,

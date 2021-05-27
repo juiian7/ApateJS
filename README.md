@@ -23,7 +23,7 @@ import { apate } from './apatejs/apate.js';
 import { apate } from './apatejs/apate.js';
 
 apate.on('draw', () => {
-    apate.screen.text(1, 1, 'Hello World!', apate.colors.white);
+    apate.screen.drawText(1, 1, 'Hello World!', apate.colors.white);
 });
 
 apate.run();

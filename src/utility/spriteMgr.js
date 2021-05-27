@@ -39,14 +39,14 @@ export default class SpriteMgr {
 
     /**
      * Converts an image to a sprite object
-     * @param {HTMLImageElement} image
+     * @param {HTMLImageElement} img
      * @returns {Sprite}
      */
-    imgToSprite(image) {
-        this.canvas.width = image.width;
-        this.canvas.height = image.height;
+    imgToSprite(img) {
+        this.canvas.width = img.width;
+        this.canvas.height = img.height;
         let ctx = this.canvas.getContext('2d');
-        ctx.drawImage(image, 0, 0);
+        ctx.drawImage(img, 0, 0);
         let image = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
         let sprite = [];
         let x = -1;
@@ -75,15 +75,15 @@ export default class SpriteMgr {
 
     /**
      * Converts an image to an aminated sprite object
-     * @param {HTMLImageElement} image
+     * @param {HTMLImageElement} img
      * @param {number} frameWidth
      * @returns {Sprite[]}
      */
-    imgToAnimatedSprite(image, frameWidth) {
-        this.canvas.width = image.width;
-        this.canvas.height = image.height;
+    imgToAnimatedSprite(img, frameWidth) {
+        this.canvas.width = img.width;
+        this.canvas.height = img.height;
         let ctx = this.canvas.getContext('2d');
-        ctx.drawImage(image, 0, 0);
+        ctx.drawImage(img, 0, 0);
 
         let image = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
         let sprites = [];

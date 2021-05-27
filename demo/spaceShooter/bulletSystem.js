@@ -52,7 +52,7 @@ bulletSystem.on('clear', () => {
 
 bulletSystem.on('draw', () => {
     for (let i = 0; i < bulletSystem.bullets.length; i++) {
-        apate.screen.sprite(bulletSystem.bullets[i].x, bulletSystem.bullets[i].y, bulletSystem.bulletSprite, 1);
+        apate.screen.drawSprite(bulletSystem.bullets[i].x, bulletSystem.bullets[i].y, bulletSystem.bulletSprite, 1);
     }
 });
 

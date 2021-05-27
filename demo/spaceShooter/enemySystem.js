@@ -56,6 +56,6 @@ enemySystem.on('clear', () => {
 
 enemySystem.on('draw', () => {
     for (let i = 0; i < enemySystem.enemies.length; i++) {
-        apate.screen.animatedSprite(enemySystem.enemies[i].x, enemySystem.enemies[i].y, enemySystem.enemySprite, 1, animFrame);
+        apate.screen.drawAnimatedSprite(enemySystem.enemies[i].x, enemySystem.enemies[i].y, enemySystem.enemySprite, 1, animFrame);
     }
 });

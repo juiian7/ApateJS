@@ -35,5 +35,5 @@ spaceShip.on('update', (delta) => {
 });
 
 spaceShip.on('draw', () => {
-    apate.screen.sprite(spaceShip.x, spaceShip.y, spaceShip.shipSprite, spaceShip.scale);
+    apate.screen.drawSprite(spaceShip.x, spaceShip.y, spaceShip.shipSprite, spaceShip.scale);
 });

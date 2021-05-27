@@ -45,13 +45,13 @@ apate.on('update', (delta) => {
 
 apate.on('draw', () => {
     if (isAlive) {
-        apate.screen.text(2, 120, `Score: ${score} - Best: ${highscore}`, apate.colors.white);
+        apate.screen.drawText(2, 120, `Score: ${score} - Best: ${highscore}`, apate.colors.white);
     } else {
-        apate.screen.text(20, 35, 'Game Over', apate.colors.white, { scale: 2, leftSpace: 3 });
+        apate.screen.drawText(20, 35, 'Game Over', apate.colors.white, { scale: 2, leftSpace: 3 });
 
-        apate.screen.text(30, 128 / 2, `Score: ${score}\nHighscore: ${highscore}`, apate.colors.white, { topSpace: 4 });
+        apate.screen.drawText(30, 128 / 2, `Score: ${score}\nHighscore: ${highscore}`, apate.colors.white, { topSpace: 4 });
 
-        apate.screen.text(36, 100, 'Restart (X/V)', apate.colors.white);
+        apate.screen.drawText(36, 100, 'Restart (X/V)', apate.colors.white);
     }
 });
 

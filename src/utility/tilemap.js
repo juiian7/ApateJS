@@ -1,4 +1,4 @@
-import SpriteMgr from './spriteMgr';
+import SpriteMgr from './spriteMgr.js';
 
 export default class Tilemap {
     /**
