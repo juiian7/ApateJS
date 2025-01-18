@@ -1,12 +1,23 @@
-import Apate from "../engine/index.js";
+import Apate, { World } from "../engine/index.js";
+import Renderer from "../engine/graphics/webgl2/Renderer.js";
 
 const canvas = document.querySelector("canvas");
+
+class Test extends World.Obj {
+    public render(renderer: Renderer): void {
+        renderer.clear();
+    }
+}
 
 class Game extends Apate {
     counter: number = 0;
 
     async init(): Promise<void> {
+        // load assets
         this.counter = 60;
+
+        console.log(this);
+        this.scene.add(new Test());
     }
 
     update(): void {
