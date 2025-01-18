@@ -3,7 +3,7 @@ import Renderer from "../graphics/webgl2/Renderer.js";
 export default class Obj {
     public name: string = "unnamed";
 
-    public parent?: Obj;
+    public parent?: Obj = null;
     public children: Obj[] = [];
 
     constructor(parent?: Obj, name?: string) {
@@ -15,6 +15,14 @@ export default class Obj {
         this.children.push(...children);
         for (const c of children) c.parent = this;
         return this;
+    }
+
+    public remove() {
+        if (this.parent) {
+            let i = this.parent.children.indexOf(this);
+            if (i >= 0) this.parent.children.splice(i, 1);
+            this.parent = null;
+        }
     }
 
     public render(renderer: Renderer) {}

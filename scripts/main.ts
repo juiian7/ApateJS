@@ -1,24 +1,31 @@
 import Apate, { World } from "../engine/index.js";
 import Renderer from "../engine/graphics/webgl2/Renderer.js";
 
-const canvas = document.querySelector("canvas");
+import Player from "./Player.js";
+import Room from "./Room.js";
 
-class Test extends World.Obj {
-    public render(renderer: Renderer): void {
-        renderer.clear();
-    }
-}
+const canvas = document.querySelector("canvas");
 
 class Game extends Apate {
     counter: number = 0;
 
+    player: Player;
+    currentRoom: Room;
+
     async init(): Promise<void> {
         // load assets
-        this.counter = 60;
-
         console.log(this);
-        this.scene.add(new Test());
+
+        // register events (dead, room_exit, ...)
+
+        this.player = new Player(this.scene);
+
+        this.currentRoom = Room.load("");
+        this.scene.add(this.currentRoom);
     }
+
+    onDied() {}
+    onRoomExit() {}
 
     update(): void {
         this.counter--;
