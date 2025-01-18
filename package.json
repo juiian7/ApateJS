@@ -1,0 +1,14 @@
+{
+  "name": "hogruta-remasted",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsc -w"
+  },
+  "dependencies": {
+    "typescript": "5.7.3"
+  },
+  "author": "ZupaJul",
+  "license": "ISC",
+  "description": ""
+}
