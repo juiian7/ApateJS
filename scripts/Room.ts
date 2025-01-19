@@ -9,7 +9,7 @@ export default class Room extends World.Obj {
 
     public static load(args: any): Room {
         // get room data from args
-        let data;
+        let data = { _room_name: "Demo" };
         return new Room(data);
     }
 }

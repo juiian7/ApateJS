@@ -1,4 +1,6 @@
 import Obj from "./Obj.js";
 import Scene from "./Scene.js";
 
-export { Obj, Scene };
+import Sprite from "./drawing/Sprite.js";
+
+export { Obj, Scene, Sprite };

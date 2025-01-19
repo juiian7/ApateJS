@@ -1,3 +1,4 @@
+import Context from "./graphics/Context.js";
 import Renderer from "./graphics/webgl2/Renderer.js";
 
 import { Scene } from "./scene/index.js";
@@ -18,8 +19,9 @@ const defaultConfig: EngineConfig = {};
 const defaultScreenConfig: ScreenConfig = { autoResize: true, width: 640, height: 360 };
 
 export default class Apate {
-    protected renderer: Renderer;
-    protected scene: Scene;
+    public renderer: Renderer;
+    public context: Context;
+    public scene: Scene;
 
     constructor(config?: EngineConfig) {
         // initialization
@@ -37,6 +39,7 @@ export default class Apate {
 
         this.renderer = new Renderer(config.screen.canvas);
         this.scene = new Scene(null, "Default");
+        this.context = new Context(this);
 
         // run after constructor
         this._init = this._init.bind(this);
@@ -63,7 +66,7 @@ export default class Apate {
 
         // rendering
         this.renderer.begin();
-        this.scene.renderAll(this.renderer);
+        this.context.drawScene(this.scene);
         this.renderer.flush();
 
         // - do timings

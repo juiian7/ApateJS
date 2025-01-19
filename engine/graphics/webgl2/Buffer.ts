@@ -30,7 +30,7 @@ export default class Buffer<T extends TypeArray> {
         this.glUsage = usage === "static_draw" ? gl.STATIC_DRAW : gl.DYNAMIC_DRAW;
     }
 
-    public upload(data: T, vertices: number = 0) {
+    public upload(data: T, vertices: number = 0): this {
         this.gl.bindBuffer(this.glTarget, this.buf);
         this.gl.bufferData(this.glTarget, data, this.glUsage);
         this.data = data;
@@ -38,12 +38,12 @@ export default class Buffer<T extends TypeArray> {
         return this;
     }
 
-    public allocSize(size: number, vertices: number = 0) {
+    public allocSize(size: number, vertices: number = 0): this {
         // @ts-ignore
         return this.upload(size, vertices);
     }
 
-    public update() {
+    public update(): this {
         this.gl.bindBuffer(this.glTarget, this.buf);
         this.gl.bufferSubData(this.glTarget, 0, this.data);
         return this;

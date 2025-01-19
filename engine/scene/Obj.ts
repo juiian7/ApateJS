@@ -1,4 +1,4 @@
-import Renderer from "../graphics/webgl2/Renderer.js";
+import Context from "../graphics/Context.js";
 
 export default class Obj {
     public name: string = "unnamed";
@@ -25,14 +25,14 @@ export default class Obj {
         }
     }
 
-    public render(renderer: Renderer) {}
+    public render(context: Context) {}
 
-    public renderAll(renderer: Renderer) {
+    protected renderAll(context: Context) {
         // render self
-        this.render(renderer);
+        this.render(context);
 
         // render children
         let i = this.children.length;
-        while (i-- > 0) this.children[i].renderAll(renderer);
+        while (i-- > 0) this.children[i].renderAll(context);
     }
 }

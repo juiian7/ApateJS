@@ -1,10 +1,11 @@
-import Apate, { World } from "../engine/index.js";
-import Renderer from "../engine/graphics/webgl2/Renderer.js";
+import Apate, { World, Tile, Vec } from "../engine/index.js";
 
 import Player from "./Player.js";
 import Room from "./Room.js";
 
 const canvas = document.querySelector("canvas");
+
+const tiles = document.querySelector("#tiles");
 
 class Game extends Apate {
     counter: number = 0;
@@ -20,6 +21,8 @@ class Game extends Apate {
 
         this.player = new Player(this.scene);
 
+        this.renderer.clearColor(Vec.from(0x000000ff));
+
         this.currentRoom = Room.load("");
         this.scene.add(this.currentRoom);
     }
@@ -29,6 +32,7 @@ class Game extends Apate {
 
     update(): void {
         this.counter--;
+        this.renderer.clear();
 
         if (this.counter <= 0) {
             console.log("Counter reached 0 -> setting to 60");
