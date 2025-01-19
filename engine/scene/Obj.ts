@@ -8,7 +8,7 @@ export default class Obj {
 
     constructor(parent?: Obj, name?: string) {
         if (name) this.name = name;
-        if (parent) this.parent.add(this);
+        if (parent) parent.add(this);
     }
 
     public add(...children: Obj[]): this {

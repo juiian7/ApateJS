@@ -42,7 +42,7 @@ export default class Apate {
         this._init = this._init.bind(this);
         this._loop = this._loop.bind(this);
 
-        setTimeout(this._init.bind(this), 0);
+        setTimeout(this._init, 0);
     }
 
     /** Internal init only (do not overwrite) */
