@@ -25,14 +25,14 @@ export default class Obj {
         }
     }
 
-    public render(context: Context) {}
+    public draw(context: Context) {}
 
-    protected renderAll(context: Context) {
+    protected drawRec(context: Context) {
         // render self
-        this.render(context);
+        this.draw(context);
 
         // render children
         let i = this.children.length;
-        while (i-- > 0) this.children[i].renderAll(context);
+        while (i-- > 0) this.children[i].drawRec(context);
     }
 }

@@ -59,13 +59,8 @@ export default class Renderer {
 
     popTarget() {}
 
-    use(shader: Shader) {
-        shader.use();
-    }
-
-    draw(array: VertexArray) {
-        array.bind();
-        this.ctx.drawArrays(this.ctx.TRIANGLE_STRIP, 0, array.size);
+    draw(count: number) {
+        this.ctx.drawArrays(this.ctx.TRIANGLE_STRIP, 0, count);
     }
 
     drawInstanced() {}

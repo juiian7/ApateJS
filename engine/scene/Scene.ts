@@ -9,7 +9,7 @@ export default class Scene extends Obj {
 
     public render(context: Context): void {
         // push target
-        this.renderAll(context);
+        this.drawRec(context);
         // pop target
     }
 }

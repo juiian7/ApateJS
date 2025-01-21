@@ -27,8 +27,18 @@ export default class Vec {
         this.offset = offset;
     }
 
-    public vec() {
+    public vec(): number[] {
         return this.data;
+    }
+
+    public color(): number[] {
+        if (this.r > 1 || this.g > 1 || this.b > 1 || this.a > 1) this.divide(255);
+        return this.vec();
+    }
+
+    public divide(v: number): this {
+        for (let i = 0; i < this.data.length; i++) this.data[i] /= v;
+        return this;
     }
 
     // Getter & Setter

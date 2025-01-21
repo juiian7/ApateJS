@@ -22,10 +22,10 @@ export default class Material {
         this.source = source;
     }
 
-    private _runtime: Shader;
+    private static _runtime: Shader;
     public compile(renderer: Renderer): Shader {
-        if (!this._runtime) this._runtime = new Shader(renderer.ctx, this.source);
-        return this._runtime;
+        if (!Material._runtime) Material._runtime = new Shader(renderer.ctx, this.source);
+        return Material._runtime;
     }
 }
 

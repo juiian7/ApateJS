@@ -33,8 +33,8 @@ export default class Shader {
     public readonly source: ShaderSource;
 
     public attrLayout: AttributeLayout = [];
-    public numOfCompPerVertex: number = 0;
-    public uniformTypes: UniformTypes = {};
+    //private numOfCompPerVertex: number = 0;
+    private uniformTypes: UniformTypes = {};
 
     constructor(gl: WebGL2RenderingContext, source: ShaderSource) {
         this.gl = gl;
@@ -75,7 +75,7 @@ export default class Shader {
                 console.warn("Couldn't auto generate attribute layout!");
                 return;
             }
-            this.numOfCompPerVertex += compSize;
+            //this.numOfCompPerVertex += compSize;
             this.attrLayout.push({ size: compSize, typeSize: 4 /* only floats */ });
         }
     }
@@ -105,6 +105,24 @@ export default class Shader {
         // delete shaders?
     }
 
+    public use() {
+        this.gl.useProgram(this.program);
+        // uniforms should be set
+    }
+
+    public setUniform(name: string, value: number | number[]) {
+        let uniform = this.uniformTypes[name];
+        if (uniform) {
+            if (uniform.type[0] == "M") this.gl[`uniform${uniform.type}v`](uniform.location, false, value); //matrix
+            else if (uniform.type[0] == "T") this.gl.uniform1i(uniform.location, value as any); // texture
+            else this.gl[`uniform${uniform.type}v`](uniform.location, value); // vec
+        }
+    }
+
+    public setUniforms(uniforms: { [name: string]: number | number[] }) {
+        for (const name in uniforms) this.setUniform(name, uniforms[name]);
+    }
+
     private applyUniforms() {
         /* let uniforms = this.material.getUniforms();
         for (const name in uniforms) {
@@ -124,10 +142,5 @@ export default class Shader {
                 this.gl[`uniform${setter.type}v`](setter.location, uniforms[name]);
             }
         } */
-    }
-
-    public use() {
-        this.gl.useProgram(this.program);
-        this.applyUniforms();
     }
 }

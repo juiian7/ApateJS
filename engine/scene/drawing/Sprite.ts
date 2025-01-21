@@ -4,9 +4,18 @@ import Tile from "../../core/Tile.js";
 import Vec from "../../core/Vec.js";
 
 import Context from "../../graphics/Context.js";
+import { SpriteMaterial } from "../../graphics/Material.js";
 
 export default class Sprite extends Obj {
-    public tile: Tile;
+    public material: SpriteMaterial = new SpriteMaterial();
+
+    public get tile(): Tile {
+        return this.material.tile;
+    }
+
+    public set tile(value: Tile) {
+        this.material.tile = value;
+    }
 
     constructor(tile?: Tile, parent?: Obj, name?: string) {
         super(parent, name);
@@ -17,8 +26,7 @@ export default class Sprite extends Obj {
 
     fromTexture() {}
 
-    public render(context: Context): void {
-        // sprite rendering
-        context.drawTile(this.tile);
+    public draw(context: Context): void {
+        context.drawTile(null, this.material.tile, this.material);
     }
 }

@@ -16,7 +16,10 @@ export default class Buffer<T extends TypeArray> {
     private readonly glUsage: number;
 
     public data: T;
-    public vertices: number = 0;
+
+    public get len() {
+        return this.data.length;
+    }
 
     constructor(gl: WebGL2RenderingContext, target: BufferTarget = "array", usage: BufferUsage = "static_draw") {
         this.gl = gl;
@@ -30,24 +33,24 @@ export default class Buffer<T extends TypeArray> {
         this.glUsage = usage === "static_draw" ? gl.STATIC_DRAW : gl.DYNAMIC_DRAW;
     }
 
-    public upload(data: T, vertices: number = 0): this {
+    public upload(data: T): this {
         this.gl.bindBuffer(this.glTarget, this.buf);
         this.gl.bufferData(this.glTarget, data, this.glUsage);
         this.data = data;
-        this.vertices = vertices;
+
         return this;
     }
 
-    public allocSize(size: number, vertices: number = 0): this {
+    public allocSize(size: number): this {
         // @ts-ignore
-        return this.upload(size, vertices);
+        return this.upload(size);
     }
 
-    public update(): this {
+    /*  public update(): this {
         this.gl.bindBuffer(this.glTarget, this.buf);
         this.gl.bufferSubData(this.glTarget, 0, this.data);
         return this;
-    }
+    } */
 
     public bind() {
         this.gl.bindBuffer(this.glTarget, this.buf);

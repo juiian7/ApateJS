@@ -16,7 +16,7 @@ export default class Player extends World.Obj {
         super(parent, "Player");
 
         // sprite
-        new World.Sprite(null, this, "Sprite");
+        new World.Sprite(animations.idle[0], this, "Sprite");
         // collider
         // physic
 

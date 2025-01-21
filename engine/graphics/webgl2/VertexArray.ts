@@ -8,8 +8,11 @@ export default class VertexArray {
 
     desiredLayout: AttributeLayout;
 
-    get size(): number {
-        return 0;
+    private vertexCount: number = 0;
+
+    get count(): number {
+        if (this.vertexCount == 0) console.warn("Vertex count is zero!");
+        return this.vertexCount;
     }
 
     constructor(gl: WebGL2RenderingContext) {
@@ -28,6 +31,7 @@ export default class VertexArray {
         this.bind();
         buffer.bind();
 
+        let size = 0;
         let offset = 0;
         let stride = 0;
         for (const attr of layout) stride += attr.size * attr.typeSize;
@@ -36,8 +40,10 @@ export default class VertexArray {
             this.gl.vertexAttribPointer(index, attr.size, this.gl.FLOAT, false, stride, offset);
             if (attr.divisor) this.gl.vertexAttribDivisor(index, attr.divisor);
             offset += attr.size * attr.typeSize;
+            size += attr.size;
             index++;
         }
+        this.vertexCount = buffer.len / size;
     }
 
     public setBuffers(buffers: Buffer<any>[], layouts: AttributeLayout[]) {

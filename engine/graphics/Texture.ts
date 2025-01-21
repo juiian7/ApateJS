@@ -79,13 +79,12 @@ export default class Texture {
     // Renderer helper
 
     private _runtime: WebGLTexture;
-    public compile(renderer: Renderer): WebGLTexture {
-        if (!this._runtime) this._runtime = this._init(renderer);
+    public compile(renderer: Renderer, slot: number): WebGLTexture {
+        this._bindTexture(renderer.ctx, slot);
         return this._runtime;
     }
 
-    private _init(renderer: Renderer) {
-        let gl = renderer.ctx;
+    private _init(gl: WebGL2RenderingContext) {
         this._runtime = gl.createTexture();
         if (!this._runtime) throw new Error("Couldn't create Texture!");
         gl.bindTexture(gl.TEXTURE_2D, this._runtime);
@@ -95,21 +94,19 @@ export default class Texture {
         if (this.source) gl.texImage2D(gl.TEXTURE_2D, 0, iFormat, format, gl.UNSIGNED_BYTE, this.source);
         else gl.texImage2D(gl.TEXTURE_2D, 0, iFormat, this.width, this.height, 0, format, gl.UNSIGNED_BYTE, this.buffer);
 
-        this._setTexParams(renderer);
+        this._setTexParams(gl);
 
         return this._runtime;
     }
 
-    private _bindTexture(renderer: Renderer, slot: number) {
-        if (!this._runtime) this._init(renderer);
+    private _bindTexture(gl: WebGL2RenderingContext, slot: number) {
+        if (!this._runtime) this._init(gl);
 
-        let gl = renderer.ctx;
         gl.activeTexture(gl.TEXTURE0 + slot);
         gl.bindTexture(gl.TEXTURE_2D, this._runtime);
     }
 
-    private _setTexParams(renderer: Renderer) {
-        let gl = renderer.ctx;
+    private _setTexParams(gl: WebGL2RenderingContext) {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, matchFilter(this.parameter.min, gl));
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, matchFilter(this.parameter.mag, gl));
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, matchWrap(this.parameter.warp_h, gl));
