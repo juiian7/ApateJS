@@ -11,7 +11,7 @@ import Shader, { ShaderSource } from "./webgl2/Shader.js";
 export default class Material {
     public readonly source: ShaderSource;
 
-    public color: Vec = Vec.from(0xff00ffff);
+    public color: Vec = Vec.from(0xffffffff);
 
     constructor(source?: ShaderSource) {
         if (!source) {

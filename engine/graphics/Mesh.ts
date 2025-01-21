@@ -16,9 +16,11 @@ interface VertexData {
     data: number[];
     vertexSize: number;
     material?: Material;
+    attributeLocation?: number;
 }
 
 export default class Mesh {
+    public name: string;
     public readonly arrays: VertexData[] = [];
     public material?: Material;
 
@@ -43,14 +45,26 @@ export default class Mesh {
         }
         if (!this._runtime) {
             this._runtime = new VertexArray(renderer.ctx);
-            for (let i = 0; i < this._buffers.length; i++) {
-                this._runtime.setBuffer(this._buffers[i], [{ size: this.arrays[i].vertexSize, typeSize: 4 }], i);
+            if (this.material) {
+                this._runtime.setBuffers(
+                    this._buffers,
+                    this.material.compile(renderer).attrLayout.map((l) => [l])
+                );
+            } else {
+                for (let i = 0; i < this._buffers.length; i++) {
+                    this._runtime.setBuffer(
+                        this._buffers[i],
+                        [{ size: this.arrays[i].vertexSize, typeSize: 4 }],
+                        this.arrays[i].attributeLocation || i
+                    );
+                }
             }
         }
         /* if (this.needsUpdate) {
             // do update // new data to buffers
             this._runtime.setBuffers(this._buffers, []);
         } */
+        this._runtime.bind();
         return this._runtime;
     }
 }

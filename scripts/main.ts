@@ -19,6 +19,12 @@ class Game extends Apate {
 
         // register events (dead, room_exit, ...)
 
+        let prism = await (await fetch("assets/prism.obj")).text();
+        let model = await World.Model.loadObj("assets/prism.obj");
+        console.log(model);
+
+        this.scene.add(model);
+
         this.player = new Player(this.scene);
 
         this.renderer.clearColor(Vec.from(0x000000ff));

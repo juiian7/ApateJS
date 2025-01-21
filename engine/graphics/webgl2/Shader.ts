@@ -6,7 +6,8 @@ export interface ShaderSource {
 }
 
 type AttributeLayout = { size: number; typeSize: number; divisor?: number }[];
-type UniformTypes = { [name: string]: { type: string; location: WebGLUniformLocation } };
+type UniformInfo = { [name: string]: { type: string; location: WebGLUniformLocation } };
+type AttributeInfo = { [name: string]: { /* type: string; */ location: number } };
 
 const uniformTypeMap = {
     0x8b50: "2f",
@@ -32,9 +33,10 @@ export default class Shader {
 
     public readonly source: ShaderSource;
 
-    public attrLayout: AttributeLayout = [];
+    public readonly attrLayout: AttributeLayout = [];
     //private numOfCompPerVertex: number = 0;
-    private uniformTypes: UniformTypes = {};
+    public readonly uniformInfo: UniformInfo = {};
+    public readonly attributeInfo: AttributeInfo = {};
 
     constructor(gl: WebGL2RenderingContext, source: ShaderSource) {
         this.gl = gl;
@@ -59,7 +61,7 @@ export default class Shader {
                 console.warn("Couldn't auto get uniform type!");
                 return;
             }
-            this.uniformTypes[uni.name] = { type, location: this.gl.getUniformLocation(this.program, uni.name)! };
+            this.uniformInfo[uni.name] = { type, location: this.gl.getUniformLocation(this.program, uni.name)! };
         }
     }
 
@@ -75,6 +77,8 @@ export default class Shader {
                 console.warn("Couldn't auto generate attribute layout!");
                 return;
             }
+
+            this.attributeInfo[attr.name] = { /* type: attr.type,  */ location: this.gl.getAttribLocation(this.program, attr.name) };
             //this.numOfCompPerVertex += compSize;
             this.attrLayout.push({ size: compSize, typeSize: 4 /* only floats */ });
         }
@@ -111,7 +115,7 @@ export default class Shader {
     }
 
     public setUniform(name: string, value: number | number[]) {
-        let uniform = this.uniformTypes[name];
+        let uniform = this.uniformInfo[name];
         if (uniform) {
             if (uniform.type[0] == "M") this.gl[`uniform${uniform.type}v`](uniform.location, false, value); //matrix
             else if (uniform.type[0] == "T") this.gl.uniform1i(uniform.location, value as any); // texture
