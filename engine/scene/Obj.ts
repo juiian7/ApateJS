@@ -1,3 +1,4 @@
+import Transform from "../core/Transform.js";
 import Context from "../graphics/Context.js";
 
 export default class Obj {
@@ -6,9 +7,15 @@ export default class Obj {
     public parent?: Obj = null;
     public children: Obj[] = [];
 
+    public transform: Transform;
+    private absolut: Transform;
+
     constructor(parent?: Obj, name?: string) {
         if (name) this.name = name;
         if (parent) parent.add(this);
+
+        this.transform = new Transform();
+        this.absolut = new Transform();
     }
 
     public add(...children: Obj[]): this {
@@ -34,5 +41,17 @@ export default class Obj {
         // render children
         let i = this.children.length;
         while (i-- > 0) this.children[i].drawRec(context);
+    }
+
+    public absolutTransform(): Transform {
+        if (!this.parent) {
+            this.absolut.setTo(this.transform.position, this.transform.rotation, this.transform.scale);
+            return this.absolut;
+        }
+
+        this.absolut.setTo(this.parent.absolut.position, this.parent.absolut.rotation, this.parent.absolut.scale);
+        this.absolut.add(this.transform.position, this.transform.rotation, this.transform.scale);
+
+        return this.absolut;
     }
 }

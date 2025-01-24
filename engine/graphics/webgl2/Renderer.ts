@@ -2,6 +2,8 @@ import Vec from "../../core/Vec.js";
 import VertexArray from "./VertexArray.js";
 import Shader from "./Shader.js";
 
+type DrawMode = "lines" | "line_loop" | "line_strip" | "points" | "triangles" | "triangle_fan" | "triangle_strip";
+
 export default class Renderer {
     public readonly canvas: HTMLCanvasElement;
     public readonly ctx: WebGL2RenderingContext;
@@ -14,6 +16,8 @@ export default class Renderer {
         this.ctx = canvas.getContext("webgl2");
 
         if (!this.ctx) throw new Error("WebGL2 not supported... :(");
+
+        this.ctx.enable(this.ctx.DEPTH_TEST);
 
         this.clearColor(new Vec([0, 0, 0, 1]));
         this.mask = this.clearMask();
@@ -59,8 +63,27 @@ export default class Renderer {
 
     popTarget() {}
 
-    draw(count: number) {
-        this.ctx.drawArrays(this.ctx.TRIANGLE_STRIP, 0, count);
+    drawMode(mode: DrawMode): number {
+        switch (mode) {
+            case "lines":
+                return this.ctx.LINES;
+            case "line_loop":
+                return this.ctx.LINE_LOOP;
+            case "line_strip":
+                return this.ctx.LINE_STRIP;
+            case "points":
+                return this.ctx.POINTS;
+            case "triangle_fan":
+                return this.ctx.TRIANGLE_FAN;
+            case "triangle_strip":
+                return this.ctx.TRIANGLE_STRIP;
+            case "triangles":
+                return this.ctx.TRIANGLES;
+        }
+    }
+
+    draw(count: number, drawMode: number = 5) {
+        this.ctx.drawArrays(drawMode, 0, count);
     }
 
     drawInstanced() {}

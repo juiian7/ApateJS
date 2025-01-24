@@ -19,7 +19,7 @@ export default class Model extends Obj {
 
     public draw(context: Context): void {
         for (let i = 0; i < this.meshes.length; i++) {
-            context.drawMesh(null, this.meshes[i], this.material);
+            context.drawMesh(this.absolutTransform(), this.meshes[i], this.material);
         }
     }
 
@@ -42,10 +42,20 @@ export default class Model extends Obj {
                 let texture: number[] = [];
                 let normal: number[] = [];
                 for (const face of store["f"]) {
-                    let [v1, v2, v3] = face.map((v) => v.split("/"));
+                    let [v1, v2, v3, ...vn] = face.map((v) => v.split("/"));
                     position.push(...store["v"][v1[0] - 1], ...store["v"][v2[0] - 1], ...store["v"][v3[0] - 1]);
                     if (v2) texture.push(...store["vt"][v1[1] - 1], ...store["vt"][v2[1] - 1], ...store["vt"][v3[1] - 1]);
                     if (v3) normal.push(...store["vn"][v1[2] - 1], ...store["vn"][v2[2] - 1], ...store["vn"][v3[2] - 1]);
+                    if (vn.length > 0) {
+                        /* for (let i = 2; i < vn.length - 1; i++) {
+                            position.push(...store["v"][v1[0] - 1], ...store["v"][vn[i][0] - 1], ...store["v"][vn[i + 1][0] - 1]);
+                            texture.push(...store["v"][v1[1] - 1], ...store["v"][vn[i][1] - 1], ...store["v"][vn[i + 1][1] - 1]);
+                            normal.push(...store["v"][v1[2] - 1], ...store["v"][vn[i][2] - 1], ...store["v"][vn[i + 1][2] - 1]);
+                        } */
+                        /* position.push(...store["v"][v1[0] - 1], ...store["v"][v4[0] - 1]);
+                        texture.push(...store["vt"][v1[1] - 1], ...store["vt"][v4[1] - 1]);
+                        normal.push(...store["vn"][v1[2] - 1], ...store["vn"][v4[2] - 1]); */
+                    }
                 }
                 mesh.arrays.push({ type: "position", data: position, vertexSize: store["v"][0].length });
                 if (texture.length > 0) mesh.arrays.push({ type: "texture", data: texture, vertexSize: store["vt"][0].length });

@@ -27,6 +27,6 @@ export default class Sprite extends Obj {
     fromTexture() {}
 
     public draw(context: Context): void {
-        context.drawTile(null, this.material.tile, this.material);
+        context.drawTile(this.absolutTransform(), this.material.tile, this.material);
     }
 }

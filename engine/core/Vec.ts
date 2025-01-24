@@ -20,11 +20,53 @@ export default class Vec {
     }
 
     protected data: number[];
-    protected offset: number;
+    protected offset: number = 0;
+    protected end: number = 4;
 
-    public constructor(data: number[], offset: number = 0) {
+    public constructor(data: number[], offset: number = 0, end: number = 4) {
         this.data = data;
         this.offset = offset;
+        this.end = end;
+    }
+
+    public setTo(vec: Vec): this {
+        this.data[this.offset + 0] = vec.x;
+        this.data[this.offset + 1] = vec.y;
+        this.data[this.offset + 2] = vec.z;
+        this.data[this.offset + 3] = vec.w;
+        return this;
+    }
+
+    public add(vec: Vec): this {
+        this.data[this.offset + 0] += vec.x;
+        this.data[this.offset + 1] += vec.y;
+        this.data[this.offset + 2] += vec.z;
+        this.data[this.offset + 3] += vec.w;
+        return this;
+    }
+
+    public subtract(vec: Vec): this {
+        this.data[this.offset + 0] -= vec.x;
+        this.data[this.offset + 1] -= vec.y;
+        this.data[this.offset + 2] -= vec.z;
+        this.data[this.offset + 3] -= vec.w;
+        return this;
+    }
+
+    public multiply(vec: Vec): this {
+        this.data[this.offset + 0] *= vec.x;
+        this.data[this.offset + 1] *= vec.y;
+        this.data[this.offset + 2] *= vec.z;
+        this.data[this.offset + 3] *= vec.w;
+        return this;
+    }
+
+    public divide(v: number): this {
+        this.data[this.offset + 0] /= v;
+        this.data[this.offset + 1] /= v;
+        this.data[this.offset + 2] /= v;
+        this.data[this.offset + 3] /= v;
+        return this;
     }
 
     public vec(): number[] {
@@ -34,11 +76,6 @@ export default class Vec {
     public color(): number[] {
         if (this.r > 1 || this.g > 1 || this.b > 1 || this.a > 1) this.divide(255);
         return this.vec();
-    }
-
-    public divide(v: number): this {
-        for (let i = 0; i < this.data.length; i++) this.data[i] /= v;
-        return this;
     }
 
     // Getter & Setter

@@ -27,6 +27,8 @@ const uniformTypeMap = {
     0x8b60: "SAMPLER_CUBE??",
 };
 
+const cache: { [source: string]: Shader } = {};
+
 export default class Shader {
     private readonly gl: WebGL2RenderingContext;
     private readonly program: WebGLProgram;
@@ -48,6 +50,15 @@ export default class Shader {
         this.compile();
         this.readAttributeLayout();
         this.readUniformTypes();
+    }
+
+    public static cache(gl: WebGL2RenderingContext, source: ShaderSource): Shader {
+        let hash = source.vertex + source.fragment;
+        if (!cache[hash]) {
+            cache[hash] = new Shader(gl, source);
+        }
+
+        return cache[hash];
     }
 
     private readUniformTypes() {
@@ -120,7 +131,7 @@ export default class Shader {
             if (uniform.type[0] == "M") this.gl[`uniform${uniform.type}v`](uniform.location, false, value); //matrix
             else if (uniform.type[0] == "T") this.gl.uniform1i(uniform.location, value as any); // texture
             else this.gl[`uniform${uniform.type}v`](uniform.location, value); // vec
-        }
+        } // else console.warn(`uniform "${name}" not found`);
     }
 
     public setUniforms(uniforms: { [name: string]: number | number[] }) {
