@@ -8,7 +8,7 @@ import Tile from "./core/Tile.js";
 import * as World from "./scene/index.js";
 
 // graphics
-import Material from "./graphics/Material.js";
+import Material, * as Mat from "./graphics/Material.js";
 import Mesh from "./graphics/Mesh.js";
 import Texture from "./graphics/Texture.js";
 import Context from "./graphics/Context.js";
@@ -18,4 +18,4 @@ import Renderer from "./graphics/webgl2/Renderer.js";
 
 export default Apate;
 export { Tile, Vec, World };
-export { Context, Material, Mesh, Renderer, Texture };
+export { Context, Mat, Material, Mesh, Renderer, Texture };

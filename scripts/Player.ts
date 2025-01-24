@@ -1,4 +1,4 @@
-import { World, Tile } from "../engine/index.js";
+import { World, Tile, Vec } from "../engine/index.js";
 
 const charactersImage = document.querySelector("#characters") as HTMLImageElement;
 
@@ -16,7 +16,9 @@ export default class Player extends World.Obj {
         super(parent, "Player");
 
         // sprite
-        new World.Sprite(animations.idle[0], this, "Sprite");
+        let sprite = new World.ASprite(animations.walk, this, "Sprite");
+        sprite.transform.move(100, 0, 0);
+        sprite.transform.scale = Vec.from(8 * 2, 8 * 2, 1);
         // collider
         // physic
 

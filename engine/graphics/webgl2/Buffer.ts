@@ -46,11 +46,11 @@ export default class Buffer<T extends TypeArray> {
         return this.upload(size);
     }
 
-    /*  public update(): this {
+    public update(): this {
         this.gl.bindBuffer(this.glTarget, this.buf);
         this.gl.bufferSubData(this.glTarget, 0, this.data);
         return this;
-    } */
+    }
 
     public bind() {
         this.gl.bindBuffer(this.glTarget, this.buf);

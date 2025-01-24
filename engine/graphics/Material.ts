@@ -1,6 +1,7 @@
 // specifies how geometry is rendered (defines shader and holds data) -> at runtime converted to shader
 import default3d from "./webgl2/shader/default3d.js";
 import sprite2d from "./webgl2/shader/sprite2d.js";
+import batch2d from "./webgl2/shader/batch2d.js";
 
 import Tile from "../core/Tile.js";
 import Vec from "../core/Vec.js";
@@ -33,9 +34,22 @@ export class SpriteMaterial extends Material {
     public tile: Tile;
 
     constructor() {
-        // use Sprite 2d shader
         super(sprite2d);
+    }
+}
 
-        this.color = Vec.from(0xffffffff);
+export class SpriteBatchMaterial extends Material {
+    public atlas: Tile;
+
+    constructor() {
+        super(batch2d);
+    }
+}
+
+export class Default3DMaterial extends Material {
+    public texture: Tile;
+
+    constructor() {
+        super(default3d);
     }
 }

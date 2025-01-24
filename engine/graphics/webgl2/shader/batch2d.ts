@@ -1,22 +1,23 @@
 export default {
     vertex: `#version 300 es
 
-    in vec4 aVertexPos;
+    in vec2 aVertexPos;
     in vec2 aTextCoord;
+    in vec4 aClip;
+    in mat4 aMatrix;
 
     uniform mat4 uModel;
     uniform mat4 uView;
     uniform mat4 uProjection;
 
     uniform vec2 uAtlasSize;
-    uniform vec4 uClip;
     
     out vec2 uv;
 
     void main() { 
-        gl_Position = uProjection * uView * uModel * aVertexPos;
+        gl_Position = uProjection * uView * ( aMatrix * uModel ) * vec4(aVertexPos, 0, 1);
         
-        uv = (uClip.xy / uAtlasSize) + ((aTextCoord * uClip.zw) / uAtlasSize);
+        uv = (aClip.xy / uAtlasSize) + ((aTextCoord * aClip.zw) / uAtlasSize);
     }
     `,
     fragment: `#version 300 es
@@ -31,5 +32,6 @@ export default {
 
     void main() { 
         glColor = texture(uAtlas, uv) * uColor;
+        glColor = /* texture(uAtlas, uv) * */ uColor;
     }`,
 };

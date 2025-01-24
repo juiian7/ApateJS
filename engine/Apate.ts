@@ -23,6 +23,8 @@ export default class Apate {
     public context: Context;
     public scene: Scene;
 
+    public delta: number = 20;
+
     constructor(config?: EngineConfig) {
         // initialization
         if (!config) config = defaultConfig;

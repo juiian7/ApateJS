@@ -32,6 +32,10 @@ export default class Texture {
     public width: number;
     public height: number;
 
+    public get size(): number[] {
+        return [this.width, this.height];
+    }
+
     private buffer: ArrayBufferView | null = null;
 
     private format: TextureFormat;

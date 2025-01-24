@@ -39,11 +39,11 @@ export default class VertexArray {
             this.gl.enableVertexAttribArray(index);
             this.gl.vertexAttribPointer(index, attr.size, this.gl.FLOAT, false, stride, offset);
             if (attr.divisor) this.gl.vertexAttribDivisor(index, attr.divisor);
+            else size += attr.size;
             offset += attr.size * attr.typeSize;
-            size += attr.size;
             index++;
         }
-        this.vertexCount = buffer.len / size;
+        if (size > 0) this.vertexCount = buffer.len / size; // FIXME wrong size when divisor
     }
 
     public setBuffers(buffers: Buffer<any>[], layouts: AttributeLayout[]) {

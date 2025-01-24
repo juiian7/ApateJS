@@ -2,7 +2,7 @@ import Vec from "../../core/Vec.js";
 import VertexArray from "./VertexArray.js";
 import Shader from "./Shader.js";
 
-type DrawMode = "lines" | "line_loop" | "line_strip" | "points" | "triangles" | "triangle_fan" | "triangle_strip";
+export type DrawMode = "lines" | "line_loop" | "line_strip" | "points" | "triangles" | "triangle_fan" | "triangle_strip";
 
 export default class Renderer {
     public readonly canvas: HTMLCanvasElement;
@@ -18,6 +18,9 @@ export default class Renderer {
         if (!this.ctx) throw new Error("WebGL2 not supported... :(");
 
         this.ctx.enable(this.ctx.DEPTH_TEST);
+
+        this.ctx.enable(this.ctx.BLEND);
+        this.ctx.blendFunc(this.ctx.SRC_ALPHA, this.ctx.ONE_MINUS_SRC_ALPHA);
 
         this.clearColor(new Vec([0, 0, 0, 1]));
         this.mask = this.clearMask();
@@ -86,5 +89,7 @@ export default class Renderer {
         this.ctx.drawArrays(drawMode, 0, count);
     }
 
-    drawInstanced() {}
+    drawInstanced(count: number, instances: number, drawMode: number = 5) {
+        this.ctx.drawArraysInstanced(drawMode, 0, count, instances);
+    }
 }

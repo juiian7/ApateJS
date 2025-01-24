@@ -2,7 +2,7 @@ import Apate from "../Apate.js";
 import Renderer from "./webgl2/Renderer.js";
 
 import Tile from "../core/Tile.js";
-import Material, { SpriteMaterial } from "./Material.js";
+import Material, { Default3DMaterial, SpriteMaterial } from "./Material.js";
 
 import { Scene, Sprite } from "../scene/index.js";
 import Mesh from "./Mesh.js";
@@ -27,18 +27,21 @@ export default class Context {
         return this.cameras[this.cameras.length - 1];
     }
 
-    engine: Apate;
-    renderer: Renderer;
+    public engine: Apate;
+    public renderer: Renderer;
 
+    private plane: Mesh;
     private white: Texture;
-    private defaultMeshMat: Material;
+    private defaultMeshMat: Default3DMaterial;
 
     constructor(engine: Apate) {
         this.engine = engine;
         this.renderer = engine.renderer;
 
+        this.plane = Mesh.plane2D();
         this.white = Texture.fromColor(Vec.from(0xffffffff));
-        this.defaultMeshMat = new Material(default3d);
+        this.defaultMeshMat = new Default3DMaterial();
+        this.defaultMeshMat.texture = new Tile(this.white);
     }
 
     pushCamera(camera: ICamera) {
@@ -61,21 +64,23 @@ export default class Context {
 
         shader.setUniforms({
             uColor: material.color.color(),
-            uTile: slot,
+            uAtlas: slot,
+            uAtlasSize: tile.texture.size,
+            uClip: tile.clip.vec(),
 
             uModel: transform.matrix(),
             uView: inverse(this.camera.transform.matrix()),
             uProjection: this.camera.projection,
         });
 
-        let arrays = Mesh.plane2D().compile(this.renderer);
+        let arrays = this.plane.compile(this.renderer);
         this.renderer.draw(arrays.count);
     }
 
-    drawMesh(transform: Transform, mesh: Mesh, material?: Material) {
+    drawMesh(transform: Transform, mesh: Mesh, material?: Default3DMaterial) {
         let mat = mesh.material || material || this.defaultMeshMat;
 
-        (false || this.white).compile(this.renderer, 1); // set texture
+        (mat.texture.texture || this.white).compile(this.renderer, 1); // set texture
 
         let shader = mat.compile(this.renderer);
         shader.use();
@@ -92,6 +97,6 @@ export default class Context {
         // mesh.arrays.find((a) => a.type == "position").attributeLocation = shader.attributeInfo["aVertPos"].location;
 
         let arrays = mesh.compile(this.renderer);
-        this.renderer.draw(arrays.count, this.renderer.drawMode("triangles")); // draw arrays
+        this.renderer.draw(arrays.count, this.renderer.drawMode(mesh.drawMode)); // draw arrays
     }
 }

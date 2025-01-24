@@ -1,11 +1,11 @@
 import Obj from "../Obj.js";
 
-import Material from "../../graphics/Material.js";
+import { Default3DMaterial } from "../../graphics/Material.js";
 import Mesh from "../../graphics/Mesh.js";
 import Context from "../../graphics/Context.js";
 
 export default class Model extends Obj {
-    private material?: Material;
+    public material?: Default3DMaterial;
     public meshes: Mesh[] = [];
 
     constructor(parent?: Obj) {
@@ -72,6 +72,7 @@ export default class Model extends Obj {
                 submit();
                 mesh = new Mesh();
                 mesh.name = params[0];
+                mesh.drawMode = "triangles";
                 store = { v: [], vn: [], vt: [], f: [] };
             } else if (store[c]) store[c].push(params);
         }

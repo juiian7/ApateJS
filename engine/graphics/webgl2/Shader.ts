@@ -78,7 +78,7 @@ export default class Shader {
 
     private readAttributeLayout() {
         let num = this.gl.getProgramParameter(this.program, this.gl.ACTIVE_ATTRIBUTES);
-        const sizeOf = { 0x8b50: 2, 0x8b51: 3, 0x8b52: 4 }; // only supports float vec 2,3,4
+        const sizeOf = { 0x8b50: 2, 0x8b51: 3, 0x8b52: 4, 35676: 16 }; // only supports float vec 2,3,4,mat4
         for (let i = 0; i < num; i++) {
             let attr = this.gl.getActiveAttrib(this.program, i);
             if (!attr) throw new Error("Error reading attribute!");
