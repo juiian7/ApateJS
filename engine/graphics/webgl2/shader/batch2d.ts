@@ -32,6 +32,5 @@ export default {
 
     void main() { 
         glColor = texture(uAtlas, uv) * uColor;
-        glColor = /* texture(uAtlas, uv) * */ uColor;
     }`,
 };

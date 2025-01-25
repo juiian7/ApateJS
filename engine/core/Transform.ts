@@ -8,8 +8,8 @@ export default class Transform {
     public rotation: Vec;
     public scale: Vec;
 
-    constructor() {
-        this.position = Vec.from(0, 0, 0, 0);
+    constructor(x?: number, y?: number, z?: number) {
+        this.position = Vec.from(x || 0, y || 0, z || 0, 0);
         this.rotation = Vec.from(0, 0, 0, 0);
         this.scale = Vec.from(1, 1, 1, 0);
     }

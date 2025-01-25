@@ -10,6 +10,7 @@ canvas.width = 320;
 canvas.height = 180;
 
 const tilesImg = document.querySelector("#tiles") as HTMLImageElement;
+const tiles = Tile.fromImage(tilesImg).grid(8, 8);
 
 class Game extends Apate {
     counter: number = 0;
@@ -19,6 +20,8 @@ class Game extends Apate {
 
     prism: World.Model;
     mouse: Vec = Vec.from(0, 0, 0);
+
+    sb: World.SpriteBatch;
 
     async init(): Promise<void> {
         // load assets
@@ -54,25 +57,15 @@ class Game extends Apate {
         this.scene.camera.projection = orthographic(0, 320, 180, 0, -100, 100);
         this.scene.camera.transform.move(-160, -90, 0);
 
-        const tiles = Tile.fromImage(tilesImg).grid(8, 8);
+        this.sb = new World.SpriteBatch(tiles[0][0], 100);
+        this.sb.transform.scale = Vec.from(8, 8, 1);
 
-        let sb = new World.SpriteBatch(tiles[0][0]);
-        sb.transform.scale = Vec.from(8 * 2, 8 * 2, 1);
+        this.scene.add(this.sb);
 
-        this.scene.add(sb);
+        this.sb.batch(tiles[0][5], new Transform(0, 0, 0));
+        //this.sb.batch(tiles[1][1], new Transform(0, -8, 0));
 
-        let t1 = new Transform();
-        let t2 = new Transform();
-        let t3 = new Transform();
-        t2.move(-100, 0, 0);
-        t3.move(10, 10, 0);
-
-        //t.move(0, 0, 0);
-        //t.scale = Vec.from(8 * 4, 8 * 4, 1);
-
-        sb.batch(tiles[0][0], t1);
-        sb.batch(tiles[0][1], t2);
-        sb.batch(tiles[0][2], t3);
+        //for (let i = 0; i < 100; i++) this.sb.batch(tiles[0][0], new Transform());
 
         //this.scene.camera.projection = orthographic(-160, 160, 90, -90, -100, 100);
         //this.scene.camera.transform.position = Vec.from(-10, -10, 0);
@@ -93,6 +86,11 @@ class Game extends Apate {
         this.renderer.clear();
 
         //this.prism.transform.rotation.setTo(this.mouse).divide(10);
+        /* for (let i = 0; i < this.sb.transforms.length; i++) {
+            this.sb.tiles[i] = tiles[i % 5][i % 4];
+            this.sb.transforms[i].move((Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, 0);
+        } */
+        this.sb.sync();
 
         if (this.counter <= 0) {
             console.log("Counter reached 0 -> setting to 60");

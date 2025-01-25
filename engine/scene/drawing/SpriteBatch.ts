@@ -12,18 +12,18 @@ import Buffer from "../../graphics/webgl2/Buffer.js";
 import { inverse } from "../../core/Matrix.js";
 
 const plane = {
-    data: new Float32Array([0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1]),
+    data: new Float32Array([0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0]),
     layout: [
-        { size: 2, typeSize: 2 },
-        { size: 2, typeSize: 2 },
+        { size: 2, typeSize: 4 },
+        { size: 2, typeSize: 4 },
     ],
 };
 
 export default class SpriteBatch extends Obj {
     public material: SpriteBatchMaterial = new SpriteBatchMaterial();
 
-    private tiles: Tile[] = [];
-    private transforms: Transform[] = [];
+    public tiles: Tile[] = [];
+    public transforms: Transform[] = [];
 
     private clips: Float32Array;
     private matrices: Float32Array;
@@ -69,7 +69,6 @@ export default class SpriteBatch extends Obj {
             offset = i * 16;
             for (let j = 0; j < 16; j++) this.matrices[offset + j] = matrix[j];
         }
-        console.log(this);
     }
 
     private _runtime: VertexArray;
@@ -116,6 +115,6 @@ export default class SpriteBatch extends Obj {
             uProjection: context.camera.projection,
         });
         this._runtime.bind();
-        context.renderer.drawInstanced(6, this.tiles.length, context.renderer.drawMode("triangle_strip"));
+        context.renderer.drawInstanced(4, this.tiles.length, context.renderer.drawMode("triangle_strip"));
     }
 }
