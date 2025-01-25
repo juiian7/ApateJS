@@ -18,7 +18,7 @@ export default class Player extends World.Obj {
         // sprite
         let sprite = new World.ASprite(animations.walk, this, "Sprite");
         sprite.transform.move(100, 0, 0);
-        sprite.transform.scale = Vec.from(8 * 2, 8 * 2, 1);
+        sprite.transform.scale = Vec.from(8, 8, 1);
         // collider
         // physic
 

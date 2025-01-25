@@ -1,7 +1,7 @@
 import Context from "./graphics/Context.js";
 import Renderer from "./graphics/webgl2/Renderer.js";
 
-import { Scene } from "./scene/index.js";
+import { Viewport } from "./scene/index.js";
 
 interface EngineConfig {
     screen?: ScreenConfig;
@@ -21,11 +21,16 @@ const defaultScreenConfig: ScreenConfig = { autoResize: true, width: 640, height
 export default class Apate {
     public renderer: Renderer;
     public context: Context;
-    public scene: Scene;
+    public scene: Viewport;
 
+    public startTime: number;
+    public time: number = 0;
+    private last: number = 0;
     public delta: number = 20;
 
     constructor(config?: EngineConfig) {
+        this.startTime = Date.now();
+
         // initialization
         if (!config) config = defaultConfig;
 
@@ -40,7 +45,7 @@ export default class Apate {
         }
 
         this.renderer = new Renderer(config.screen.canvas);
-        this.scene = new Scene(null, "Default");
+        this.scene = new Viewport(null, "Default Viewport");
         this.context = new Context(this);
 
         // run after constructor
@@ -62,16 +67,19 @@ export default class Apate {
 
     private _loop() {
         // - do timings
+        this.time = Date.now() - this.startTime;
+        this.delta = this.time - this.last;
 
         // update
         this.update();
 
         // rendering
-        this.renderer.begin();
-        this.context.drawScene(this.scene);
+        this.renderer.begin(this.delta);
+        this.context.drawViewport(this.scene);
         this.renderer.flush();
 
         // - do timings
+        this.last = this.time;
         window.requestAnimationFrame(this._loop);
     }
 

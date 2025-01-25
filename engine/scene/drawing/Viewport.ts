@@ -1,12 +1,11 @@
-import Obj from "./Obj.js";
+import Obj from "../Obj.js";
 
-import Context, { ICamera } from "../graphics/Context.js";
+import Context, { ICamera } from "../../graphics/Context.js";
 
-import Transform from "../core/Transform.js";
-import { orthographic } from "../core/Matrix.js";
+import Transform from "../../core/Transform.js";
+import { orthographic } from "../../core/Matrix.js";
 
-// like a Godot "viewport" -> render children to this render target
-export default class Scene extends Obj {
+export default class Viewport extends Obj {
     public camera: ICamera = {
         transform: new Transform(),
         projection: orthographic(-10, 10, 10, -10, -10, 10),

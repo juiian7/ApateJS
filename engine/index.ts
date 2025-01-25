@@ -3,6 +3,7 @@ import Apate from "./Apate.js";
 // core
 import Vec from "./core/Vec.js";
 import Tile from "./core/Tile.js";
+import Transform from "./core/Transform.js";
 
 // world
 import * as World from "./scene/index.js";
@@ -17,5 +18,5 @@ import Context from "./graphics/Context.js";
 import Renderer from "./graphics/webgl2/Renderer.js";
 
 export default Apate;
-export { Tile, Vec, World };
+export { Tile, Transform, Vec, World };
 export { Context, Mat, Material, Mesh, Renderer, Texture };

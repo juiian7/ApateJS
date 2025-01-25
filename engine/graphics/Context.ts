@@ -4,13 +4,13 @@ import Renderer from "./webgl2/Renderer.js";
 import Tile from "../core/Tile.js";
 import Material, { Default3DMaterial, SpriteMaterial } from "./Material.js";
 
-import { Scene, Sprite } from "../scene/index.js";
 import Mesh from "./Mesh.js";
 import Vec from "../core/Vec.js";
 import Texture from "./Texture.js";
 import default3d from "./webgl2/shader/default3d.js";
 import Transform from "../core/Transform.js";
 import { inverse, Matrix } from "../core/Matrix.js";
+import { Viewport } from "../scene/index.js";
 
 export interface ICamera {
     transform: Transform;
@@ -39,7 +39,7 @@ export default class Context {
         this.renderer = engine.renderer;
 
         this.plane = Mesh.plane2D();
-        this.white = Texture.fromColor(Vec.from(0xffffffff));
+        this.white = Texture.fromColor(Vec.fromHex(0xffffffff));
         this.defaultMeshMat = new Default3DMaterial();
         this.defaultMeshMat.texture = new Tile(this.white);
     }
@@ -52,7 +52,7 @@ export default class Context {
         return this.cameras.pop();
     }
 
-    drawScene(scene: Scene) {
+    drawViewport(scene: Viewport) {
         scene.render(this);
     }
 

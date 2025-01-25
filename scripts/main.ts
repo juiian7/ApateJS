@@ -21,8 +21,6 @@ class Game extends Apate {
     prism: World.Model;
     mouse: Vec = Vec.from(0, 0, 0);
 
-    sb: World.SpriteBatch;
-
     async init(): Promise<void> {
         // load assets
         console.log(this);
@@ -45,34 +43,19 @@ class Game extends Apate {
             }
         });
 
-        /* this.prism = await World.Model.loadObj("assets/local/suzanne_smooth_3.obj");
-        let mat = new Mat.Default3DMaterial();
-        mat.texture = Tile.fromImage(tilesImg);
-        this.prism.material = mat;
-
-        this.scene.add(this.prism);
+        this.prism = await World.Model.loadObj("assets/prism.obj");
         this.prism.transform.position.add(Vec.from(0, 0, -80));
-        this.prism.transform.scale.add(Vec.from(25, 25, 25)); */
+        this.prism.transform.scale.add(Vec.from(25, 25, 25));
+        this.scene.add(this.prism);
 
         this.scene.camera.projection = orthographic(0, 320, 180, 0, -100, 100);
         this.scene.camera.transform.move(-160, -90, 0);
-
-        this.sb = new World.SpriteBatch(tiles[0][0], 100);
-        this.sb.transform.scale = Vec.from(8, 8, 1);
-
-        this.scene.add(this.sb);
-
-        this.sb.batch(tiles[0][5], new Transform(0, 0, 0));
-        //this.sb.batch(tiles[1][1], new Transform(0, -8, 0));
-
-        //for (let i = 0; i < 100; i++) this.sb.batch(tiles[0][0], new Transform());
-
         //this.scene.camera.projection = orthographic(-160, 160, 90, -90, -100, 100);
         //this.scene.camera.transform.position = Vec.from(-10, -10, 0);
 
-        this.player = new Player(this.scene);
+        this.renderer.clearColor(Vec.fromHex(0x000000ff));
 
-        this.renderer.clearColor(Vec.from(0x000000ff));
+        this.player = new Player(this.scene);
 
         this.currentRoom = Room.load("");
         this.scene.add(this.currentRoom);
@@ -82,19 +65,18 @@ class Game extends Apate {
     onRoomExit() {}
 
     update(): void {
-        this.counter--;
+        this.counter -= this.delta;
         this.renderer.clear();
 
-        //this.prism.transform.rotation.setTo(this.mouse).divide(10);
-        /* for (let i = 0; i < this.sb.transforms.length; i++) {
-            this.sb.tiles[i] = tiles[i % 5][i % 4];
-            this.sb.transforms[i].move((Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, 0);
-        } */
-        this.sb.sync();
+        this.prism.transform.rotation.y += (0.6 * this.delta) / 1000;
 
         if (this.counter <= 0) {
-            console.log("Counter reached 0 -> setting to 60");
-            this.counter = 60;
+            /* `Uptime: ${this.time / 1000}s, ` + */
+            let info = `Fps: ${this.renderer.stats.fps}, Draw calls: ${this.renderer.stats.drawCalls}`;
+
+            console.log(info);
+
+            this.counter = 1000;
         }
     }
 }

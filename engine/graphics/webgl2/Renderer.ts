@@ -8,6 +8,11 @@ export default class Renderer {
     public readonly canvas: HTMLCanvasElement;
     public readonly ctx: WebGL2RenderingContext;
 
+    public stats = {
+        fps: 0,
+        drawCalls: 0,
+    };
+
     private currentClearColor: Vec;
     private mask: number;
 
@@ -52,12 +57,25 @@ export default class Renderer {
         );
     }
 
-    begin() {
+    private _second: number = 1000;
+    private _frames: number = 0;
+    private _drawCalls: number = 0;
+    public begin(dt: number) {
         // called on frame start
+        this._second -= dt;
+        if (this._second <= 0) {
+            this._second = 1000;
+
+            this.stats.fps = this._frames;
+            this._frames = 0;
+        }
+        this._drawCalls = 0;
     }
 
-    flush() {
+    public flush() {
         // called on frame end
+        this._frames++;
+        this.stats.drawCalls = this._drawCalls;
     }
 
     createTarget() {}
@@ -87,9 +105,11 @@ export default class Renderer {
 
     draw(count: number, drawMode: number = 5) {
         this.ctx.drawArrays(drawMode, 0, count);
+        this._drawCalls++;
     }
 
     drawInstanced(count: number, instances: number, drawMode: number = 5) {
         this.ctx.drawArraysInstanced(drawMode, 0, count, instances);
+        this._drawCalls++;
     }
 }

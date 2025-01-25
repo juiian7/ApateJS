@@ -20,7 +20,7 @@ export default class Sprite extends Obj {
     constructor(tile?: Tile, parent?: Obj, name?: string) {
         super(parent, name);
 
-        if (!tile) tile = Tile.fromColor(Vec.from(0xff00ffff));
+        if (!tile) tile = Tile.fromColor(Vec.fromHex(0xff00ffff));
         this.tile = tile;
     }
 

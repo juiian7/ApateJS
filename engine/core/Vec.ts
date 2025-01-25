@@ -1,14 +1,6 @@
 // use for color and pos
 export default class Vec {
-    public static from(num: number, bit?: number): Vec;
-    public static from(x: number, y: number, z: number, w?: number): Vec;
-    public static from(...args: any[]) {
-        if (args.length <= 2) return this.numToVec(args[0], args[1]);
-
-        return new Vec([args[0], args[1], args[2], args[3] || 0]);
-    }
-
-    private static numToVec(num: number, bit: number = 8) {
+    public static fromHex(num: number, bit: number = 8): Vec {
         let mask = 2 ** bit - 1;
         let v = new Vec([
             (num >> (bit * 3)) & mask,
@@ -17,6 +9,10 @@ export default class Vec {
             num & mask, //
         ]);
         return v;
+    }
+
+    public static from(x: number, y: number, z?: number, w?: number): Vec {
+        return new Vec([x, y, z || 0, w || 0]);
     }
 
     protected data: number[];
