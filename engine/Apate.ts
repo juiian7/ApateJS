@@ -1,7 +1,9 @@
+import Input from "./core/Input.js";
 import Context from "./graphics/Context.js";
 import Renderer from "./graphics/webgl2/Renderer.js";
 
-import { Viewport } from "./scene/index.js";
+import { Camera, Viewport } from "./scene/index.js";
+import Obj, { Drawable } from "./scene/Obj.js";
 
 interface EngineConfig {
     screen?: ScreenConfig;
@@ -21,7 +23,9 @@ const defaultScreenConfig: ScreenConfig = { autoResize: true, width: 640, height
 export default class Apate {
     public renderer: Renderer;
     public context: Context;
-    public scene: Viewport;
+    public input: Input;
+
+    public scene: Obj;
 
     public startTime: number;
     public time: number = 0;
@@ -45,8 +49,11 @@ export default class Apate {
         }
 
         this.renderer = new Renderer(config.screen.canvas);
-        this.scene = new Viewport(null, "Default Viewport");
+        this.scene = new Obj(null, "Default Scene");
         this.context = new Context(this);
+        this.context.pushCamera(new Camera(this.renderer.canvas.width, this.renderer.canvas.height, null, null, "Default Camera"));
+
+        this.input = new Input(this.renderer.canvas);
 
         // run after constructor
         this._init = this._init.bind(this);
@@ -75,7 +82,7 @@ export default class Apate {
 
         // rendering
         this.renderer.begin(this.delta);
-        this.context.drawViewport(this.scene);
+        this.scene.render(this.context);
         this.renderer.flush();
 
         // - do timings

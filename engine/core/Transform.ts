@@ -26,16 +26,22 @@ export default class Transform {
         if (scale) this.scale.multiply(scale);
     }
 
-    public move(x: number, y: number, z: number) {
+    public move(x: number = 0, y: number = 0, z: number = 0) {
         this.position.x += x;
         this.position.y += y;
         this.position.z += z;
     }
 
-    public rotate(x: number, y: number, z: number) {
+    public rotate(x: number = 0, y: number = 0, z: number = 0) {
         this.rotation.x += x * rFac;
         this.rotation.y += y * rFac;
         this.rotation.z += z * rFac;
+    }
+
+    public size(x: number = 1, y: number = 1, z: number = 1) {
+        this.scale.x *= x;
+        this.scale.y *= y;
+        this.scale.z *= z;
     }
 
     public matrix(): Matrix {

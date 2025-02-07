@@ -60,6 +60,15 @@ export function multiply(a: Matrix, b: Matrix): Matrix {
     ];
 }
 
+export function multiplyVec(mat: Matrix, vec: Vec): Vec {
+    return new Vec([
+        vec.x * mat[0] + vec.y * mat[4] + vec.z * mat[8] + vec.w * mat[12],
+        vec.x * mat[1] + vec.y * mat[5] + vec.z * mat[9] + vec.w * mat[13],
+        vec.x * mat[2] + vec.y * mat[6] + vec.z * mat[10] + vec.w * mat[14],
+        vec.x * mat[3] + vec.y * mat[7] + vec.z * mat[11] + vec.w * mat[15],
+    ]);
+}
+
 export function orthographic(
     left: number = -1,
     right: number = 1,
@@ -72,6 +81,12 @@ export function orthographic(
     var bt = 1 / (bottom - top);
     var nf = 1 / (near - far);
     return [-2 * lr, 0, 0, 0, 0, -2 * bt, 0, 0, 0, 0, 2 * nf, 0, (left + right) * lr, (top + bottom) * bt, (far + near) * nf, 1];
+}
+
+export function perspective(fov: number, near: number, far: number, aspect: number): Matrix {
+    var f = Math.tan(Math.PI * 0.5 - 0.5 * fov);
+    var rangeInv = 1.0 / (near - far);
+    return [f / aspect, 0, 0, 0, 0, f, 0, 0, 0, 0, (near + far) * rangeInv, -1, 0, 0, near * far * rangeInv * 2, 0];
 }
 
 export function inverse(mat: Matrix): Matrix {
@@ -219,4 +234,15 @@ export function inverse(mat: Matrix): Matrix {
 
     //@ts-ignore
     return inv;
+}
+
+export function worldToScreen(world: Matrix, view: Matrix, projection: Matrix, screenSize: Vec) {
+    var m = multiply(world, multiply(view, projection));
+    return Vec.from(m[12] / screenSize.x, m[13] / screenSize.y);
+}
+
+export function screenToWorld(screenPos: Vec, view: Matrix, projection: Matrix, screenSize: Vec) {
+    let inv = inverse(multiply(projection, view));
+    let v = multiplyVec(inv, Vec.from((2 * screenPos.x) / screenSize.x - 1, 1 - (2 * screenPos.y) / screenSize.y));
+    return v;
 }

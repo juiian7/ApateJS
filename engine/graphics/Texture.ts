@@ -48,6 +48,14 @@ export default class Texture {
         warp_v: "repeat",
     };
 
+    public setParameters(params: Partial<TextureParameter>) {
+        if (params.mag) this.parameter.mag = params.mag;
+        if (params.min) this.parameter.min = params.min;
+        if (params.warp_h) this.parameter.warp_h = params.warp_h;
+        if (params.warp_v) this.parameter.warp_v = params.warp_v;
+        this._needsUpdate = true;
+    }
+
     private source: TextureSource;
 
     public constructor(width: number, height: number, format: TextureFormat, internalFormat: TextureFormat) {
@@ -57,6 +65,8 @@ export default class Texture {
         this.internalFormat = internalFormat;
         this.parameter = pixelTextureParameter;
     }
+
+    public resize(width: number, height: number) {}
 
     public static fromSource(source: TextureSource, format: TextureFormat = "rgba", width: number = 1, height: number = 1): Texture {
         let text = new Texture(width, height, format, format);
@@ -83,6 +93,7 @@ export default class Texture {
     // Renderer helper
 
     private _runtime: WebGLTexture;
+    public _needsUpdate: boolean = false;
     public compile(renderer: Renderer, slot: number): WebGLTexture {
         this._bindTexture(renderer.ctx, slot);
         return this._runtime;
@@ -93,6 +104,12 @@ export default class Texture {
         if (!this._runtime) throw new Error("Couldn't create Texture!");
         gl.bindTexture(gl.TEXTURE_2D, this._runtime);
 
+        this._update(gl);
+
+        return this._runtime;
+    }
+
+    private _update(gl: WebGL2RenderingContext) {
         let iFormat = matchFormat(this.internalFormat, gl);
         let format = matchFormat(this.format, gl);
         if (this.source) gl.texImage2D(gl.TEXTURE_2D, 0, iFormat, format, gl.UNSIGNED_BYTE, this.source);
@@ -100,11 +117,12 @@ export default class Texture {
 
         this._setTexParams(gl);
 
-        return this._runtime;
+        this._needsUpdate = false;
     }
 
     private _bindTexture(gl: WebGL2RenderingContext, slot: number) {
         if (!this._runtime) this._init(gl);
+        if (this._needsUpdate) this._update(gl);
 
         gl.activeTexture(gl.TEXTURE0 + slot);
         gl.bindTexture(gl.TEXTURE_2D, this._runtime);

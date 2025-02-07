@@ -1,8 +1,14 @@
 import Vec from "../../core/Vec.js";
 import VertexArray from "./VertexArray.js";
 import Shader from "./Shader.js";
+import Texture from "../Texture.js";
 
 export type DrawMode = "lines" | "line_loop" | "line_strip" | "points" | "triangles" | "triangle_fan" | "triangle_strip";
+
+export interface RenderTarget {
+    framebuffer: WebGLFramebuffer;
+    texture: Texture;
+}
 
 export default class Renderer {
     public readonly canvas: HTMLCanvasElement;
@@ -16,6 +22,8 @@ export default class Renderer {
     private currentClearColor: Vec;
     private mask: number;
 
+    private targets: RenderTarget[] = [];
+
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("webgl2");
@@ -27,18 +35,18 @@ export default class Renderer {
         this.ctx.enable(this.ctx.BLEND);
         this.ctx.blendFunc(this.ctx.SRC_ALPHA, this.ctx.ONE_MINUS_SRC_ALPHA);
 
-        this.clearColor(new Vec([0, 0, 0, 1]));
+        this.clearColor = new Vec([0, 0, 0, 1]);
         this.mask = this.clearMask();
     }
 
     clear(mask?: number, color?: Vec) {
         if (mask !== undefined) this.mask = mask;
-        if (color) this.clearColor(color);
+        if (color) this.clearColor = color;
 
         this.ctx.clear(this.mask);
     }
 
-    clearColor(color: Vec): void {
+    public set clearColor(color: Vec) {
         if (color.r > 1) {
             color.r /= 255;
             color.g /= 255;
@@ -47,6 +55,10 @@ export default class Renderer {
         }
         this.ctx.clearColor(color.r, color.g, color.b, color.a);
         this.currentClearColor = color;
+    }
+
+    public get clearColor(): Vec {
+        return this.currentClearColor;
     }
 
     clearMask(color: boolean = true, depth: boolean = true, stencil: boolean = false): number {
@@ -78,11 +90,44 @@ export default class Renderer {
         this.stats.drawCalls = this._drawCalls;
     }
 
-    createTarget() {}
+    createTarget(width: number, height: number): RenderTarget;
+    createTarget(texture: Texture): RenderTarget;
+    createTarget(...args: any[]) {
+        let texture = args[0] as Texture;
+        if (!(texture instanceof Texture)) texture = new Texture(args[0], args[1], "rgba", "rgba");
 
-    pushTarget() {}
+        const target: RenderTarget = {
+            framebuffer: this.ctx.createFramebuffer(),
+            texture,
+        };
+        this.ctx.bindFramebuffer(this.ctx.FRAMEBUFFER, target.framebuffer);
+        this.ctx.framebufferTexture2D(this.ctx.FRAMEBUFFER, this.ctx.COLOR_ATTACHMENT0, this.ctx.TEXTURE_2D, texture.compile(this, 7), 0);
 
-    popTarget() {}
+        return target;
+    }
+
+    private setTarget(target: RenderTarget | null) {
+        if (target === null) {
+            this.ctx.bindFramebuffer(this.ctx.FRAMEBUFFER, null);
+            this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
+            return;
+        }
+        this.ctx.bindFramebuffer(this.ctx.FRAMEBUFFER, target.framebuffer);
+        this.ctx.viewport(0, 0, target.texture?.width || 0, target.texture?.height || 0);
+    }
+
+    pushTarget(target: RenderTarget) {
+        this.targets.push(target);
+        this.setTarget(target);
+    }
+
+    popTarget() {
+        if (this.targets.length == 0) throw new Error("No targets to pop left!");
+
+        this.targets.pop();
+        if (this.targets.length == 0) this.setTarget(null);
+        else this.setTarget(this.targets[this.targets.length - 1]);
+    }
 
     drawMode(mode: DrawMode): number {
         switch (mode) {

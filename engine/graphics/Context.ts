@@ -15,15 +15,15 @@ import { Viewport } from "../scene/index.js";
 export interface ICamera {
     transform: Transform;
     projection: Matrix;
+    bgColor: Vec;
 }
 
-/* import Geometry from "./Mesh.js";
-import Material from "./Material.js";
- */
 export default class Context {
     public cameras: ICamera[] = [];
+    public layers: number[] = [];
 
     public get camera(): ICamera {
+        if (this.cameras.length == 0) throw new Error("No Camera defined!");
         return this.cameras[this.cameras.length - 1];
     }
 
@@ -50,10 +50,6 @@ export default class Context {
 
     popCamera(): ICamera {
         return this.cameras.pop();
-    }
-
-    drawViewport(scene: Viewport) {
-        scene.render(this);
     }
 
     drawTile(transform: Transform, tile: Tile, material: Material) {
@@ -98,5 +94,10 @@ export default class Context {
 
         let arrays = mesh.compile(this.renderer);
         this.renderer.draw(arrays.count, this.renderer.drawMode(mesh.drawMode)); // draw arrays
+    }
+
+    clear() {
+        this.renderer.clearColor = this.camera.bgColor;
+        this.renderer.clear();
     }
 }

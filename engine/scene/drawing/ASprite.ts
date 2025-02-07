@@ -26,6 +26,8 @@ export default class ASprite extends Sprite {
             if (this.frame > this.animation.length - 1) this.frame = 0;
             if (this.frame < 0) this.frame = this.animation.length;
             this.next = 1000 / 10;
+
+            this.material.tile = this.animation[this.frame];
         }
 
         context.drawTile(this.absolutTransform(), this.animation[this.frame], this.material);
