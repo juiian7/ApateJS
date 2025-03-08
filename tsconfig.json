@@ -3,5 +3,5 @@
         "target": "ESNext",
         "outDir": "./dist/"
     },
-    "include": ["./scripts/main.ts"]
+    "include": ["./scripts/main.ts", "./slimeattack/main.ts"]
 }

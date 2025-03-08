@@ -1,7 +1,6 @@
 {
-  "name": "hogruta-remasted",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "ApateJS",
+  "version": "0.0.1",
   "scripts": {
     "dev": "tsc -w"
   },
