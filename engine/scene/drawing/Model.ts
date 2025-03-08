@@ -1,10 +1,14 @@
 import Obj from "../Obj.js";
 
-import { Default3DMaterial } from "../../graphics/Material.js";
+import Material, { Default3DMaterial } from "../../graphics/Material.js";
 import Mesh from "../../graphics/Mesh.js";
 import Context from "../../graphics/Context.js";
+import Vec from "../../core/Vec.js";
+import Apate from "../../Apate.js";
 
-export default class Model extends Obj {
+type MatLib = { [name: string]: Default3DMaterial };
+
+export default class Model<E extends Apate = Apate> extends Obj<E> {
     public material?: Default3DMaterial;
     public meshes: Mesh[] = [];
 
@@ -19,16 +23,30 @@ export default class Model extends Obj {
 
     public draw(context: Context): void {
         for (let i = 0; i < this.meshes.length; i++) {
-            context.drawMesh(this.absolutTransform(), this.meshes[i], this.material);
+            context.drawMesh(this.absolut(), this.meshes[i], this.material);
         }
     }
 
     public static async loadObj(path: string): Promise<Model> {
         let contents = await (await fetch(path)).text();
-        return this.loadObjSync(contents);
+        let matLib: MatLib = {};
+        if (contents.includes("mtllib")) {
+            let libs: Promise<MatLib>[] = [];
+            for (const match of contents.matchAll(/^mtllib (.*)$/gm)) {
+                let i = path.lastIndexOf("/");
+                libs.push(this.loadMaterials(path.slice(0, i + 1) + match[1]));
+            }
+            let matLibs = await Promise.all(libs);
+            for (const lib of matLibs) {
+                for (const name in lib) {
+                    matLib[name] = lib[name];
+                }
+            }
+        }
+        return this.loadObjSync(contents, matLib);
     }
 
-    public static loadObjSync(content: string): Model {
+    public static loadObjSync(content: string, matLib: MatLib = {}): Model {
         // load meshes
 
         let model = new Model();
@@ -46,22 +64,14 @@ export default class Model extends Obj {
                     position.push(...store["v"][v1[0] - 1], ...store["v"][v2[0] - 1], ...store["v"][v3[0] - 1]);
                     if (v2) texture.push(...store["vt"][v1[1] - 1], ...store["vt"][v2[1] - 1], ...store["vt"][v3[1] - 1]);
                     if (v3) normal.push(...store["vn"][v1[2] - 1], ...store["vn"][v2[2] - 1], ...store["vn"][v3[2] - 1]);
-                    if (vn.length > 0) {
-                        /* for (let i = 2; i < vn.length - 1; i++) {
-                            position.push(...store["v"][v1[0] - 1], ...store["v"][vn[i][0] - 1], ...store["v"][vn[i + 1][0] - 1]);
-                            texture.push(...store["v"][v1[1] - 1], ...store["v"][vn[i][1] - 1], ...store["v"][vn[i + 1][1] - 1]);
-                            normal.push(...store["v"][v1[2] - 1], ...store["v"][vn[i][2] - 1], ...store["v"][vn[i + 1][2] - 1]);
-                        } */
-                        /* position.push(...store["v"][v1[0] - 1], ...store["v"][v4[0] - 1]);
-                        texture.push(...store["vt"][v1[1] - 1], ...store["vt"][v4[1] - 1]);
-                        normal.push(...store["vn"][v1[2] - 1], ...store["vn"][v4[2] - 1]); */
-                    }
                 }
                 mesh.arrays.push({ type: "position", data: position, vertexSize: store["v"][0].length });
                 if (texture.length > 0) mesh.arrays.push({ type: "texture", data: texture, vertexSize: store["vt"][0].length });
                 if (normal.length > 0) mesh.arrays.push({ type: "normal", data: normal, vertexSize: store["vn"][0].length });
 
+                mesh.material = store.mtl;
                 model.addMesh(mesh);
+                store.f = [];
             }
         };
 
@@ -73,11 +83,31 @@ export default class Model extends Obj {
                 mesh = new Mesh();
                 mesh.name = params[0];
                 mesh.drawMode = "triangles";
-                store = { v: [], vn: [], vt: [], f: [] };
-            } else if (store[c]) store[c].push(params);
+            } else if (c == "usemtl") store.mtl = matLib[params[0]];
+            else if (store[c]) store[c].push(params);
         }
         submit();
 
         return model;
+    }
+
+    public static async loadMaterials(path: string): Promise<MatLib> {
+        return this.loadMaterialsSync(await (await fetch(path)).text());
+    }
+    public static loadMaterialsSync(content: string): MatLib {
+        const lines = content.split("\n");
+        const lib: MatLib = {};
+
+        let name: string, diffuse: Vec, ambient: Vec;
+        for (const line of lines) {
+            let [c, ...params] = line.split(" ");
+            if (c == "newmtl") {
+                lib[name] = new Default3DMaterial(diffuse);
+                name = params[0];
+            }
+            if (c == "Kd") diffuse = Vec.from(+params[0], +params[1], +params[2], 1);
+            if (c == "Ka") ambient = Vec.from(+params[0], +params[1], +params[2], 1);
+        }
+        return lib;
     }
 }

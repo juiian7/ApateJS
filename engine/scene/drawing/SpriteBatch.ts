@@ -10,6 +10,7 @@ import { SpriteBatchMaterial } from "../../graphics/Material.js";
 import VertexArray from "../../graphics/webgl2/VertexArray.js";
 import Buffer from "../../graphics/webgl2/Buffer.js";
 import { inverse } from "../../core/Matrix.js";
+import Apate from "../../Apate.js";
 
 const plane = {
     data: new Float32Array([0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0]),
@@ -19,7 +20,7 @@ const plane = {
     ],
 };
 
-export default class SpriteBatch extends Obj {
+export default class SpriteBatch<E extends Apate = Apate> extends Obj<E> {
     public material: SpriteBatchMaterial = new SpriteBatchMaterial();
 
     public tiles: Tile[] = [];
@@ -31,10 +32,10 @@ export default class SpriteBatch extends Obj {
     private maxSize: number = 128;
     private needsUpdate: boolean = false;
 
-    constructor(atlas: Tile, maxSize: number = 128, parent?: Obj, name?: string) {
+    constructor(atlas?: Tile, maxSize: number = 128, parent?: Obj, name?: string) {
         super(parent, name);
 
-        this.material.atlas = atlas;
+        if (atlas) this.material.atlas = atlas;
 
         this.resize(maxSize);
     }
@@ -57,6 +58,13 @@ export default class SpriteBatch extends Obj {
         this.sync();
     }
 
+    public clear() {
+        this.tiles.length = 0;
+        this.transforms.length = 0;
+
+        this.sync();
+    }
+
     public sync(start: number = 0, end: number = this.maxSize) {
         this.needsUpdate = true;
         if (this.tiles.length < end) end = this.tiles.length;
@@ -74,6 +82,8 @@ export default class SpriteBatch extends Obj {
     private _runtime: VertexArray;
     private _buffers: Buffer<any>[] = [];
     public draw(context: Context): void {
+        if (this.tiles.length == 0) return;
+
         let mat = this.material.compile(context.renderer);
         if (!this._runtime) {
             let gl = context.renderer.ctx;
@@ -110,7 +120,7 @@ export default class SpriteBatch extends Obj {
             uAtlasSize: this.material.atlas.texture.size,
             uAtlas: 5,
 
-            uModel: this.absolutTransform().matrix(),
+            uModel: this.absolut().matrix(),
             uView: inverse(context.camera.transform.matrix()),
             uProjection: context.camera.projection,
         });

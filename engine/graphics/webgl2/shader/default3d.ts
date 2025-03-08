@@ -1,9 +1,9 @@
 export default {
     vertex: `#version 300 es
 
-    in vec4 aVertexPos;
+    in vec3 aVertexPos;
     in vec2 aTextCoord;
-    in vec4 aNormal;
+    in vec3 aNormal;
 
     uniform mat4 uModel;
     uniform mat4 uView;
@@ -13,11 +13,11 @@ export default {
     out vec3 normal;
 
     void main() { 
-        gl_Position = uProjection * uView * uModel * aVertexPos;
+        gl_Position = uProjection * uView * uModel * vec4(aVertexPos, 1);
         
         //vertPos = (uProjection * uView * uModel * aVertexPos).xyz;
         uv = aTextCoord;
-        normal = mat3(uModel) * aNormal.xyz;
+        normal = mat3(uModel) * aNormal;
     }
     `,
     fragment: `#version 300 es
@@ -26,23 +26,23 @@ export default {
     in vec2 uv;
     in vec3 normal;
     
-    uniform sampler2D uTexture;
-    uniform vec4 uColor;
+    uniform vec4 uAmbient;
+    uniform vec4 uDiffuse;
 
     out vec4 glColor;
 
     void main() { 
-        vec4 objColor = texture(uTexture, uv) * uColor;
+        vec4 objColor = uDiffuse;
 
-        vec3 lightDir = normalize(vec3(50,50,30));
+        vec3 lightDir = normalize(normal - vec3(10,-10,10));
         vec3 lightColor = objColor.rgb; //vec3(1,1,1);
         float lightIntensity = 1.0;
         
         float diff = max(dot(normalize(normal), lightDir), 0.0);
         vec4 diffuse = vec4(diff * lightColor, 1.0);
-
-        vec3 ambient = vec3(1,1,1) * 0.2;
         
-        glColor = (vec4(ambient, 1) + diffuse) * objColor;
+        vec4 ambient = uAmbient;
+
+        glColor = (ambient + diffuse) * objColor;
     }`,
 };

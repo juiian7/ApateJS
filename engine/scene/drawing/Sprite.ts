@@ -5,8 +5,9 @@ import Vec from "../../core/Vec.js";
 
 import Context from "../../graphics/Context.js";
 import { SpriteMaterial } from "../../graphics/Material.js";
+import Apate from "../../Apate.js";
 
-export default class Sprite extends Obj {
+export default class Sprite<E extends Apate = Apate> extends Obj<E> {
     public material: SpriteMaterial = new SpriteMaterial();
 
     public get tile(): Tile {
@@ -22,11 +23,15 @@ export default class Sprite extends Obj {
 
         if (!tile) tile = Tile.fromColor(Vec.fromHex(0xff00ffff));
         this.tile = tile;
+
+        // to size
+        this.transform.scale.x = tile.clip.z;
+        this.transform.scale.y = tile.clip.w;
     }
 
     fromTexture() {}
 
     public draw(context: Context): void {
-        context.drawTile(this.absolutTransform(), this.material.tile, this.material);
+        context.drawTile(this.absolut(), this.material.tile, this.material);
     }
 }

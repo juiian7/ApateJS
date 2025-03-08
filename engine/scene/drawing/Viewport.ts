@@ -3,7 +3,7 @@ import Apate from "../../Apate.js";
 import Obj from "../Obj.js";
 import Camera from "./Camera.js";
 
-import Context from "../../graphics/Context.js";
+import Context, { ICamera } from "../../graphics/Context.js";
 import Renderer, { RenderTarget } from "../../graphics/webgl2/Renderer.js";
 import Texture from "../../graphics/Texture.js";
 import Tile from "../../core/Tile.js";
@@ -12,10 +12,10 @@ import Vec from "../../core/Vec.js";
 import Transform from "../../core/Transform.js";
 import Material, { SpriteMaterial } from "../../graphics/Material.js";
 
-export default class Viewport extends Obj {
-    public camera: Camera;
+export default class Viewport<E extends Apate = Apate> extends Obj<E> {
+    public camera: ICamera;
 
-    public material: Material = new SpriteMaterial();
+    public material: SpriteMaterial = new SpriteMaterial();
 
     public texture: Texture;
     private tile: Tile;
@@ -56,8 +56,10 @@ export default class Viewport extends Obj {
 
         context.clear();
 
-        let i = this.children.length; // @ts-ignore
-        while (i-- > 0) for (let l = 0; l < Viewport.Layers.length; l++) this.children[i].drawRec(context, l);
+        for (let l = 0; l < Viewport.Layers.length; l++) {
+            let i = this.children.length; // @ts-ignore
+            while (i-- > 0) this.children[i].drawRec(context, l);
+        }
 
         context.renderer.popTarget();
         context.popCamera();
@@ -66,7 +68,7 @@ export default class Viewport extends Obj {
     }
 
     private nullTransformation: Transform = new Transform();
-    public absolutTransform(): Transform {
+    public absolut(): Transform {
         return this.nullTransformation;
     }
 }

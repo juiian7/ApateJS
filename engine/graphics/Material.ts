@@ -12,7 +12,7 @@ import Shader, { ShaderSource } from "./webgl2/Shader.js";
 export default class Material {
     public readonly source: ShaderSource;
 
-    public color: Vec = Vec.fromHex(0xffffffff);
+    //public color: Vec = Vec.fromHex(0xffffffff);
 
     constructor(source?: ShaderSource) {
         if (!source) {
@@ -28,18 +28,34 @@ export default class Material {
         if (!this._runtime) this._runtime = Shader.cache(renderer.ctx, this.source);
         return this._runtime;
     }
+
+    public data() {
+        return {};
+    }
 }
 
 export class SpriteMaterial extends Material {
     public tile: Tile;
+    public color: Vec = Vec.fromHex(0xffffffff);
+    public flipH: boolean = false;
+    public flipV: boolean = false;
 
-    constructor() {
-        super(sprite2d);
+    constructor(source: ShaderSource = sprite2d) {
+        super(source);
+    }
+
+    data() {
+        return {
+            uColor: this.color.color(),
+            uFlipH: +this.flipH,
+            uFlipV: +this.flipV,
+        };
     }
 }
 
 export class SpriteBatchMaterial extends Material {
     public atlas: Tile;
+    public color: Vec = Vec.fromHex(0xffffffff);
 
     constructor() {
         super(batch2d);
@@ -47,9 +63,12 @@ export class SpriteBatchMaterial extends Material {
 }
 
 export class Default3DMaterial extends Material {
-    public texture: Tile;
+    public ambient: Vec = Vec.fromHex(0x000000ff);
+    public diffuse: Vec = Vec.fromHex(0xffffffff);
 
-    constructor() {
+    constructor(diffuse?: Vec) {
         super(default3d);
+
+        if (diffuse) this.diffuse = diffuse;
     }
 }

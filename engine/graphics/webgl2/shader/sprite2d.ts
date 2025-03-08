@@ -8,6 +8,8 @@ export default {
     uniform mat4 uView;
     uniform mat4 uProjection;
 
+    /* uniform bool uFlipH;
+    uniform bool uFlipV; */
     uniform vec2 uAtlasSize;
     uniform vec4 uClip;
     
@@ -16,6 +18,10 @@ export default {
     void main() { 
         gl_Position = uProjection * uView * uModel * aVertexPos;
         
+        /* vec2 flip = vec2(1,1);
+        if (uFlipH) flip.x = -1.0;
+        if (uFlipV) flip.y = -1.0; */
+
         uv = (uClip.xy / uAtlasSize) + ((aTextCoord * uClip.zw) / uAtlasSize);
     }
     `,

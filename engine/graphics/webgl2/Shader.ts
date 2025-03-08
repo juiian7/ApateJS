@@ -130,7 +130,10 @@ export default class Shader {
         if (uniform) {
             if (uniform.type[0] == "M") this.gl[`uniform${uniform.type}v`](uniform.location, false, value); //matrix
             else if (uniform.type[0] == "T") this.gl.uniform1i(uniform.location, value as any); // texture
-            else this.gl[`uniform${uniform.type}v`](uniform.location, value); // vec
+            else {
+                if (typeof value == "number") this.gl[`uniform${uniform.type}`](uniform.location, value); // vec
+                else this.gl[`uniform${uniform.type}v`](uniform.location, value); // vec
+            }
         } // else console.warn(`uniform "${name}" not found`);
     }
 
