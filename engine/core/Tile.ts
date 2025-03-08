@@ -22,19 +22,23 @@ export default class Tile {
 
     public split(px: number, gap: number = 0): Tile[] {
         let tiles: Tile[] = [];
-        for (let i = 0; i < this.texture.width; i += px + gap)
+        for (let i = this.clip.x; i < this.clip.x + this.clip.z; i += px + gap)
             tiles.push(new Tile(this.texture, new Vec([i, this.clip.y, px, this.clip.w])));
         return tiles;
     }
 
     public splitV(px: number, gap: number = 0): Tile[] {
         let tiles: Tile[] = [];
-        for (let i = 0; i < this.texture.height; i += px + gap)
+        for (let i = this.clip.y; i < this.clip.y + this.clip.w; i += px + gap)
             tiles.push(new Tile(this.texture, new Vec([this.clip.x, i, this.clip.z, px])));
         return tiles;
     }
 
     public grid(width: number, height: number, gap: number = 0): Tile[][] {
         return this.splitV(height, gap).map((row) => row.split(width, gap));
+    }
+
+    public sub(clip: Vec) {
+        return new Tile(this.texture, clip);
     }
 }

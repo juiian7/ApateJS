@@ -35,7 +35,12 @@ export default class Input {
         return this.keys[code + shift + ctrl + alt + meta] > 0;
     }
 
-    public axis() {}
+    public axis(name: string): number {
+        let axis = 0;
+        if (this.key("KeyD")) axis += 1;
+        if (this.key("KeyA")) axis -= 1;
+        return axis;
+    }
 
     public mouse(): Vec {
         return this.mPosition;

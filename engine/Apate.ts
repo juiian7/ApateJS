@@ -1,4 +1,6 @@
 import Input from "./core/Input.js";
+import Physics from "./core/Physics.js";
+
 import Context from "./graphics/Context.js";
 import Renderer from "./graphics/webgl2/Renderer.js";
 
@@ -23,14 +25,27 @@ const defaultScreenConfig: ScreenConfig = { autoResize: true, width: 640, height
 export default class Apate {
     public renderer: Renderer;
     public context: Context;
-    public input: Input;
 
-    public scene: Obj;
+    public input: Input;
+    public physics: Physics;
+
+    private _scene: Obj;
+    public set scene(v: Obj) {
+        if (this._scene) this._scene.recCall("on_scene_exit", this);
+        this._scene = v;
+        this._scene.recCall("on_scene_enter", this);
+    }
+
+    public get scene(): Obj {
+        return this._scene;
+    }
 
     public startTime: number;
     public time: number = 0;
     private last: number = 0;
     public delta: number = 20;
+
+    public debug: boolean = true;
 
     constructor(config?: EngineConfig) {
         this.startTime = Date.now();
@@ -51,9 +66,12 @@ export default class Apate {
         this.renderer = new Renderer(config.screen.canvas);
         this.scene = new Obj(null, "Default Scene");
         this.context = new Context(this);
-        this.context.pushCamera(new Camera(this.renderer.canvas.width, this.renderer.canvas.height, null, null, "Default Camera"));
+        let camera = new Camera(this.renderer.canvas.width, this.renderer.canvas.height, null, null, "Default Camera");
+        camera.transform.move(0, 0, 1);
+        this.context.pushCamera(camera);
 
         this.input = new Input(this.renderer.canvas);
+        this.physics = new Physics();
 
         // run after constructor
         this._init = this._init.bind(this);
@@ -82,7 +100,7 @@ export default class Apate {
 
         // rendering
         this.renderer.begin(this.delta);
-        this.scene.render(this.context);
+        this._scene.render(this.context);
         this.renderer.flush();
 
         // - do timings

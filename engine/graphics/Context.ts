@@ -16,6 +16,8 @@ export interface ICamera {
     transform: Transform;
     projection: Matrix;
     bgColor: Vec;
+    width: number;
+    height: number;
 }
 
 export default class Context {
@@ -41,7 +43,6 @@ export default class Context {
         this.plane = Mesh.plane2D();
         this.white = Texture.fromColor(Vec.fromHex(0xffffffff));
         this.defaultMeshMat = new Default3DMaterial();
-        this.defaultMeshMat.texture = new Tile(this.white);
     }
 
     pushCamera(camera: ICamera) {
@@ -52,14 +53,14 @@ export default class Context {
         return this.cameras.pop();
     }
 
-    drawTile(transform: Transform, tile: Tile, material: Material) {
+    drawTile(transform: Transform, tile: Tile, material: SpriteMaterial) {
         let slot = 0;
         let texture = tile.texture.compile(this.renderer, 0);
         let shader = material.compile(this.renderer);
         shader.use();
 
         shader.setUniforms({
-            uColor: material.color.color(),
+            ...material.data(),
             uAtlas: slot,
             uAtlasSize: tile.texture.size,
             uClip: tile.clip.vec(),
@@ -76,13 +77,15 @@ export default class Context {
     drawMesh(transform: Transform, mesh: Mesh, material?: Default3DMaterial) {
         let mat = mesh.material || material || this.defaultMeshMat;
 
-        (mat.texture.texture || this.white).compile(this.renderer, 1); // set texture
+        //(mat.texture.texture || this.white).compile(this.renderer, 1); // set texture
 
         let shader = mat.compile(this.renderer);
         shader.use();
         shader.setUniforms({
-            uColor: mat.color.color(),
-            uTexture: 1,
+            ...material.data(),
+            uAmbient: mat.ambient.color(),
+            uDiffuse: mat.diffuse.color(),
+            //uTexture: 1,
 
             uModel: transform.matrix(),
             uView: inverse(this.camera.transform.matrix()),

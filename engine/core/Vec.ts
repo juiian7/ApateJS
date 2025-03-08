@@ -33,6 +33,14 @@ export default class Vec {
         return this;
     }
 
+    public setXYZ(x: number, y: number, z: number = 0, w: number = 0): this {
+        this.data[this.offset + 0] = x;
+        this.data[this.offset + 1] = y;
+        this.data[this.offset + 2] = z;
+        this.data[this.offset + 3] = w;
+        return this;
+    }
+
     public add(vec: Vec): this {
         this.data[this.offset + 0] += vec.x;
         this.data[this.offset + 1] += vec.y;
@@ -54,6 +62,14 @@ export default class Vec {
         this.data[this.offset + 1] *= vec.y;
         this.data[this.offset + 2] *= vec.z;
         this.data[this.offset + 3] *= vec.w;
+        return this;
+    }
+
+    public multiplyScalar(f: number): this {
+        this.data[this.offset + 0] *= f;
+        this.data[this.offset + 1] *= f;
+        this.data[this.offset + 2] *= f;
+        this.data[this.offset + 3] *= f;
         return this;
     }
 
