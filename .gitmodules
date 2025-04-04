@@ -1,0 +1,3 @@
+[submodule "src/ui/WebUI"]
+	path = src/ui/WebUI
+	url = git@github.com:juiian7/WebUI.git
