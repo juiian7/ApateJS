@@ -1,6 +1,6 @@
-import { Comp } from "../WebUI/src/index.js";
+import { Input } from "../WebUI/src/index.js";
 
-export default class NumberInput extends Comp.Input {
+export default class NumberInput extends Input {
     private _focused: boolean = false;
     public get isFocused(): boolean {
         return this._focused;

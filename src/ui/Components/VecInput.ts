@@ -1,9 +1,9 @@
 import Vec from "../../core/Vec.js";
 import NumberInput from "./NumberInput.js";
 
-import { Comp, container, text } from "../WebUI/src/index.js";
+import { Container, container, text } from "../WebUI/src/index.js";
 
-export default class VecInput extends Comp.Container {
+export default class VecInput extends Container {
     private ref: Vec;
     private inputs: NumberInput[] = [];
 
@@ -14,7 +14,7 @@ export default class VecInput extends Comp.Container {
         size = size || ref.dimension;
 
         for (let i = 0; i < size; i++) {
-            let input = new NumberInput();
+            let input = new NumberInput().style("width", "8ch");
             input.on("input", () => {
                 ref.vec()[i] = input.num;
             });
