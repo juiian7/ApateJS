@@ -19,6 +19,10 @@ export default class Vec {
     protected offset: number = 0;
     protected end: number = 4;
 
+    public get dimension(): number {
+        return this.end - this.offset;
+    }
+
     public constructor(data: number[], offset: number = 0, end: number = 4) {
         this.data = data;
         this.offset = offset;

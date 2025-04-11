@@ -5,7 +5,7 @@ import Context from "../../graphics/Context.js";
 import Shape from "./Shape.js";
 import Apate from "../../Apate.js";
 
-interface CollisionInfo<T> {
+export interface CollisionInfo<T> {
     self: Shape;
     collider: Collider;
     colliderShape: Shape;

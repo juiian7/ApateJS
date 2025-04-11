@@ -19,6 +19,9 @@ import Context from "./graphics/Context.js";
 // webgl
 import Renderer from "./graphics/webgl2/Renderer.js";
 
+// html UI
+import * as UI from "./ui/index.js";
+
 export default Apate;
 export { Tile, Transform, Vec, World };
-export { Context, Input, Mat, Material, Mesh, Physics, Renderer, Texture };
+export { Context, Input, Mat, Material, Mesh, Physics, Renderer, Texture, UI };

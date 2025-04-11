@@ -1,6 +1,6 @@
 import Obj from "../Obj.js";
 import Vec from "../../core/Vec.js";
-import Collider from "./Collider.js";
+import Collider, { CollisionInfo } from "./Collider.js";
 import Context from "../../graphics/Context.js";
 import Apate from "../../Apate.js";
 
@@ -53,7 +53,7 @@ export default class Body<E extends Apate = Apate> extends Obj<E> {
         }
     }
 
-    public collide() {
+    public collide(): CollisionInfo<any>[] {
         this._update();
 
         // apply vel, and return optional collision
