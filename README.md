@@ -7,11 +7,16 @@ This project is not released, it is in early development! Don't assume things sh
 
 ## Introduction
 
-`This is the most important thing to understand in order to use Apate.`
+The introduction should give a basic understanding how to use Apate.
+The most important part is the **scene** with the entities (represented as **Obj**)
 
-As the name says it's a graph, which is leading to a tree structure. Every node inherits the "Obj" class. A simple container class for storing other nodes within the tree. An Obj also contains a certain position and the behaviour how it gets displayed. The Obj class itself doesn't implement the draw method since it's the root of the inheritance and not designed to be used for rendering content. To actually display stuff there are multiple other Obj-inherited classes.
+### Scene Graph (engine.scene)
+
+As the name says it's a graph, which is leading to a tree structure. Every node inherits the "Obj" class. A simple container class for storing other nodes within the tree. An Obj also contains a certain position and the behaviour how it gets displayed. The Obj class itself doesn't implement this draw method since it's the root of the inheritance and not designed to be used for rendering content. To actually display stuff there are multiple other Obj-inherited classes. Lets look at a simple scene graph as an example:
 
 ```
+The type of the node in the tree is written inside brackets.
+
 > Scene (Obj)
 |--> Player (Obj)
 |  |--> Image (Sprite)
@@ -24,7 +29,7 @@ As the name says it's a graph, which is leading to a tree structure. Every node 
 |  |--> Image (Sprite)
 ```
 
-### Types of Objs
+### Types of Nodes - Obj inheritance
 
 **Obj** - the root of inheritance. Stores a Transform object.
 
@@ -44,16 +49,17 @@ _Physics (2D)_:
 
 ### Other Helper Objects
 
-**Vec**: just a simple 4-dimensional Vector (x,y,z,w), but also designed to be used for colors (r,g,b,a -> same as x,y,...).
+**Vec**: just a simple 4-dimensional Vector (x,y,z,w), but also designed to be used for colors (r,g,b,a -> same as x,y,...). Actually it could be used for more dimensions, but all mathematical operations only work on the first four.
 
 **Transform**: an object that describes a transformation. Stores vectors for position, rotation and scale.
 
-**Texture**: the thing that gets uploaded to the GPU. (not relevant for game devs)
+**Texture**: the thing (mostly a real image) that gets uploaded to the GPU. (not really relevant for game devs, but still important to know how things work together behind the mask)
 
 **Tile**: an abstraction of Texture. Why? Multiple Tiles could be different parts of the same image (cutouts). **Remember:** Images are always rendered as Tiles.
-_Example:_ there is one sprite atlas with all animations of a player. This image would be loaded as a Tile. The Tile would store the data of the image (as a texture) and the area that should be visible. So we can create Tiles for every frame of every animation. All of these tiles use the same Image (texture), but different cutouts, so they all look different.
 
-### Bringing it all together (aka main loop)
+_Example:_ there is one sprite atlas (a big image containing other images) with all animations of a player. This image would be loaded as a Tile. The Tile would store the data of the image (as a texture) and the area that should be visible. So we can create Tiles for every frame of every animation. All of these tiles use the same Image (texture), but different cutouts, so they all look different.
+
+### Bringing it all together (aka the main loop)
 
 To bring it all together and finally be able to see something on the screen there is the **Apate** class which acts as the mount point of the engine. It stores the active scene graph (scene), manages timings and handles the main loop.
 
@@ -152,6 +158,7 @@ async init() {
     const idle = row1.sub(0, 0, 16, 8).split(8);
     const attack = row1.sub(16, 0, 48, 8).split(8);
     const walk = row2.split(8);
+    // create an animated sprite and start the walk animation
     const anim = new World.ASprite(walk, this.scene);
 
     // ... at a later point
