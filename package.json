@@ -2,7 +2,8 @@
   "name": "ApateJS",
   "version": "0.0.1",
   "scripts": {
-    "dev": "tsc -w"
+    "dev": "tsc -w",
+    "build": "tsc"
   },
   "dependencies": {
     "typescript": "5.7.3"
