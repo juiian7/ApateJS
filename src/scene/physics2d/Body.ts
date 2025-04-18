@@ -6,10 +6,9 @@ import Apate from "../../Apate.js";
 
 export default class Body<E extends Apate = Apate> extends Obj<E> {
     public mass: number = 1;
-    public acceleration: Vec;
     public velocity: Vec;
 
-    public gravity: Vec = Vec.from(0, -1, 0);
+    public gravity: Vec = Vec.from(0, -9.81, 0);
 
     public collider: Collider<E>;
 
@@ -21,32 +20,37 @@ export default class Body<E extends Apate = Apate> extends Obj<E> {
             this.collider = collider;
         } else new Collider([], 0, this, name ? name + "-collider" : null);
 
-        this.acceleration = Vec.from(0, 0, 0);
         this.velocity = Vec.from(0, 0, 0);
     }
 
     private clone: Vec = new Vec([0, 0, 0, 0]);
-    public addForce(force: Vec) {
-        this.clone.setTo(force).multiplyScalar(20 / 1000); // needs to include delta?
-        this.acceleration.add(this.clone);
+    public accelerate(force: Vec) {
+        this.clone.setTo(force).multiplyScalar(this.engine.delta / 1000);
+        this.velocity.add(this.clone);
+    }
+
+    public impulse(force: Vec) {
+        this.velocity.add(force);
     }
 
     private _update() {
-        if (this.gravity) this.addForce(this.gravity);
-        this.velocity.add(this.acceleration);
+        if (this.gravity) {
+            this.accelerate(this.gravity);
+        }
     }
 
     public slide() {
         this._update();
 
+        const factor = this.engine.delta * 0.001; // delta in seconds
         // apply vel and if collision change vel along colliding obj
         // apply y
-        this.transform.move(0, this.velocity.y, 0);
+        this.transform.move(0, this.velocity.y * factor, 0);
         if (this.collider.check() > 0) {
             // resolve
             // this.velocity.y > 0 -> up
         }
-        this.transform.move(this.velocity.x, 0, 0);
+        this.transform.move(this.velocity.x * factor, 0, 0);
         if (this.collider.check() > 0) {
             // resolve
             // this.velocity.x > 0 -> right
@@ -56,8 +60,9 @@ export default class Body<E extends Apate = Apate> extends Obj<E> {
     public collide(): CollisionInfo<any>[] {
         this._update();
 
+        const factor = this.engine.delta * 0.001; // delta in seconds
         // apply vel, and return optional collision
-        this.transform.move(this.velocity.x, this.velocity.y, 0);
+        this.transform.move(this.velocity.x * factor, this.velocity.y * factor, 0);
 
         // check collisions
         this.collider.check();
