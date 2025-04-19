@@ -5,64 +5,89 @@ import { Obj } from "../index.js";
 import Context from "../../graphics/Context.js";
 import Apate from "../../Apate.js";
 
+export interface Anim {
+    speed?: number;
+    name?: string;
+    frames: Tile[];
+    frame?: number;
+    startAt?: number;
+    repeat?: "loop" | "once";
+}
+
 export default class ASprite<E extends Apate = Apate> extends Sprite<E> {
-    public frame: number = 0;
-    public fps: number = 10;
-    public animation: Tile[];
-    public after: "loop" | "end" = "loop";
+    public fps: number = 20;
+    public animation: Anim;
     public isPaused: boolean = false;
+
+    private _finished: boolean = false;
+    public get finished() {
+        return this._finished;
+    }
 
     private next: number = 0;
 
-    constructor(animation: Tile[] = [], parent?: Obj, name?: string) {
-        super((animation || [])[0], parent, name);
+    private animQueue: Anim[] = [];
 
-        this.animation = animation;
-    }
-
-    public run(animation: Tile[], fps: number = this.fps, startFrame: number = 0) {
-        // wait for last anim to finish?
-        // play loop | reverse_loop | once | zigzag?
-        this.animation = animation;
-        this.frame = startFrame;
+    constructor(animation: Anim = { frames: [] }, fps: number = 20, parent?: Obj, name?: string) {
+        super(animation.frames[0], parent, name);
         this.fps = fps;
 
-        this.next = 1000 / this.fps;
+        this.run(animation);
+    }
+
+    public run(animation: Anim) {
+        this.animation = animation;
+        this.animation.frame = animation.startAt || 0;
+        if (!this.animation.speed) this.animation.speed = 1;
+        this.next = 1000 / (this.fps * this.animation.speed);
+        this._finished = false;
         return this;
     }
 
-    public play(animation?: Tile[] | null, fps: number = 10): this {
+    public play(animation?: Anim | null): this {
         if (animation && animation != this.animation) {
-            // set animation
-            this.animation = animation;
-            this.frame = 0;
+            this.run(animation);
         }
-        this.fps = fps;
         this.isPaused = false;
         return this;
     }
-    public pause() {}
-    public queue() {}
+
+    public pause() {
+        this.isPaused = true;
+    }
+
+    public queue(...animations: Anim[]) {
+        this.animQueue.unshift(...animations);
+    }
 
     public draw(context: Context): void {
-        if (this.isPaused || !this.animation || this.animation.length == 0) return;
+        if (!this.animation || this.animation.frames.length == 0) {
+            if (this.animQueue.length == 0) return;
 
-        this.next -= context.engine.delta;
-        if (this.next < 0) {
-            this.next = 1000 / this.fps;
-            this.frame++;
-            switch (this.after) {
-                case "loop":
-                    if (this.frame > this.animation.length - 1) this.frame = 0;
-                    if (this.frame < 0) this.frame = this.animation.length;
-                    break;
-                case "end":
-                    if (this.frame > this.animation.length - 1) this.frame--;
-                    break;
-            }
-            this.material.tile = this.animation[this.frame];
+            let anim = this.animQueue.pop();
+            if (anim) this.run(anim);
         }
 
-        context.drawTile(this.absolut(), this.animation[this.frame], this.material);
+        if (!this.isPaused) this.next -= context.engine.delta;
+        if (this.next < 0) {
+            this.next = 1000 / (this.fps * this.animation.speed);
+            if (!this._finished) this.animation.frame++;
+            switch (this.animation.repeat || "loop") {
+                case "loop":
+                    if (this.animation.frame > this.animation.frames.length - 1) this.animation.frame = 0;
+                    break;
+                case "once":
+                    if (this.animation.frame > this.animation.frames.length - 1) {
+                        this._finished = true;
+                        this.animation.frame--;
+                        let anim = this.animQueue.pop();
+                        if (anim) this.run(anim);
+                    }
+                    break;
+            }
+        }
+
+        this.material.tile = this.animation.frames[this.animation.frame];
+        context.drawTile(this.absolut(), this.material.tile, this.material);
     }
 }

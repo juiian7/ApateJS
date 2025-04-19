@@ -9,6 +9,7 @@ import Physics from "./core/Physics.js";
 
 // world
 import * as World from "./scene/index.js";
+import { Anim } from "./scene/drawing/ASprite.js";
 
 // graphics
 import Material, * as Mat from "./graphics/Material.js";
@@ -23,5 +24,5 @@ import Renderer from "./graphics/webgl2/Renderer.js";
 import * as UI from "./ui/index.js";
 
 export default Apate;
-export { Tile, Transform, Vec, World };
+export { Anim, Tile, Transform, Vec, World };
 export { Context, Input, Mat, Material, Mesh, Physics, Renderer, Texture, UI };
