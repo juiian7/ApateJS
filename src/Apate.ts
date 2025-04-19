@@ -66,7 +66,8 @@ export default class Apate {
         this.renderer = new Renderer(config.screen.canvas);
         this.scene = new Obj(null, "Default Scene");
         this.context = new Context(this);
-        let camera = new Camera(this.renderer.canvas.width, this.renderer.canvas.height, null, null, "Default Camera");
+        let camera = Camera.perspective(this.renderer.canvas.width, this.renderer.canvas.height);
+        camera.name = "Default Camera";
         camera.transform.move(0, 0, 1);
         this.context.pushCamera(camera);
 

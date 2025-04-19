@@ -88,6 +88,6 @@ export default class ASprite<E extends Apate = Apate> extends Sprite<E> {
         }
 
         this.material.tile = this.animation.frames[this.animation.frame];
-        context.drawTile(this.absolut(), this.material.tile, this.material);
+        super.draw(context);
     }
 }

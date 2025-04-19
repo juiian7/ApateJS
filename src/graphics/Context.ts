@@ -32,7 +32,8 @@ export default class Context {
     public engine: Apate;
     public renderer: Renderer;
 
-    private plane: Mesh;
+    private planeAlignCenter: Mesh;
+    private planeAlignCorner: Mesh;
     private white: Texture;
     private defaultMeshMat: Default3DMaterial;
 
@@ -40,7 +41,8 @@ export default class Context {
         this.engine = engine;
         this.renderer = engine.renderer;
 
-        this.plane = Mesh.plane2D();
+        this.planeAlignCenter = Mesh.plane2D("center");
+        this.planeAlignCorner = Mesh.plane2D("corner");
         this.white = Texture.fromColor(Vec.fromHex(0xffffffff));
         this.defaultMeshMat = new Default3DMaterial();
     }
@@ -53,7 +55,7 @@ export default class Context {
         return this.cameras.pop();
     }
 
-    drawTile(transform: Transform, tile: Tile, material: SpriteMaterial) {
+    drawTile(transform: Transform, tile: Tile, material: SpriteMaterial, align: "center" | "corner" = "corner") {
         let slot = 0;
         let texture = tile.texture.compile(this.renderer, 0);
         let shader = material.compile(this.renderer);
@@ -70,7 +72,7 @@ export default class Context {
             uProjection: this.camera.projection,
         });
 
-        let arrays = this.plane.compile(this.renderer);
+        let arrays = (align == "center" ? this.planeAlignCenter : this.planeAlignCorner).compile(this.renderer);
         this.renderer.draw(arrays.count);
     }
 

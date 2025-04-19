@@ -9,6 +9,7 @@ import Apate from "../../Apate.js";
 
 export default class Sprite<E extends Apate = Apate> extends Obj<E> {
     public material: SpriteMaterial = new SpriteMaterial();
+    public align: "center" | "corner" = "corner";
 
     public get tile(): Tile {
         return this.material.tile;
@@ -32,6 +33,6 @@ export default class Sprite<E extends Apate = Apate> extends Obj<E> {
     fromTexture() {}
 
     public draw(context: Context): void {
-        context.drawTile(this.absolut(), this.material.tile, this.material);
+        context.drawTile(this.absolut(), this.material.tile, this.material, this.align);
     }
 }

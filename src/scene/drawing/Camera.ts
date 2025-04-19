@@ -13,13 +13,13 @@ export default class Camera<E extends Apate = Apate> extends Obj<E> implements I
     public width: number;
     public height: number;
 
-    constructor(width: number, height: number, projection?: Matrix, parent?: Obj, name?: string) {
+    constructor(width: number, height: number, projection: Matrix, parent?: Obj, name?: string) {
         super(parent, name);
 
-        this.projection = projection || perspective(1.57, 1, 100, width / height);
+        this.projection = projection;
     }
 
-    public static ortho(width: number, height: number, anchor: "center" | "bottom left" | "top left" = "center") {
+    public static orthographic(width: number, height: number, anchor: "center" | "bottom left" | "top left" = "center") {
         switch (anchor) {
             case "bottom left":
                 return new Camera(width, height, orthographic(0, width, height, 0, -100, 100));
@@ -28,6 +28,10 @@ export default class Camera<E extends Apate = Apate> extends Obj<E> implements I
             case "top left":
                 return new Camera(width, height, orthographic(0, width, 0, height, -100, 100));
         }
+    }
+
+    public static perspective(width: number, height: number, fov: number = 1.57) {
+        return new Camera(width, height, perspective(fov, 1, 100, width / height));
     }
 
     public draw(context: Context): void {
