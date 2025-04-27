@@ -21,7 +21,7 @@
         "monospaceLinks": false
     },
     "opts": {
-        "destination": "docs-out/",
+        "destination": "docs/out/",
         "recurse": true,
         "readme": "./README.md",
         "template": "./docs/template/apate"
