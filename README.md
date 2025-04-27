@@ -7,6 +7,8 @@ ApateJS is a small game and rendering engine for the web inspired by Heaps and G
 `Important:`
 This project is not released, it is in early development! Don't assume things should work ;). Feel free to contribute! Apate is designed to be a 3D engine, but mostly only tested for 2D.
 
+Take a look at the [Docs](https://juiian7.github.io/ApateJS/) for better insights.
+
 ## Introduction
 
 The introduction should give a basic understanding how to use Apate.
