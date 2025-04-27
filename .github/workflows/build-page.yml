@@ -27,7 +27,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with: 
-          submodules: false
+          submodules: true
 
       - uses: actions/setup-node@v4
         with:
