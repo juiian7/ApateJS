@@ -139,14 +139,14 @@ async init() {
     // ... tile1: Tile, tile2: Tile, spriteSheet: Tile
 
     // create an animation from two sprites
-    new World.ASprite({ frames: [tile1, tile2] }, this.scene);
+    new World.ASprite({ frames: [tile1, tile2] }, 20, this.scene);
 
     // create an animation from a sprite sheet
     // the sheet has a size of 64x8
     // so there are 8 frames aligned in a horizontal order
     // we split these frames to separate tiles
     const frames = spriteSheet.split(8);
-    new World.ASprite({ frames }, this.scene);
+    new World.ASprite({ frames }, 20, this.scene);
 
 
     // we now assume that the sheet has a size of 64x16
@@ -157,7 +157,7 @@ async init() {
     const attack = { frames: row1.sub(16, 0, 48, 8).split(8), repeat: "once" };
     const walk = { frames: row2.split(8) };
     // create an animated sprite and start the walk animation
-    const anim = new World.ASprite(walk, this.scene);
+    const anim = new World.ASprite(walk, 20, this.scene);
 
     // ... at a later point
     anim.play(idle);
