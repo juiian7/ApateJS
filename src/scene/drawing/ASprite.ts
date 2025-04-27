@@ -1,9 +1,9 @@
-import Sprite from "./Sprite.js";
+import { Sprite } from "./Sprite.js";
 
-import Tile from "../../core/Tile.js";
+import { Tile } from "../../core/Tile.js";
 import { Obj } from "../index.js";
-import Context from "../../graphics/Context.js";
-import Apate from "../../Apate.js";
+import { Context } from "../../graphics/Context.js";
+import { Apate } from "../../Apate.js";
 
 export interface Anim {
     speed?: number;
@@ -14,7 +14,7 @@ export interface Anim {
     repeat?: "loop" | "once";
 }
 
-export default class ASprite<E extends Apate = Apate> extends Sprite<E> {
+export class ASprite<E extends Apate = Apate> extends Sprite<E> {
     public fps: number = 20;
     public animation: Anim;
     public isPaused: boolean = false;

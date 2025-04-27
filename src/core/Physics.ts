@@ -1,6 +1,6 @@
 import { Collider, Obj } from "../scene/index.js";
 
-export default class Physics {
+class Physics {
     private colliders: Collider[] = [];
 
     constructor() {}
@@ -37,3 +37,4 @@ export default class Physics {
         return m;
     }
 }
+export { Physics };

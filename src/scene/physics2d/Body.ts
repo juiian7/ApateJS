@@ -1,10 +1,10 @@
-import Obj from "../Obj.js";
-import Vec from "../../core/Vec.js";
-import Collider, { CollisionInfo } from "./Collider.js";
-import Context from "../../graphics/Context.js";
-import Apate from "../../Apate.js";
+import { Obj } from "../Obj.js";
+import { Vec } from "../../core/Vec.js";
+import { Collider, CollisionInfo } from "./Collider.js";
+import { Context } from "../../graphics/Context.js";
+import { Apate } from "../../Apate.js";
 
-export default class Body<E extends Apate = Apate> extends Obj<E> {
+export class Body<E extends Apate = Apate> extends Obj<E> {
     public mass: number = 1;
     public velocity: Vec;
 

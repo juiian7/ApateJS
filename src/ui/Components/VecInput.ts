@@ -1,4 +1,4 @@
-import Vec from "../../core/Vec.js";
+import { Vec } from "../../core/Vec.js";
 import NumberInput from "./NumberInput.js";
 
 import { Container, container, text } from "../WebUI/src/index.js";

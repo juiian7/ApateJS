@@ -1,11 +1,11 @@
-import Input from "./core/Input.js";
-import Physics from "./core/Physics.js";
+import { Input } from "./core/Input.js";
+import { Physics } from "./core/Physics.js";
 
-import Context from "./graphics/Context.js";
-import Renderer from "./graphics/webgl2/Renderer.js";
+import { Context } from "./graphics/Context.js";
+import { Renderer } from "./graphics/webgl2/Renderer.js";
 
 import { Camera, Viewport } from "./scene/index.js";
-import Obj, { Drawable } from "./scene/Obj.js";
+import { Obj } from "./scene/Obj.js";
 
 interface EngineConfig {
     screen?: ScreenConfig;
@@ -22,8 +22,21 @@ interface ScreenConfig {
 const defaultConfig: EngineConfig = {};
 const defaultScreenConfig: ScreenConfig = { autoResize: true, width: 640, height: 360 };
 
-export default class Apate {
+/**
+ * This class is the entry point of the engine.
+ * It handles the engines initialization, asynchronous content loading and executes the game loop
+ */
+export class Apate {
+    /**
+     * The instance of the current renderer (only webgl2 is supported for now)
+     * @type {Renderer}
+     */
     public renderer: Renderer;
+
+    /**
+     * The context for draw operations
+     * @type {Context}
+     */
     public context: Context;
 
     public input: Input;

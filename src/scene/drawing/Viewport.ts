@@ -1,18 +1,17 @@
-import Apate from "../../Apate.js";
+import { Apate } from "../../Apate.js";
 
-import Obj from "../Obj.js";
-import Camera from "./Camera.js";
+import { Obj } from "../Obj.js";
+import { Camera } from "./Camera.js";
 
-import Context, { ICamera } from "../../graphics/Context.js";
-import Renderer, { RenderTarget } from "../../graphics/webgl2/Renderer.js";
-import Texture from "../../graphics/Texture.js";
-import Tile from "../../core/Tile.js";
-import Sprite from "./Sprite.js";
-import Vec from "../../core/Vec.js";
-import Transform from "../../core/Transform.js";
-import Material, { SpriteMaterial } from "../../graphics/Material.js";
+import { Context, ICamera } from "../../graphics/Context.js";
+import { RenderTarget } from "../../graphics/webgl2/Renderer.js";
+import { Texture } from "../../graphics/Texture.js";
+import { Tile } from "../../core/Tile.js";
 
-export default class Viewport<E extends Apate = Apate> extends Obj<E> {
+import { Transform } from "../../core/Transform.js";
+import { SpriteMaterial } from "../../graphics/Material.js";
+
+export class Viewport<E extends Apate = Apate> extends Obj<E> {
     public camera: ICamera;
 
     public material: SpriteMaterial = new SpriteMaterial();

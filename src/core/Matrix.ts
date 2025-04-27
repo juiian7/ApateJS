@@ -1,5 +1,5 @@
-import Transform from "./Transform.js";
-import Vec from "./Vec.js";
+import { Transform } from "./Transform.js";
+import { Vec } from "./Vec.js";
 
 type c = number;
 export type Matrix = [c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c];

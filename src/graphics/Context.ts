@@ -1,16 +1,15 @@
-import Apate from "../Apate.js";
-import Renderer from "./webgl2/Renderer.js";
+import { Apate } from "../Apate.js";
+import { Renderer } from "./webgl2/Renderer.js";
 
-import Tile from "../core/Tile.js";
-import Material, { Default3DMaterial, SpriteMaterial } from "./Material.js";
+import { Tile } from "../core/Tile.js";
+import { BaseMaterial, Default3DMaterial, SpriteMaterial } from "./Material.js";
 
-import Mesh from "./Mesh.js";
-import Vec from "../core/Vec.js";
-import Texture from "./Texture.js";
-import default3d from "./webgl2/shader/default3d.js";
-import Transform from "../core/Transform.js";
+import { Mesh } from "./Mesh.js";
+import { Vec } from "../core/Vec.js";
+import { Texture } from "./Texture.js";
+import { Transform } from "../core/Transform.js";
+
 import { inverse, Matrix } from "../core/Matrix.js";
-import { Viewport } from "../scene/index.js";
 
 export interface ICamera {
     transform: Transform;
@@ -20,7 +19,7 @@ export interface ICamera {
     height: number;
 }
 
-export default class Context {
+export class Context {
     public cameras: ICamera[] = [];
     public layers: number[] = [];
 

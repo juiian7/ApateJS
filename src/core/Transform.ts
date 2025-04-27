@@ -1,9 +1,9 @@
 import { Matrix, transform } from "./Matrix.js";
-import Vec from "./Vec.js";
+import { Vec } from "./Vec.js";
 
 const rFac = Math.PI / 180;
 
-export default class Transform {
+class Transform {
     public position: Vec;
     public rotation: Vec;
     public scale: Vec;
@@ -57,3 +57,5 @@ export default class Transform {
         return transform(this);
     }
 }
+
+export { Transform };

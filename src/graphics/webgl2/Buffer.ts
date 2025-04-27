@@ -5,7 +5,7 @@ type TypeArray = Float32Array | Uint8Array;
 type BufferTarget = "array" | "element";
 type BufferUsage = "static_draw" | "dynamic_draw";
 
-export default class Buffer<T extends TypeArray> {
+export class Buffer<T extends TypeArray> {
     private gl: WebGL2RenderingContext;
     public readonly buf: WebGLBuffer;
 

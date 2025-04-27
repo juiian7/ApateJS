@@ -1,6 +1,6 @@
-import Vec from "./Vec.js";
+import { Vec } from "./Vec.js";
 
-export default class Input {
+class Input {
     private keys: { [code: string]: number } = {};
     private mPosition: Vec = Vec.from(0, 0, 0);
 
@@ -48,3 +48,4 @@ export default class Input {
 
     //cursor() {}
 }
+export { Input };

@@ -1,14 +1,14 @@
-import Obj from "../Obj.js";
+import { Obj } from "../Obj.js";
 
-import Material, { Default3DMaterial } from "../../graphics/Material.js";
-import Mesh from "../../graphics/Mesh.js";
-import Context from "../../graphics/Context.js";
-import Vec from "../../core/Vec.js";
-import Apate from "../../Apate.js";
+import { Default3DMaterial } from "../../graphics/Material.js";
+import { Mesh } from "../../graphics/Mesh.js";
+import { Context } from "../../graphics/Context.js";
+import { Vec } from "../../core/Vec.js";
+import { Apate } from "../../Apate.js";
 
 type MatLib = { [name: string]: Default3DMaterial };
 
-export default class Model<E extends Apate = Apate> extends Obj<E> {
+export class Model<E extends Apate = Apate> extends Obj<E> {
     public material?: Default3DMaterial;
     public meshes: Mesh[] = [];
 

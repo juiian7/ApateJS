@@ -1,8 +1,8 @@
-import Buffer from "./Buffer.js";
+import { Buffer } from "./Buffer.js";
 
 type AttributeLayout = { size: number; typeSize: number; divisor?: number }[];
 
-export default class VertexArray {
+export class VertexArray {
     private readonly gl: WebGL2RenderingContext;
     private readonly vao: WebGLVertexArrayObject;
 

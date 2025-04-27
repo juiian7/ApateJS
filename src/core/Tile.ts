@@ -1,8 +1,8 @@
-import Vec from "./Vec.js";
-import Texture from "../graphics/Texture.js";
+import { Vec } from "./Vec.js";
+import { Texture } from "../graphics/Texture.js";
 
 // abstraction for images
-export default class Tile {
+class Tile {
     static fromImage(img: HTMLImageElement): Tile {
         return new Tile(Texture.fromSource(img));
     }
@@ -42,3 +42,5 @@ export default class Tile {
         return new Tile(this.texture, clip);
     }
 }
+
+export { Tile };

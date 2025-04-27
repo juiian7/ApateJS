@@ -3,13 +3,13 @@ import default3d from "./webgl2/shader/default3d.js";
 import sprite2d from "./webgl2/shader/sprite2d.js";
 import batch2d from "./webgl2/shader/batch2d.js";
 
-import Tile from "../core/Tile.js";
-import Vec from "../core/Vec.js";
+import { Tile } from "../core/Tile.js";
+import { Vec } from "../core/Vec.js";
 
-import Renderer from "./webgl2/Renderer.js";
-import Shader, { ShaderSource } from "./webgl2/Shader.js";
+import { Renderer } from "./webgl2/Renderer.js";
+import { Shader, ShaderSource } from "./webgl2/Shader.js";
 
-export default class Material {
+export class BaseMaterial {
     public readonly source: ShaderSource;
 
     //public color: Vec = Vec.fromHex(0xffffffff);
@@ -34,7 +34,7 @@ export default class Material {
     }
 }
 
-export class SpriteMaterial extends Material {
+export class SpriteMaterial extends BaseMaterial {
     public tile: Tile;
     public color: Vec = Vec.fromHex(0xffffffff);
     public flipH: boolean = false;
@@ -53,7 +53,7 @@ export class SpriteMaterial extends Material {
     }
 }
 
-export class SpriteBatchMaterial extends Material {
+export class SpriteBatchMaterial extends BaseMaterial {
     public atlas: Tile;
     public color: Vec = Vec.fromHex(0xffffffff);
 
@@ -62,7 +62,7 @@ export class SpriteBatchMaterial extends Material {
     }
 }
 
-export class Default3DMaterial extends Material {
+export class Default3DMaterial extends BaseMaterial {
     public ambient: Vec = Vec.fromHex(0x000000ff);
     public diffuse: Vec = Vec.fromHex(0xffffffff);
 

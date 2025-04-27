@@ -1,5 +1,5 @@
-import Vec from "../core/Vec.js";
-import Renderer from "./webgl2/Renderer.js";
+import { Vec } from "../core/Vec.js";
+import { Renderer } from "./webgl2/Renderer.js";
 
 // the raw image used for rendering
 
@@ -28,7 +28,7 @@ const pixelTextureParameter: TextureParameter = {
     warp_h: "clamp",
 };
 
-export default class Texture {
+export class Texture {
     public width: number;
     public height: number;
 

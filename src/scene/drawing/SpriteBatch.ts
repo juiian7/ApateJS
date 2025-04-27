@@ -2,15 +2,15 @@
 
 import { Obj } from "../index.js";
 
-import Tile from "../../core/Tile.js";
-import Transform from "../../core/Transform.js";
-import Context from "../../graphics/Context.js";
-import Vec from "../../core/Vec.js";
+import { Tile } from "../../core/Tile.js";
+import { Transform } from "../../core/Transform.js";
+import { Context } from "../../graphics/Context.js";
+
 import { SpriteBatchMaterial } from "../../graphics/Material.js";
-import VertexArray from "../../graphics/webgl2/VertexArray.js";
-import Buffer from "../../graphics/webgl2/Buffer.js";
+import { VertexArray } from "../../graphics/webgl2/VertexArray.js";
+import { Buffer } from "../../graphics/webgl2/Buffer.js";
 import { inverse } from "../../core/Matrix.js";
-import Apate from "../../Apate.js";
+import { Apate } from "../../Apate.js";
 
 const plane = {
     data: new Float32Array([0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0]),
@@ -19,8 +19,7 @@ const plane = {
         { size: 2, typeSize: 4 },
     ],
 };
-
-export default class SpriteBatch<E extends Apate = Apate> extends Obj<E> {
+export class SpriteBatch<E extends Apate = Apate> extends Obj<E> {
     public material: SpriteBatchMaterial = new SpriteBatchMaterial();
 
     public tiles: Tile[] = [];

@@ -1,9 +1,9 @@
 // vertex data (pos, color) -> at runtime converted to VertexArray
 
-import Material, { Default3DMaterial } from "./Material.js";
-import Buffer from "./webgl2/Buffer.js";
-import Renderer, { DrawMode } from "./webgl2/Renderer.js";
-import VertexArray from "./webgl2/VertexArray.js";
+import { BaseMaterial, Default3DMaterial } from "./Material.js";
+import { Buffer } from "./webgl2/Buffer.js";
+import { Renderer, DrawMode } from "./webgl2/Renderer.js";
+import { VertexArray } from "./webgl2/VertexArray.js";
 
 // ONLY USED FOR GEOMETRY RENDERING -> use buffers directly instead if more control needed
 
@@ -15,11 +15,11 @@ interface VertexData {
     type: VertexType;
     data: number[];
     vertexSize: number;
-    material?: Material;
+    material?: BaseMaterial;
     attributeLocation?: number;
 }
 
-export default class Mesh {
+export class Mesh {
     public name: string;
     public readonly arrays: VertexData[] = [];
     public drawMode: DrawMode = "triangle_strip";

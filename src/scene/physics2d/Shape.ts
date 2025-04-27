@@ -1,15 +1,15 @@
-import Obj from "../Obj.js";
-import Transform from "../../core/Transform.js";
-import Context from "../../graphics/Context.js";
-import Collider from "./Collider.js";
-import Vec from "../../core/Vec.js";
-import Tile from "../../core/Tile.js";
+import { Obj } from "../Obj.js";
+import { Transform } from "../../core/Transform.js";
+import { Context } from "../../graphics/Context.js";
+import { Collider } from "./Collider.js";
+import { Vec } from "../../core/Vec.js";
+import { Tile } from "../../core/Tile.js";
 import { SpriteMaterial } from "../../graphics/Material.js";
 import { transform } from "../../core/Matrix.js";
 
 const mat = new SpriteMaterial();
 
-export default abstract class Shape {
+export abstract class Shape {
     public abstract readonly type: string;
 
     private _color: Vec = Vec.fromHex(0x00ff00aa);

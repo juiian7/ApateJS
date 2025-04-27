@@ -1,10 +1,10 @@
-import Apate from "../../Apate.js";
-import Tile from "../../core/Tile.js";
-import Transform from "../../core/Transform.js";
-import Vec from "../../core/Vec.js";
-import Texture from "../../graphics/Texture.js";
-import Obj from "../Obj.js";
-import SpriteBatch from "./SpriteBatch.js";
+import { Apate } from "../../Apate.js";
+import { Tile } from "../../core/Tile.js";
+import { Transform } from "../../core/Transform.js";
+import { Vec } from "../../core/Vec.js";
+import { Texture } from "../../graphics/Texture.js";
+import { Obj } from "../Obj.js";
+import { SpriteBatch } from "./SpriteBatch.js";
 
 const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const chars = abc + abc.toLowerCase() + "1234567890" + ":!\"§$%&/()[]<>{}=?'";
@@ -14,7 +14,7 @@ export interface BitFont {
     [char: string]: Tile;
 }
 
-export default class Text<E extends Apate = Apate> extends Obj<E> {
+export class Text<E extends Apate = Apate> extends Obj<E> {
     public async loadBitFont(path: string): Promise<BitFont> {
         return {};
     }

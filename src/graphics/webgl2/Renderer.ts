@@ -1,7 +1,7 @@
-import Vec from "../../core/Vec.js";
-import VertexArray from "./VertexArray.js";
-import Shader from "./Shader.js";
-import Texture from "../Texture.js";
+import { Vec } from "../../core/Vec.js";
+import { VertexArray } from "./VertexArray.js";
+import { Shader } from "./Shader.js";
+import { Texture } from "../Texture.js";
 
 export type DrawMode = "lines" | "line_loop" | "line_strip" | "points" | "triangles" | "triangle_fan" | "triangle_strip";
 
@@ -10,7 +10,7 @@ export interface RenderTarget {
     texture: Texture;
 }
 
-export default class Renderer {
+export class Renderer {
     public readonly canvas: HTMLCanvasElement;
     public readonly ctx: WebGL2RenderingContext;
 

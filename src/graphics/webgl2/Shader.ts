@@ -1,4 +1,4 @@
-import Renderer from "./Renderer.js";
+import { Renderer } from "./Renderer.js";
 
 export interface ShaderSource {
     vertex: string;
@@ -29,7 +29,7 @@ const uniformTypeMap = {
 
 const cache: { [source: string]: Shader } = {};
 
-export default class Shader {
+export class Shader {
     private readonly gl: WebGL2RenderingContext;
     private readonly program: WebGLProgram;
 

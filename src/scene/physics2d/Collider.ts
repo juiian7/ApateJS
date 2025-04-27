@@ -1,9 +1,9 @@
-import Obj from "../Obj.js";
+import { Obj } from "../Obj.js";
 
-import Context from "../../graphics/Context.js";
+import { Context } from "../../graphics/Context.js";
 
-import Shape from "./Shape.js";
-import Apate from "../../Apate.js";
+import { Shape } from "./Shape.js";
+import { Apate } from "../../Apate.js";
 
 export interface CollisionInfo<T> {
     self: Shape;
@@ -13,7 +13,7 @@ export interface CollisionInfo<T> {
 }
 
 type CollisionLayer = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15;
-export default class Collider<E extends Apate = Apate> extends Obj<E> {
+export class Collider<E extends Apate = Apate> extends Obj<E> {
     public shapes: Shape[] = [];
     public enabled: boolean = true;
 
