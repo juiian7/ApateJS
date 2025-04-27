@@ -13,7 +13,8 @@ export interface Drawable {
  *
  * This class is the root of the inheritance used for the nodes of the scene graph.
  *
- * Obj is an node only consisting of a {@link Transform} for saving its position and children (an array of {@link Obj | Objs})
+ * Obj is an node only consisting of a {@link Core.Transform | Transform} for saving its position
+ * and the nodes children (an array of {@link World.Obj | Objs})
  *
  * It has no direct drawing behaviour. If you are looking for drawable node types see: Sprite, Model, Text
  *
@@ -51,7 +52,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
     /**
      * The parent node in the scene graph.
      *
-     * @type {Obj}
+     * @type {World.Obj}
      * @public
      */
     public parent?: Obj<E> = null;
@@ -59,7 +60,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
     /**
      * The children of this node.
      *
-     * @type {Obj[]}
+     * @type {World.Obj[]}
      */
     public children: Obj<E>[] = [];
 
@@ -71,7 +72,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
      * this.transform.postion.x += 10;
      * this.transform.rotation.z += Math.PI;
      *
-     * @type {Transform}
+     * @type {Core.Transform}
      * @public
      */
     public transform: Transform;
@@ -79,7 +80,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
     /**
      * Cache only! Used to cache the absolute transform within the scene.
      *
-     * @type {Transform}
+     * @type {Core.Transform}
      * @private
      */
     private _absolut: Transform;
@@ -88,7 +89,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
      * Constructs a new Obj with an optional parent and display name.
      * When the parent is set the Obj will be automatically added as a child of the parent.
      *
-     * @param {Obj} parent - The parent of the newly created scene graph node
+     * @param {World.Obj} parent - The parent of the newly created scene graph node
      * @param {string} name - The name of the Obj (helpful for debugging)
      * @constructs
      */
@@ -102,7 +103,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
 
     /**
      * Adds children to this node.
-     * @param {Obj[]} children - The children to add
+     * @param {World.Obj[]} children - The children to add
      */
     public add(...children: Obj<E>[]): void {
         this.children.push(...children);
@@ -185,7 +186,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
     /**
      * Calculates the absolute position of this node within the scene
      *
-     * @returns {Transform} the transformations object
+     * @returns {Core.Transform} the transformations object
      */
     public absolut(): Transform {
         if (!this.parent) {
@@ -203,7 +204,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
     /**
      * Gets the root node of the graph
      *
-     * @returns {Obj} the obj wich acts as root node
+     * @returns {World.Obj} the obj wich acts as root node
      */
     public root(): Obj<E> {
         return this.parent ? this.parent.root() : this;
@@ -226,7 +227,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
     /**
      * An event wich gets called when this node enters the scene graph.
      * When injecting own code, make sure to call `super.on_scene_enter(engine)`
-     * to ensure the {@link Obj#engine} is set.
+     * to ensure the {@link World.Obj#engine} is set.
      * @param {Apate} engine - The engine of the active scene graph
      */
     on_scene_enter(engine: E) {
@@ -236,7 +237,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
     /**
      * An event wich gets called when this node is removed from the scene graph.
      * When injecting own code, make sure to call `super.on_scene_exit(engine)`
-     * to ensure the {@link Obj#engine} property is set to undefined.
+     * to ensure the {@link World.Obj#engine} property is set to undefined.
      * @param {Apate} engine - The engine where the scene graph was active
      */
     on_scene_exit(engine: E) {

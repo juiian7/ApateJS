@@ -153,8 +153,9 @@
     ?>
         <h3 class="subsection-title">Methods</h3>
 
-        <?js methods.forEach(function(m) { ?>
+        <?js methods.forEach(function(m, i) { ?>
             <?js= self.partial('method.tmpl', m) ?>
+            <?js if (i != methods.length - 1) { ?><span class="split-line"></span><?js } ?>
         <?js }); ?>
     <?js } ?>
 

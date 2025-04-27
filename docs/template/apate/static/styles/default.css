@@ -397,3 +397,9 @@ thead tr {
 .note.bug {
     border-color: var(--c-bug);
 }
+
+.split-line {
+    margin: 1rem 0px;
+    display: block;
+    border-bottom: 1px solid var(--c-bg-dark);
+}

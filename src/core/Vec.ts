@@ -2,11 +2,11 @@
  * This class is used to create and operate with 4 dimensional vectors.
  * Vectors are typically used for storing positions, rotations, scales and also colors.
  * To make it practicable for working with colors the components
- * {@link Vec#x | x}, {@link Vec#y | y}, {@link Vec#z | z}, {@link Vec#w | w} can be replaced by
- * {@link Vec#r | r}, {@link Vec#g | g}, {@link Vec#b | b}, {@link Vec#a | a}.
+ * {@link Core.Vec#x | x}, {@link Core.Vec#y | y}, {@link Core.Vec#z | z}, {@link Core.Vec#w | w} can be replaced by
+ * {@link Core.Vec#r | r}, {@link Core.Vec#g | g}, {@link Core.Vec#b | b}, {@link Core.Vec#a | a}.
  * <br>
  * A Vec object is in fact just a mask to operate on an array with the components more elegant.
- * The raw array can be accessed with {@link Vec#vec | this.vec()}.
+ * The raw array can be accessed with {@link Core.Vec#vec | this.vec()}.
  *
  * <span class="note">
  * Important: Vec is designed to work on the current reference. Be sure to create copies if needed!
@@ -26,7 +26,7 @@ class Vec {
      * @static
      * @param {number} num - The value of the vector, formatted in a single number (see hex colors -> 0xff00ff)
      * @param {number} bit - The number of bits per component
-     * @returns {Vec} - The created vector
+     * @returns {Core.Vec} - The created vector
      */
     public static fromHex(num: number, bit: number = 8): Vec {
         let mask = 2 ** bit - 1;
@@ -47,7 +47,7 @@ class Vec {
      * @param {number} y the y comp...
      * @param {number} z the z ...
      * @param {number} w ...
-     * @returns {Vec} - The created object
+     * @returns {Core.Vec} - The created object
      */
     public static from(x: number, y: number, z: number = 0, w: number = 0): Vec {
         return new Vec([x, y, z, w]);
@@ -66,7 +66,8 @@ class Vec {
     }
 
     /**
-     * Creates a new Vec object. If you want more simple constructors look at: {@link Vec.from} and {@link Vec.fromHex}
+     * Creates a new Vec object. If you want more simple constructors look at:
+     * {@link Core.Vec.from | Vec.from} and {@link Core.Vec.fromHex | Vec.from}
      *
      * @param {number[]} data - The array behind the vector, storing the components
      * @param {number} offset - The index of the array with the first component
@@ -81,8 +82,8 @@ class Vec {
     /**
      * Sets the vectors components equal to an others vectors components.
      *
-     * @param {Vec} vec - The vec to mirror
-     * @returns {Vec} - A reference to the own vector.
+     * @param {Core.Vec} vec - The vec to mirror
+     * @returns {Core.Vec} - A reference to the own vector.
      */
     public setTo(vec: Vec): this {
         this.data[this.offset + 0] = vec.x;
@@ -99,7 +100,7 @@ class Vec {
      * @param y - The y component to set
      * @param z - The z component to set
      * @param w - The w component to set
-     * @returns {Vec} The ref to this
+     * @returns {Core.Vec} The ref to this
      */
     public setXYZ(x: number, y: number, z: number = 0, w: number = 0): this {
         this.data[this.offset + 0] = x;
@@ -113,7 +114,7 @@ class Vec {
      * Add the values of the components of the given vector to this vector.
      *
      * @param vec - The vec to add
-     * @returns {Vec} The ref to this
+     * @returns {Core.Vec} The ref to this
      */
     public add(vec: Vec): this {
         this.data[this.offset + 0] += vec.x;
@@ -127,7 +128,7 @@ class Vec {
      * Subtracts the values of the components of the given vector from this vector.
      *
      * @param vec - The vec to subtract
-     * @returns {Vec} The ref to this
+     * @returns {Core.Vec} The ref to this
      */
     public subtract(vec: Vec): this {
         this.data[this.offset + 0] -= vec.x;
@@ -141,7 +142,7 @@ class Vec {
      * Multiplies the values of the components of the given vector to this vector.
      *
      * @param vec - The vec to multiply
-     * @returns {Vec} The ref to this
+     * @returns {Core.Vec} The ref to this
      */
     public multiply(vec: Vec): this {
         this.data[this.offset + 0] *= vec.x;
@@ -155,7 +156,7 @@ class Vec {
      * Multiplies a single value to all components of this vector.
      *
      * @param f - The number to multiply
-     * @returns {Vec} The ref to this
+     * @returns {Core.Vec} The ref to this
      */
     public multiplyScalar(f: number): this {
         this.data[this.offset + 0] *= f;
@@ -169,7 +170,7 @@ class Vec {
      * Divides a single value from all components of this vector.
      *
      * @param f - The number to divide the components
-     * @returns {Vec} The ref to this
+     * @returns {Core.Vec} The ref to this
      */
     public divide(v: number): this {
         this.data[this.offset + 0] /= v;
@@ -205,7 +206,7 @@ class Vec {
      * This is not a deep copy if the components are not numbers, but references they will have the same reference.
      * </span>
      *
-     * @returns {Vec} The cloned vector
+     * @returns {Core.Vec} The cloned vector
      */
     public clone(): Vec {
         return new Vec([...this.data], this.offset, this.end);
