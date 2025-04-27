@@ -29,8 +29,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm ci
-      - run: npm docs
+      - run: npm i
+      - run: npm run docs
 
       - name: Deploy to GitHub Pages
         id: deployment
