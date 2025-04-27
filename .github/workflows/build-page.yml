@@ -11,10 +11,6 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-permissions:
-  pages: write      # to deploy to Pages
-  id-token: write   # to verify the deployment originates from an appropriate source
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -40,13 +36,17 @@ jobs:
         id: deploy
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/out/
+          path: ".docs/out/"
 
   deploy:
       runs-on: ubuntu-latest
       environment:
         name: github-pages
         url: ${{ steps.deployment.outputs.page_url }}
+        
+      permissions:
+        pages: write
+        id-token: write
         
       steps:
         - name: Deploy to GitHub Pages
