@@ -3,9 +3,11 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "tsc -w",
-    "build": "tsc"
+    "build": "tsc",
+    "docs": "tsc && jsdoc -c jsdoc.json"
   },
   "dependencies": {
+    "jsdoc": "^4.0.4",
     "typescript": "5.7.3"
   },
   "author": "ZupaJul",

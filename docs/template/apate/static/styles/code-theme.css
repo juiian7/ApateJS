@@ -1,0 +1,142 @@
+html,
+html[theme="light"] {
+  --code-plain: #333;
+  --code-string: #7bb641;
+  --code-keyword: #8e52b5;
+  --code-comment: #696969;
+  --code-type: #d89821;
+  --code-literal: #1f8ef5;
+  --code-punctuation: #777;
+  --code-declaration: #f5871f;
+  --code-variable: var(--code-keyword);
+  --code-function: var(--code-keyword);
+  --code-tag: #c82829;
+  --code-attribute-name: #f5871f;
+  --code-attribute-value: #3e999f;
+  --code-b-open: #4d4d4c;
+  --code-b-close: #4d4d4c;
+}
+
+html[theme="dark"] {
+  --code-plain: #eee;
+  --code-comment: #696969;
+
+}
+
+.pln {
+  color: var(--code-plain);
+}
+
+@media screen {
+
+  /* string content */
+  .str {
+    color: var(--code-string);
+  }
+
+  /* a keyword */
+  .kwd {
+    color: var(--code-keyword);
+  }
+
+  /* a comment */
+  .com {
+    color: var(--code-comment);
+  }
+
+  /* a type name */
+  .typ {
+    color: var(--code-type);
+  }
+
+  /* a literal value */
+  .lit {
+    color: var(--code-literal);
+  }
+
+  /* punctuation */
+  .pun {
+    color: var(--code-punctuation);
+  }
+
+  /* lisp open bracket */
+  .opn {
+    color: var(--code-b-open);
+  }
+
+  /* lisp close bracket */
+  .clo {
+    color: var(--code-b-close);
+  }
+
+  /* a markup tag name */
+  .tag {
+    color: var(--code-tag);
+  }
+
+  /* a markup attribute name */
+  .atn {
+    color: var(--code-attribute-name);
+  }
+
+  /* a markup attribute value */
+  .atv {
+    color: var(--code-attribute-value);
+  }
+
+  /* a declaration */
+  .dec {
+    color: var(--code-declaration);
+  }
+
+  /* a variable name */
+  .var {
+    color: var(--code-variable);
+  }
+
+  /* a function name */
+  .fun {
+    color: var(--code-function);
+  }
+}
+
+/* Use higher contrast and text-weight for printable form. */
+
+/*
+pre.prettyprint {
+  background: white;
+  font-family: Consolas, Monaco, 'Andale Mono', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  border: 1px solid #ccc;
+  padding: 10px; }
+*/
+
+/* Specify class=linenums on a pre to get line numbering */
+ol.linenums {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* IE indents via margin-left */
+li.L0,
+li.L1,
+li.L2,
+li.L3,
+li.L4,
+li.L5,
+li.L6,
+li.L7,
+li.L8,
+li.L9 {
+  /* */
+}
+
+/* Alternate shading for lines */
+li.L1,
+li.L3,
+li.L5,
+li.L7,
+li.L9 {
+  /* */
+}

@@ -4,9 +4,12 @@
 # Build
 dist/
 local/
+build/
+docs-out/
 
 # npm
 node_modules/
+package-lock.json
 
 # vscode
 .vscode/

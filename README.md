@@ -1,5 +1,3 @@
-# ApateJS
-
 ApateJS is a small game and rendering engine for the web inspired by Heaps and Godot. It is designed and written to run with vanilla javascript with an object-like oriented approach of a scene graph.
 
 `Important:`
