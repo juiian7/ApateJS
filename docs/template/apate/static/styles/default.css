@@ -403,3 +403,17 @@ thead tr {
     display: block;
     border-bottom: 1px solid var(--c-bg-dark);
 }
+
+.hidden {
+    display: none;
+}
+
+input#search {
+    width: calc(300px - 4rem);
+    box-sizing: border-box;
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    outline: var(--c-highlight);
+    border: none;
+}

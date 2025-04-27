@@ -351,6 +351,9 @@ function buildNav(members) {
     const seen = {};
     const seenTutorials = {};
 
+    let search = '<input id="search" placeholder="Search Docs">';
+    nav += search;
+
     nav += buildMemberNav(members.modules, "Modules", {}, linkto);
     nav += buildMemberNav(members.externals, "Externals", seen, linktoExternal);
     nav += buildMemberNav(members.namespaces, "Namespaces", seen, linkto);
