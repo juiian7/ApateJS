@@ -15,10 +15,6 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
-    environment:
-        name: github-pages
-        url: ${{ steps.deployment.outputs.page_url }}
-        
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -29,12 +25,26 @@ jobs:
         with: 
           submodules: true
 
-      - uses: actions/setup-node@v4
+      - name: Build docs
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       - run: npm i
       - run: npm run docs
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Upload static files
+        id: deploy
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/out/
+
+  deploy:
+      runs-on: ubuntu-latest
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+        
+      steps:
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v4
