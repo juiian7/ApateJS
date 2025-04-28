@@ -21,6 +21,11 @@ class Tile {
     /**
      * Constructs a new Tile from a given html image element as source
      *
+     * @example
+     * // create a tile from a HTMLImageElement
+     * const img = document.queySelector("img"); // could be loaded from dom
+     * const tile = Tile.fromImage(img);
+     *
      * @param {HTMLImageElement} img - The image of the tile
      * @returns {Core.Tile} The tile with the full image of the HTMLImageElement.
      */

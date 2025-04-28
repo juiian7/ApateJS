@@ -17,6 +17,11 @@
  * const position = Vec.from(0,0);
  * postion.add(otherVec).multiplyScalar(3.4);
  *
+ * const magenta = Vec.fromHex(0xff00ffff, 8);
+ * const yellow = Vec.fromHex("#ffff00");
+ * magenta.vec(); // [255, 0, 255, 255]
+ * magenta.color(); // [1, 0, 1, 1]
+ *
  * @memberof Core
  */
 class Vec {

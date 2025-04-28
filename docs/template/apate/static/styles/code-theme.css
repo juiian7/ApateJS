@@ -1,5 +1,5 @@
 html,
-html[theme="light"] {
+html[data-theme="light"] {
   --code-plain: #333;
   --code-string: #7bb641;
   --code-keyword: #8e52b5;
@@ -17,10 +17,27 @@ html[theme="light"] {
   --code-b-close: #4d4d4c;
 }
 
-html[theme="dark"] {
+html[data-theme="dark"] {
   --code-plain: #eee;
   --code-comment: #696969;
+}
 
+.lang-txt {
+  --code-plain: initial;
+  --code-string: initial;
+  --code-keyword: initial;
+  --code-comment: initial;
+  --code-type: initial;
+  --code-literal: initial;
+  --code-punctuation: initial;
+  --code-declaration: initial;
+  --code-variable: initial;
+  --code-function: initial;
+  --code-tag: initial;
+  --code-attribute-name: initial;
+  --code-attribute-value: initial;
+  --code-b-open: initial;
+  --code-b-close: initial;
 }
 
 .pln {

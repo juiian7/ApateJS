@@ -23,7 +23,8 @@
     "opts": {
         "destination": "docs/out/",
         "recurse": true,
-        "readme": "./README.md",
-        "template": "./docs/template/apate"
+        "readme": "README.md",
+        "template": "docs/template/apate",
+        "tutorials": "docs/tutorials/"
     }
 }

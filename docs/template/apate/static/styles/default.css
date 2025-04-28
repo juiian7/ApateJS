@@ -1,6 +1,6 @@
 html,
-html[theme="light"] {
-    --c-highlight: #289c8b;
+html[data-theme="light"] {
+    --c-highlight: #00aeab;
     --c-info: var(--c-highlight);
     --c-warn: #fdc921;
     --c-bug: #9c2828;
@@ -17,7 +17,7 @@ html[theme="light"] {
     --c-attribs: #999;
 }
 
-html[theme="dark"] {
+html[data-theme="dark"] {
     --c-highlight: #32ccb5;
     --c-fg: #ededed;
     --c-bg: #2f2f2f;
@@ -40,8 +40,9 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.5;
     color: var(--c-fg);
-    background-color: var(--c-highlight);
     margin: 0px;
+    background-color: var(--c-highlight);
+    overflow-x: hidden;
 }
 
 .view {
@@ -113,6 +114,7 @@ section {
 
 nav {
     position: fixed;
+    overflow: auto;
     width: 300px;
     box-sizing: border-box;
     padding: 2rem 4rem 0px 2rem;
@@ -120,13 +122,21 @@ nav {
     height: 100vh;
 }
 
+
 nav ul {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 100%;
-    line-height: 17px;
+    padding: 0;
+    list-style-type: none;
+}
+
+nav li {
+    padding-left: 2rem;
+}
+
+nav>ul>li {
     padding: 0;
     margin: 0;
-    list-style-type: none;
 }
 
 nav ul a,
@@ -137,12 +147,16 @@ nav ul a:active {
     color: var(--c-fg);
 }
 
-nav h3 {
-    margin-top: 12px;
+nav ul li.item-in-view>a {
+    border-left: 3px solid var(--c-highlight);
+    display: inline-block;
+    font-weight: bold;
+    padding-left: 1rem;
+    color: var(--c-highlight);
 }
 
-nav li {
-    margin-top: 6px;
+nav h3 {
+    margin-top: 12px;
 }
 
 footer {
@@ -309,8 +323,7 @@ thead tr {
 
 .source {
     border: 1px solid var(--c-bg-dark);
-    width: calc(100vw - 300px - 4rem);
-    overflow: scroll;
+    border-radius: 8px;
 }
 
 .source code {
@@ -321,6 +334,11 @@ thead tr {
     margin: 0;
     background-color: var(--c-bg-code);
     color: var(--c-fg-code);
+}
+
+.prettyprint {
+    width: calc(100vw - 300px - 4rem);
+    overflow: auto;
 }
 
 .prettyprint code span.line {
@@ -383,7 +401,7 @@ thead tr {
     margin: 0.5rem 0px;
     display: block;
     padding: 0.25rem 1rem;
-    border-left: 4px solid var(--c-fg);
+    border-left: 4px solid var(--c-bg-dark);
 }
 
 .note.info {
@@ -402,4 +420,39 @@ thead tr {
     margin: 1rem 0px;
     display: block;
     border-bottom: 1px solid var(--c-bg-dark);
+}
+
+.hidden {
+    display: none;
+}
+
+input#search {
+    width: calc(300px - 4rem);
+    background-color: var(--c-bg);
+    box-sizing: border-box;
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    outline: var(--c-highlight);
+    border: none;
+}
+
+@media (max-width:480px) {
+    nav {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    #main {
+        margin-left: 0;
+    }
+
+    input#search {
+        width: 100%;
+    }
+
+    .prettyprint {
+        width: calc(100vw - 4rem);
+    }
 }

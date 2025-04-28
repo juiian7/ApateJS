@@ -1,0 +1,35 @@
+{
+    "1-setup": {
+        "title": "Install and setup"
+    },
+    "2-intro": {
+        "title": "Learning the basics",
+        "children": {
+            "2-sprites": {
+                "title": "Drawing sprites"
+            },
+            "2-asprites": {
+                "title": "Animating sprites"
+            }
+        }
+    },
+    "3-advanced": {
+        "title": "More advanced stuff",
+        "children": {
+            "3-extending-obj": {
+                "title": "Creating own node types"
+            },
+            "3-render-targets": {
+                "title": "Rendering to textures",
+                "children": {
+                    "3-postprocessing": {
+                        "title": "Applying screen effects"
+                    },
+                    "3-split-screens": {
+                        "title": "Splitting the screen"
+                    }
+                }
+            }
+        }
+    }
+}

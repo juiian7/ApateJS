@@ -104,6 +104,19 @@
   font-style: normal;
 }
 
+.lang-txt .kwd,
+.lang-txt .com,
+.lang-txt .pun,
+.lang-txt .opn,
+.lang-txt .clo,
+.lang-txt .dec,
+.lang-txt .fun {
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+
 /* Specify class=linenums on a pre to get line numbering */
 ol.linenums {
   margin-top: 0;

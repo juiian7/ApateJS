@@ -292,7 +292,7 @@ function attachModuleSymbols(doclets, modules) {
     });
 }
 
-function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
+function buildMemberNav(items, itemHeading, itemsSeen, linktoFn, recursive, insideRecursion) {
     let nav = "";
 
     if (items.length) {
@@ -301,22 +301,31 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
         items.forEach((item) => {
             let displayName;
 
+            itemsNav += `<li data-name="${item.name}">`;
+
             if (!hasOwnProp.call(item, "longname")) {
-                itemsNav += `<li>${linktoFn("", item.name)}</li>`;
+                itemsNav += `${linktoFn("", item.name)}`;
             } else if (!hasOwnProp.call(itemsSeen, item.longname)) {
                 if (env.conf.templates.default.useLongnameInNav) {
                     displayName = item.longname;
                 } else {
                     displayName = item.name;
                 }
-                itemsNav += `<li>${linktoFn(item.longname, displayName.replace(/\b(module|event):/g, ""))}</li>`;
+                itemsNav += `${linktoFn(item.longname, displayName.replace(/\b(module|event):/g, ""))}`;
 
                 itemsSeen[item.longname] = true;
             }
+
+            if (recursive && item.children) {
+                itemsNav += buildMemberNav(item.children, itemHeading, itemsSeen, linktoFn, recursive, true);
+            }
+
+            itemsNav += "</li>";
         });
 
         if (itemsNav !== "") {
-            nav += `<h3>${itemHeading}</h3><ul>${itemsNav}</ul>`;
+            if (!insideRecursion) nav += `<h3>${itemHeading}</h3>`;
+            nav += `<ul>${itemsNav}</ul>`;
         }
     }
 
@@ -351,6 +360,9 @@ function buildNav(members) {
     const seen = {};
     const seenTutorials = {};
 
+    let search = '<input id="search" placeholder="Search Docs">';
+    nav += search;
+
     nav += buildMemberNav(members.modules, "Modules", {}, linkto);
     nav += buildMemberNav(members.externals, "Externals", seen, linktoExternal);
     nav += buildMemberNav(members.namespaces, "Namespaces", seen, linkto);
@@ -358,7 +370,9 @@ function buildNav(members) {
     nav += buildMemberNav(members.interfaces, "Interfaces", seen, linkto);
     nav += buildMemberNav(members.events, "Events", seen, linkto);
     nav += buildMemberNav(members.mixins, "Mixins", seen, linkto);
-    nav += buildMemberNav(members.tutorials, "Tutorials", seenTutorials, linktoTutorial);
+    nav += buildMemberNav(members.tutorials, "Tutorials", seenTutorials, linktoTutorial, true);
+
+    //console.log(members.tutorials[1]);
 
     if (members.globals.length) {
         globalNav = "";
@@ -660,6 +674,7 @@ exports.publish = (taffyData, opts, tutorials) => {
     // TODO: move the tutorial functions to templateHelper.js
     function generateTutorial(title, tutorial, filename) {
         const tutorialData = {
+            name: tutorial.name,
             title: title,
             header: tutorial.title,
             content: tutorial.parse(),

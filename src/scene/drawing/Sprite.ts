@@ -10,8 +10,11 @@ import { Apate } from "../../Apate.js";
 /**
  * This class acts as node type for drawing sprites.
  * A sprite is build for rendering a single image in form of a {@link Tile}.
- * If you are looking for animated sprites, tile maps or particles check out {@link ASprite}, {@link SpriteBatch}
+ * If you are looking for animated sprites, tile maps or particles check out {@link ASprite}, {@link SpriteBatch}.
  *
+ * <div>
+ * For basic usage see: [Tutorial - Drawing Sprites]{@tutorial 2-sprites}
+ * </div>
  * @example
  * // add a sprite to the scene (could be found in {@link Apate#init})
  * new World.Sprite(Tile.fromImage(<img>), this.scene, "demo-sprite")
