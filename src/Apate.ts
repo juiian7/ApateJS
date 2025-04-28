@@ -25,6 +25,25 @@ const defaultScreenConfig: ScreenConfig = { autoResize: true, width: 640, height
 /**
  * This class is the entry point of the engine.
  * It handles the engines initialization, asynchronous content loading and executes the game loop
+ *
+ * @example
+ * import Apate, { {@link World} } from "<apate>/index.js";
+ *
+ * class Game extends Apate {
+ *     sprite;
+ *
+ *     async init() {
+ *         // load content required for running the game
+ *         const tile = {@link Core.Tile | Tile}.{@link Core.Tile.fromImage | fromImage}(<img>);
+ *         this.sprite = new {@link World.Sprite}(tile, this.scene, "My first sprite");
+ *     }
+ *
+ *     update() {
+ *         // gets called every frame before the drawing is done
+ *         sprite.transform.rotate(0, 0.1, 0);
+ *     }
+ * }
+ * new Game();
  */
 export class Apate {
     /**
@@ -43,6 +62,13 @@ export class Apate {
     public physics: Physics;
 
     private _scene: Obj;
+
+    /**
+     * This is the currently active scene.
+     * The object and all children will be drawn when they are in the active scene
+     *
+     * @type {Obj}
+     */
     public set scene(v: Obj) {
         if (this._scene) this._scene.recCall("on_scene_exit", this);
         this._scene = v;
