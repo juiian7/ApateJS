@@ -52,7 +52,7 @@ export class Text<E extends Apate = Apate> extends Obj<E> {
             if (this.font[chars[i]])
                 this.sprites.batch(
                     this.font[chars[i]],
-                    new Transform(i * spaceBetween, 0).size(1, this.font[chars[i]].clip.w / this.font[chars[i]].clip.z)
+                    new Transform(this.transform, i * spaceBetween, 0).scale(1, this.font[chars[i]].clip.w / this.font[chars[i]].clip.z)
                 );
         }
         return this;
@@ -60,8 +60,8 @@ export class Text<E extends Apate = Apate> extends Obj<E> {
 
     center(pos: Vec) {
         let sortedX = this.sprites.transforms.map((t) => t.position).sort((a, b) => b.x - a.x);
-        this.transform.position.x = pos.x - (sortedX[0].x * this.transform.scale.x) / 2;
-        this.transform.position.y = pos.y - this.transform.scale.y / 2;
+        this.transform.position.x = pos.x - (sortedX[0].x * this.transform.size.x) / 2;
+        this.transform.position.y = pos.y - this.transform.size.y / 2;
         return this;
     }
 }

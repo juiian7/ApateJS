@@ -31,7 +31,7 @@ export class Camera<E extends Apate = Apate> extends Obj<E> implements ICamera {
     }
 
     public static perspective(width: number, height: number, fov: number = 1.57) {
-        return new Camera(width, height, perspective(fov, 1, 100, width / height));
+        return new Camera(width, height, perspective(fov, 0.001, 100, width / height));
     }
 
     public draw(context: Context): void {

@@ -31,8 +31,8 @@ export class Viewport<E extends Apate = Apate> extends Obj<E> {
 
         this.camera = new Camera(width, height, null, null, "Viewport Camera");
 
-        this.transform.scale.x = this.texture.width;
-        this.transform.scale.y = this.texture.height;
+        this.transform.size.x = this.texture.width;
+        this.transform.size.y = this.texture.height;
     }
 
     protected drawRec(context: Context, layer: number): void {

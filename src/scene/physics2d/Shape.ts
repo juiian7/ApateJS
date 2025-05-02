@@ -5,7 +5,6 @@ import { Collider } from "./Collider.js";
 import { Vec } from "../../core/Vec.js";
 import { Tile } from "../../core/Tile.js";
 import { SpriteMaterial } from "../../graphics/Material.js";
-import { transform } from "../../core/Matrix.js";
 
 const mat = new SpriteMaterial();
 
@@ -48,13 +47,13 @@ export class BoxShape extends Shape {
     collision(self: Transform, shape: BoxShape, other: Transform) {
         if (shape.type != "box") return shape.info(self, this, other);
 
-        this.clone.setTo(self.position, null, self.scale).position.add(this.offset);
+        this.clone.setTo(self.position, null, self.size).position.add(this.offset);
         let { x: ax, y: ay } = this.clone.position;
-        let { x: aw, y: ah } = this.clone.scale;
+        let { x: aw, y: ah } = this.clone.size;
 
-        this.clone.setTo(other.position, null, other.scale).position.add(shape.offset);
+        this.clone.setTo(other.position, null, other.size).position.add(shape.offset);
         let { x: bx, y: by } = this.clone.position;
-        let { x: bw, y: bh } = this.clone.scale;
+        let { x: bw, y: bh } = this.clone.size;
 
         return !(ax + aw <= bx || bx + bw <= ax || ay + ah <= by || by + bh <= ay);
     }
@@ -62,19 +61,19 @@ export class BoxShape extends Shape {
     info(self: Transform, shape: BoxShape, other: Transform) {
         if (shape.type != "box") return shape.info(self, this, other);
 
-        this.clone.setTo(self.position, null, self.scale).position.add(this.offset);
+        this.clone.setTo(self.position, null, self.size).position.add(this.offset);
         let { x: ax, y: ay } = this.clone.position;
-        let { x: aw, y: ah } = this.clone.scale;
+        let { x: aw, y: ah } = this.clone.size;
 
-        this.clone.setTo(other.position, null, other.scale).position.add(shape.offset);
+        this.clone.setTo(other.position, null, other.size).position.add(shape.offset);
         let { x: bx, y: by } = this.clone.position;
-        let { x: bw, y: bh } = this.clone.scale;
+        let { x: bw, y: bh } = this.clone.size;
 
         return { top: ay + ah - by, right: bx + bw - ax, bottom: by + bh - ay, left: ax + aw - bx };
     }
 
     public draw(context: Context, transform: Transform): void {
-        this.clone.setTo(transform.position, null, transform.scale).position.add(this.offset);
+        this.clone.setTo(transform.position, null, transform.size).position.add(this.offset);
         super.draw(context, this.clone);
     }
 }

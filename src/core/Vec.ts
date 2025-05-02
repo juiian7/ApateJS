@@ -1,6 +1,6 @@
 /**
  * This class is used to create and operate with 4 dimensional vectors.
- * Vectors are typically used for storing positions, rotations, scales and also colors.
+ * Vectors are typically used for storing positions, scales and also colors.
  * To make it practicable for working with colors the components
  * {@link Core.Vec#x | x}, {@link Core.Vec#y | y}, {@link Core.Vec#z | z}, {@link Core.Vec#w | w} can be replaced by
  * {@link Core.Vec#r | r}, {@link Core.Vec#g | g}, {@link Core.Vec#b | b}, {@link Core.Vec#a | a}.
@@ -56,6 +56,21 @@ class Vec {
      */
     public static from(x: number, y: number, z: number = 0, w: number = 0): Vec {
         return new Vec([x, y, z, w]);
+    }
+
+    /**
+     * Calculates the cross product
+     *
+     * @param {Core.Vec} a The first vec of the operation
+     * @param {Core.Vec} b The second vec of the operation
+     * @param {Core.Vec} ref The working reference, if omitted will create a new Vec
+     * @returns {Core.Vec} the resulting vec
+     */
+    public static cross(a: Vec, b: Vec, ref: Vec = Vec.from(0, 0)) {
+        ref.x = a.y * b.z - a.z * b.y;
+        ref.y = a.z * b.x - a.x * b.z;
+        ref.z = a.x * b.y - a.y * b.x;
+        return ref;
     }
 
     protected data: number[];
@@ -182,6 +197,20 @@ class Vec {
         this.data[this.offset + 1] /= v;
         this.data[this.offset + 2] /= v;
         this.data[this.offset + 3] /= v;
+        return this;
+    }
+
+    public len() {
+        return Math.sqrt(
+            this.data[this.offset + 0] ** 2 +
+                this.data[this.offset + 1] ** 2 +
+                this.data[this.offset + 2] ** 2 +
+                this.data[this.offset + 3] ** 2
+        );
+    }
+
+    public normalize() {
+        this.divide(this.len());
         return this;
     }
 

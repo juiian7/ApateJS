@@ -38,10 +38,10 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
 
         this.collisions.length = 0;
         for (let i = 0; i < this.shapes.length; i++) {
-            let a = this.absolut();
+            let a = this.transform.absolute();
             for (let j = 0; j < toCheck.length; j++) {
                 for (let k = 0; k < toCheck[j].shapes.length; k++) {
-                    let b = toCheck[j].absolut();
+                    let b = toCheck[j].transform.absolute();
                     if (this.shapes[i].collision(a, toCheck[j].shapes[k], b))
                         this.collisions.push({
                             collider: toCheck[j],
@@ -57,7 +57,7 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
 
     public draw(context: Context): void {
         if (context.engine.debug && this.enabled) {
-            for (const shape of this.shapes) shape.draw(context, this.absolut());
+            for (const shape of this.shapes) shape.draw(context, this.transform);
         }
     }
 

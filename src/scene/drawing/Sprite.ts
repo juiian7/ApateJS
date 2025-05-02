@@ -65,14 +65,14 @@ class Sprite<E extends Apate = Apate> extends Obj<E> {
         this.tile = tile;
 
         // to size
-        this.transform.scale.x = tile.clip.z;
-        this.transform.scale.y = tile.clip.w;
+        this.transform.size.x = tile.clip.z;
+        this.transform.size.y = tile.clip.w;
     }
 
     fromTexture() {}
 
     public draw(context: Context): void {
-        context.drawTile(this.absolut(), this.material.tile, this.material, this.align);
+        context.drawTile(this.transform, this.material.tile, this.material, this.align);
     }
 }
 export { Sprite };

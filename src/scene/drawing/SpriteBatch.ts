@@ -119,7 +119,7 @@ export class SpriteBatch<E extends Apate = Apate> extends Obj<E> {
             uAtlasSize: this.material.atlas.texture.size,
             uAtlas: 5,
 
-            uModel: this.absolut().matrix(),
+            uModel: this.transform.matrix(),
             uView: inverse(context.camera.transform.matrix()),
             uProjection: context.camera.projection,
         });

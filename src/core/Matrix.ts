@@ -32,32 +32,42 @@ export function rotation(axis: Vec): Matrix {
     return multiply(multiply(rotationX(axis.x), rotationY(axis.y)), rotationZ(axis.z));
 }
 
-export function transform(transform: Transform) {
-    return multiply(multiply(translation(transform.position), rotation(transform.rotation)), scale(transform.scale));
+export function lookAt(eye: Vec, target: Vec, up = Vec.from(0, 1, 0)): Matrix {
+    let fwd = eye.clone().subtract(target).normalize();
+    let right = Vec.cross(up, fwd).normalize();
+    up = Vec.cross(fwd, right);
+    return [right.x, up.x, fwd.x, 0, right.y, up.y, fwd.y, 0, right.z, up.z, fwd.z, 0, 0, 0, 0, 1];
 }
 
-export function multiply(a: Matrix, b: Matrix): Matrix {
-    return [
-        b[0] * a[0] + b[1] * a[4] + b[2] * a[8] + b[3] * a[12],
-        b[0] * a[1] + b[1] * a[5] + b[2] * a[9] + b[3] * a[13],
-        b[0] * a[2] + b[1] * a[6] + b[2] * a[10] + b[3] * a[14],
-        b[0] * a[3] + b[1] * a[7] + b[2] * a[11] + b[3] * a[15],
+/* export function transform(transform: Transform) {
+    return multiplyStack(translation(transform.position), rotation(transform.rotation), scale(transform.scale));
+    //return multiply(multiply(translation(transform.position), rotation(transform.rotation)), scale(transform.scale));
+} */
 
-        b[4] * a[0] + b[5] * a[4] + b[6] * a[8] + b[7] * a[12],
-        b[4] * a[1] + b[5] * a[5] + b[6] * a[9] + b[7] * a[13],
-        b[4] * a[2] + b[5] * a[6] + b[6] * a[10] + b[7] * a[14],
-        b[4] * a[3] + b[5] * a[7] + b[6] * a[11] + b[7] * a[15],
+export function multiply(a: Matrix, b: Matrix, ref: Matrix = identity()): Matrix {
+    ref[0] = b[0] * a[0] + b[1] * a[4] + b[2] * a[8] + b[3] * a[12];
+    ref[1] = b[0] * a[1] + b[1] * a[5] + b[2] * a[9] + b[3] * a[13];
+    ref[2] = b[0] * a[2] + b[1] * a[6] + b[2] * a[10] + b[3] * a[14];
+    ref[3] = b[0] * a[3] + b[1] * a[7] + b[2] * a[11] + b[3] * a[15]; // 0
+    ref[4] = b[4] * a[0] + b[5] * a[4] + b[6] * a[8] + b[7] * a[12];
+    ref[5] = b[4] * a[1] + b[5] * a[5] + b[6] * a[9] + b[7] * a[13];
+    ref[6] = b[4] * a[2] + b[5] * a[6] + b[6] * a[10] + b[7] * a[14];
+    ref[7] = b[4] * a[3] + b[5] * a[7] + b[6] * a[11] + b[7] * a[15]; // 0
+    ref[8] = b[8] * a[0] + b[9] * a[4] + b[10] * a[8] + b[11] * a[12];
+    ref[9] = b[8] * a[1] + b[9] * a[5] + b[10] * a[9] + b[11] * a[13];
+    ref[10] = b[8] * a[2] + b[9] * a[6] + b[10] * a[10] + b[11] * a[14];
+    ref[11] = b[8] * a[3] + b[9] * a[7] + b[10] * a[11] + b[11] * a[15]; // 0
+    ref[12] = b[12] * a[0] + b[13] * a[4] + b[14] * a[8] + b[15] * a[12];
+    ref[13] = b[12] * a[1] + b[13] * a[5] + b[14] * a[9] + b[15] * a[13];
+    ref[14] = b[12] * a[2] + b[13] * a[6] + b[14] * a[10] + b[15] * a[14];
+    ref[15] = b[12] * a[3] + b[13] * a[7] + b[14] * a[11] + b[15] * a[15]; // 1
+    return ref;
+}
 
-        b[8] * a[0] + b[9] * a[4] + b[10] * a[8] + b[11] * a[12],
-        b[8] * a[1] + b[9] * a[5] + b[10] * a[9] + b[11] * a[13],
-        b[8] * a[2] + b[9] * a[6] + b[10] * a[10] + b[11] * a[14],
-        b[8] * a[3] + b[9] * a[7] + b[10] * a[11] + b[11] * a[15],
-
-        b[12] * a[0] + b[13] * a[4] + b[14] * a[8] + b[15] * a[12],
-        b[12] * a[1] + b[13] * a[5] + b[14] * a[9] + b[15] * a[13],
-        b[12] * a[2] + b[13] * a[6] + b[14] * a[10] + b[15] * a[14],
-        b[12] * a[3] + b[13] * a[7] + b[14] * a[11] + b[15] * a[15],
-    ];
+export function multiplyStack(...matrices: Matrix[]) {
+    let mat = matrices[0];
+    for (let i = 1; i < matrices.length; i++) mat = multiply(mat, matrices[i]);
+    return mat;
 }
 
 export function multiplyVec(mat: Matrix, vec: Vec): Vec {

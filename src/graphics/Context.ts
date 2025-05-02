@@ -83,7 +83,7 @@ export class Context {
         let shader = mat.compile(this.renderer);
         shader.use();
         shader.setUniforms({
-            ...material.data(),
+            ...mat.data(),
             uAmbient: mat.ambient.color(),
             uDiffuse: mat.diffuse.color(),
             //uTexture: 1,

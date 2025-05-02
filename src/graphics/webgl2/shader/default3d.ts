@@ -34,7 +34,8 @@ export default {
     void main() { 
         vec4 objColor = uDiffuse;
 
-        vec3 lightDir = normalize(normal - vec3(10,-10,10));
+        vec3 lightPos = vec3(10, 10, 10) * -1.0;
+        vec3 lightDir = normalize(normal - lightPos);
         vec3 lightColor = objColor.rgb; //vec3(1,1,1);
         float lightIntensity = 1.0;
         

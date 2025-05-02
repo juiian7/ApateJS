@@ -78,14 +78,6 @@ class Obj<E extends Apate = Apate> implements Drawable {
     public transform: Transform;
 
     /**
-     * Cache only! Used to cache the absolute transform within the scene.
-     *
-     * @type {Core.Transform}
-     * @private
-     */
-    private _absolut: Transform;
-
-    /**
      * Constructs a new Obj with an optional parent and display name.
      * When the parent is set the Obj will be automatically added as a child of the parent.
      *
@@ -94,11 +86,10 @@ class Obj<E extends Apate = Apate> implements Drawable {
      * @constructs
      */
     constructor(parent?: Obj, name?: string) {
+        this.transform = new Transform();
+
         if (name) this.name = name;
         if (parent) parent.add(this);
-
-        this.transform = new Transform();
-        this._absolut = new Transform();
     }
 
     /**
@@ -109,6 +100,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
         this.children.push(...children);
         for (const c of children) {
             c.parent = this;
+            c.transform.parent = this.transform;
             if (this.engine) c.recCall("on_scene_enter", this.engine);
         }
     }
@@ -124,7 +116,8 @@ class Obj<E extends Apate = Apate> implements Drawable {
         if (this.parent) {
             let i = this.parent.children.indexOf(this);
             if (i >= 0) this.parent.children.splice(i, 1);
-            this.parent = null;
+            this.parent = undefined;
+            this.transform.parent = undefined;
         }
         if (this.engine) this.recCall("on_scene_exit", this.engine);
     }
@@ -181,24 +174,6 @@ class Obj<E extends Apate = Apate> implements Drawable {
         for (let i = 0; i < Obj.Layers.length; i++) {
             this.drawRec(context, i);
         }
-    }
-
-    /**
-     * Calculates the absolute position of this node within the scene
-     *
-     * @returns {Core.Transform} the transformations object
-     */
-    public absolut(): Transform {
-        if (!this.parent) {
-            this._absolut.setTo(this.transform.position, this.transform.rotation, this.transform.scale);
-            return this._absolut;
-        }
-
-        this.parent._absolut = this.parent.absolut();
-        this._absolut.setTo(this.parent._absolut.position, this.parent._absolut.rotation, this.parent._absolut.scale);
-        this._absolut.add(this.transform.position, this.transform.rotation, this.transform.scale);
-
-        return this._absolut;
     }
 
     /**

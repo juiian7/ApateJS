@@ -23,7 +23,7 @@ export class Model<E extends Apate = Apate> extends Obj<E> {
 
     public draw(context: Context): void {
         for (let i = 0; i < this.meshes.length; i++) {
-            context.drawMesh(this.absolut(), this.meshes[i], this.material);
+            context.drawMesh(this.transform, this.meshes[i], this.material);
         }
     }
 
