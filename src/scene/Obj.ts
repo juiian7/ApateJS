@@ -2,6 +2,8 @@ import { Apate } from "../Apate.js";
 import { Transform } from "../core/Transform.js";
 import { Context } from "../graphics/Context.js";
 
+import { Elem, Engine, container, heading } from "../ui/index.js";
+
 /**
  * @deprecated
  */
@@ -217,6 +219,10 @@ class Obj<E extends Apate = Apate> implements Drawable {
      */
     on_scene_exit(engine: E) {
         this.engine = undefined;
+    }
+
+    drawDebugUI(): Elem {
+        return container(heading(this.name || "-"), new Engine.TransformInput(this.transform));
     }
 }
 export { Obj };

@@ -2,6 +2,7 @@
 import default3d from "./webgl2/shader/default3d.js";
 import sprite2d from "./webgl2/shader/sprite2d.js";
 import batch2d from "./webgl2/shader/batch2d.js";
+import postprocessing from "./webgl2/shader/postprocessing.js";
 
 import { Tile } from "../core/Tile.js";
 import { Vec } from "../core/Vec.js";
@@ -70,5 +71,12 @@ export class Default3DMaterial extends BaseMaterial {
         super(default3d);
 
         if (diffuse) this.diffuse = diffuse;
+    }
+}
+
+export class PostprocessingMaterial extends BaseMaterial {
+    constructor(glsl_fragment: string = "") {
+        super(postprocessing);
+        this.source.fragment = this.source.fragment.replace("//#inject", glsl_fragment);
     }
 }

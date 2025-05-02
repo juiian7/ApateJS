@@ -1,8 +1,8 @@
 import { Apate } from "../Apate.js";
-import { Renderer } from "./webgl2/Renderer.js";
+import { Renderer, RenderTarget } from "./webgl2/Renderer.js";
 
 import { Tile } from "../core/Tile.js";
-import { BaseMaterial, Default3DMaterial, SpriteMaterial } from "./Material.js";
+import { BaseMaterial, Default3DMaterial, SpriteMaterial, PostprocessingMaterial } from "./Material.js";
 
 import { Mesh } from "./Mesh.js";
 import { Vec } from "../core/Vec.js";
@@ -31,6 +31,8 @@ export class Context {
     public engine: Apate;
     public renderer: Renderer;
 
+    private postprocessing?: { target: RenderTarget; material: BaseMaterial };
+
     private planeAlignCenter: Mesh;
     private planeAlignCorner: Mesh;
     private white: Texture;
@@ -44,6 +46,33 @@ export class Context {
         this.planeAlignCorner = Mesh.plane2D("corner");
         this.white = Texture.fromColor(Vec.fromHex(0xffffffff));
         this.defaultMeshMat = new Default3DMaterial();
+    }
+
+    setPostProcessingMaterial(material: PostprocessingMaterial) {
+        this.postprocessing = { material, target: this.postprocessing?.target || this.renderer.createTarget() };
+    }
+
+    begin() {
+        if (this.postprocessing) this.renderer.pushTarget(this.postprocessing.target);
+    }
+
+    flush() {
+        if (this.postprocessing) {
+            this.renderer.popTarget();
+
+            this.postprocessing.target.texture.compile(this.renderer, 7);
+            let shader = this.postprocessing.material.compile(this.renderer);
+            shader.use();
+            shader.setUniforms({
+                uScreen: 7,
+                uScreenSize: this.postprocessing.target.texture.size,
+                uTime: this.engine.time,
+                ...this.postprocessing.material.data(),
+            });
+
+            let arrays = this.planeAlignCenter.compile(this.renderer);
+            this.renderer.draw(arrays.count);
+        }
     }
 
     pushCamera(camera: ICamera) {

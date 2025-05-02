@@ -90,9 +90,12 @@ export class Renderer {
         this.stats.drawCalls = this._drawCalls;
     }
 
+    createTarget(): RenderTarget;
     createTarget(width: number, height: number): RenderTarget;
     createTarget(texture: Texture): RenderTarget;
     createTarget(...args: any[]) {
+        if (args.length == 0) args = [this.canvas.clientWidth, this.canvas.clientHeight];
+
         let texture = args[0] as Texture;
         if (!(texture instanceof Texture)) texture = new Texture(args[0], args[1], "rgba", "rgba");
 
