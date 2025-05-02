@@ -58,5 +58,3 @@ Once the game loop is entered it runs for every frame. At first _{@link Apate#up
 
 Let's walk through some basic examples, to understand the concepts.
 At first: Drawing Sprites
-
-#### [Next Page >>]{@tutorial 2-sprites}

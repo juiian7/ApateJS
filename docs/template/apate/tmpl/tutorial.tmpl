@@ -19,4 +19,10 @@
     <?js= content ?>
 </article>
 
+<span class="pageLinks"> 
+    <a href="tutorial-<?js= prev?.longname ?>.html"><?js= prev?.name ? `&lt&lt ${prev.title}` : "" ?></a>
+    <a href="tutorial-<?js= next?.longname ?>.html"><?js= next ? `${next.title} &gt&gt` : "" ?></a>
+</span>
+
 </section>
+ 

@@ -379,7 +379,7 @@ function buildNav(members) {
 
         members.globals.forEach(({ kind, longname, name }) => {
             if (kind !== "typedef" && !hasOwnProp.call(seen, longname)) {
-                globalNav += `<li>${linkto(longname, name)}</li>`;
+                globalNav += `<li>${linkto(name, longname)}</li>`;
             }
             seen[longname] = true;
         });
@@ -672,14 +672,17 @@ exports.publish = (taffyData, opts, tutorials) => {
     });
 
     // TODO: move the tutorial functions to templateHelper.js
-    function generateTutorial(title, tutorial, filename) {
+    function generateTutorial(title, tutorial, filename, ref) {
         const tutorialData = {
             name: tutorial.name,
+            next: ref.flat[ref.pointer + 1] || null,
+            prev: ref.flat[ref.pointer - 1] || null,
             title: title,
             header: tutorial.title,
             content: tutorial.parse(),
             children: tutorial.children,
         };
+        ref.pointer++;
         const tutorialPath = path.join(outdir, filename);
         let html = view.render("tutorial.tmpl", tutorialData);
 
@@ -690,12 +693,16 @@ exports.publish = (taffyData, opts, tutorials) => {
     }
 
     // tutorials can have only one parent so there is no risk for loops
-    function saveChildren({ children }) {
-        children.forEach((child) => {
-            generateTutorial(`Tutorial: ${child.title}`, child, helper.tutorialToUrl(child.name));
-            saveChildren(child);
+    function saveChildren({ children }, ref) {
+        children.forEach((child, i) => {
+            generateTutorial(`Tutorial: ${child.title}`, child, helper.tutorialToUrl(child.name), ref);
+            saveChildren(child, ref);
         });
     }
 
-    saveChildren(tutorials);
+    function flatten(tutorials) {
+        if (!tutorials) return [];
+        return [tutorials, ...tutorials.children.flatMap((t) => flatten(t))];
+    }
+    saveChildren(tutorials, { flat: flatten(tutorials), pointer: 1 });
 };

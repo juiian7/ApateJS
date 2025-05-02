@@ -437,6 +437,12 @@ input#search {
     border: none;
 }
 
+.pageLinks {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.25rem;
+}
+
 @media (max-width:480px) {
     nav {
         position: relative;

@@ -16,6 +16,7 @@ This project is not released, it is in early development! Don't assume things sh
 ## Examples / Demo
 
 TODO: examples can be run locally (explanation)
+
 TODO: Online demo?
 
 ## Getting Started!
@@ -24,5 +25,4 @@ Tutorials and code exampled of the core concepts can be found in the [docs](http
 
 -   [Install and setup](https://juiian7.github.io/ApateJS/tutorial-1-setup.html)
 -   [Learning the basics](https://juiian7.github.io/ApateJS/tutorial-2-intro.html)
--   [Advanced stuff](https://juiian7.github.io/ApateJS/)
 -   [Advanced stuff](https://juiian7.github.io/ApateJS/)

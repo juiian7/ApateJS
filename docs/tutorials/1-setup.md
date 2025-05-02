@@ -54,5 +54,3 @@ my-game/
 ```
 
 This structure is only an example. If you want to organize your code completely different, feel free! There is no need to follow this structure.
-
-#### [Learn the basics >>]{@tutorial 2-intro}
