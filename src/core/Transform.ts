@@ -43,7 +43,7 @@ class Transform {
     /**
      * The scale component of the transformation.
      *
-     * @type {Vec}
+     * @type {Core.Vec}
      * @public
      */
     public size: Vec;
@@ -173,7 +173,7 @@ class Transform {
     /**
      * Gets a transformation matrix of this object. Also referred as "model" or "world" matrix.
      *
-     * @returns {Matrix}
+     * @returns {Core.Matrix}
      */
     public matrix(): Matrix {
         this.sync();
@@ -184,8 +184,8 @@ class Transform {
      * Gets the absolute transformation of this object
      * TODO: Not finished!
      *
-     * @param {Transform} ref The destination to write to, if omitted a new transform object is created
-     * @returns {Transform} the absolute transform (equal to ref)
+     * @param {Core.Transform} ref The destination to write to, if omitted a new transform object is created
+     * @returns {Core.Transform} the absolute transform (equal to ref)
      */
     public absolute(ref: Transform = new Transform()): Transform {
         this.sync();

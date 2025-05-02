@@ -64,8 +64,6 @@ class Input {
         let code = Input.toInternalKey(ev);
         if (!this.keys[code]) this.keys[code] = 0;
         this.keys[code]++;
-
-        console.log(this.keys);
     }
 
     private mouseMove(ev: MouseEvent) {

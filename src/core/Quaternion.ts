@@ -35,9 +35,9 @@ class Quaternion {
     /**
      * Constructs a new quaternion object with an initial axis rotation (in radians!)
      *
-     * @param ax The x rotation in radians
-     * @param ay The y rotation in radians
-     * @param az The z rotation in radians
+     * @param {number} ax The x rotation in radians
+     * @param {number} ay The y rotation in radians
+     * @param {number} az The z rotation in radians
      */
     public constructor(ax: number = 0, ay: number = 0, az: number = 0) {
         if (ax || ay || az) this.setAngles(ax, ay, az);
@@ -68,10 +68,10 @@ class Quaternion {
     /**
      * Multiplies two quaternions and writes the result in ref.
      *
-     * @param {Quaternion} a The first quaternion for the multiplication
-     * @param {Quaternion} b The second quaternion for the multiplication
-     * @param {Quaternion} ref The output, if omitted a new quaternion is created
-     * @returns {Quaternion} The output (same as ref)
+     * @param {Core.Quaternion} a The first quaternion for the multiplication
+     * @param {Core.Quaternion} b The second quaternion for the multiplication
+     * @param {Core.Quaternion} ref The output, if omitted a new quaternion is created
+     * @returns {Core.Quaternion} The output (same as ref)
      */
     public static multiply(a: Quaternion, b: Quaternion, ref: Quaternion = new Quaternion()) {
         let w, x, y, z;
@@ -92,7 +92,7 @@ class Quaternion {
      * @param {number} ax The x rotation in radians
      * @param {number} ay The y rotation in radians
      * @param {number} az The z rotation in radians
-     * @returns {Quaternion} A reference to this quaternion
+     * @returns {Core.Quaternion} A reference to this quaternion
      */
     public setAngles(ax: number = 0, ay: number = 0, az: number = 0) {
         var sinX = Math.sin(ax * 0.5);
@@ -113,8 +113,8 @@ class Quaternion {
     /**
      * Sets the quaternion by a given rotation of a matrix
      *
-     * @param m The matrix containing the rotation
-     * @returns {Quaternion} A reference to this
+     * @param {Core.Matrix} m The matrix containing the rotation
+     * @returns {Core.Quaternion} A reference to this
      */
     public setMatrix(m: Matrix) {
         let m11 = m[0],
@@ -162,7 +162,7 @@ class Quaternion {
     /**
      * Gets the current rotation matrix of the quaternion.
      *
-     * @returns {Matrix} The rotation matrix
+     * @returns {Core.Matrix} The rotation matrix
      */
     public matrix(): Matrix {
         return [
