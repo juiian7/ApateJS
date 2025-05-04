@@ -48,8 +48,30 @@ class Transform {
      */
     public size: Vec;
 
-    public parent?: Transform;
     private mat: Matrix = Mat.identity();
+    private children: Transform[] = [];
+    private _parent: Transform;
+    private _changed: boolean = true;
+
+    public get parent(): Transform {
+        return this._parent;
+    }
+    public set parent(v: Transform) {
+        if (this._parent) {
+            let i = this._parent.children.indexOf(this);
+            this._parent.children.splice(i, 1);
+        }
+
+        if (v) v.children.push(this);
+        this._parent = v;
+    }
+    public get changed(): boolean {
+        return this._changed || this.position.changed() || this.rotation.c.changed() || this.size.changed();
+    }
+    public set changed(v: boolean) {
+        this._changed = v;
+        if (v) for (let i = 0; i < this.children.length; i++) this.children[i].changed = true;
+    }
 
     /**
      * Constructs a new Transform object with an optional initial position.
@@ -91,6 +113,7 @@ class Transform {
         this.position.setTo(position);
         if (rotation) this.rotation.c.setTo(rotation.c);
         if (scale) this.size.setTo(scale);
+        this.changed = true;
         return this;
     }
 
@@ -106,6 +129,7 @@ class Transform {
         this.position.x += x;
         this.position.y += y;
         this.position.z += z;
+        this.changed = true;
         return this;
     }
 
@@ -121,6 +145,7 @@ class Transform {
     public rotate(x: number = 0, y: number = 0, z: number = 0) {
         this.tmpQuat.setAngles(x, y, z);
         Quaternion.multiply(this.rotation, this.tmpQuat, this.rotation);
+        this.changed = true;
         return this;
     }
 
@@ -136,12 +161,14 @@ class Transform {
         this.size.x *= x;
         this.size.y *= y;
         this.size.z *= z;
+        this.changed = true;
         return this;
     }
 
     public static up: Vec = Vec.from(0, 1, 0);
     public lookAt(pos: Vec, up: Vec = Transform.up) {
         this.rotation.setMatrix(Mat.lookAt(this.position, pos, up));
+        this.changed = true;
         return this;
     }
 
@@ -163,9 +190,13 @@ class Transform {
         this.mat[14] = this.position.z;
 
         if (this.parent) this.mat = Mat.multiply(this.parent.mat, this.mat);
+
+        this.changed = false;
     }
 
     private sync() {
+        if (!this.changed) return;
+
         if (this.parent) this.parent.sync();
         this.calc();
     }
@@ -193,9 +224,14 @@ class Transform {
         ref.position.x = this.mat[12];
         ref.position.y = this.mat[13];
         ref.position.z = this.mat[14];
-        ref.parent = undefined;
 
-        //TODO: also scale and rotation
+        ref.size.x = Math.sqrt(this.mat[0] ** 2 + this.mat[1] ** 2 + this.mat[2] ** 2);
+        ref.size.y = Math.sqrt(this.mat[4] ** 2 + this.mat[5] ** 2 + this.mat[6] ** 2);
+        ref.size.z = Math.sqrt(this.mat[8] ** 2 + this.mat[9] ** 2 + this.mat[10] ** 2);
+
+        ref.rotation.setMatrix(this.mat);
+
+        ref.parent = undefined;
         return ref;
     }
 }

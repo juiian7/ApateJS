@@ -67,8 +67,8 @@ class Input {
     }
 
     private mouseMove(ev: MouseEvent) {
-        this.mPosition.x = ev.clientX;
-        this.mPosition.y = ev.clientY;
+        this.mPosition.x = ev.offsetX;
+        this.mPosition.y = ev.offsetY;
     }
 
     public on() {}

@@ -1,4 +1,13 @@
-import { Collider, Obj } from "../scene/index.js";
+import { Vec } from "./Vec.js";
+
+import { Collider, Shapes } from "../scene/index.js";
+
+export interface CollisionInfo {
+    self: Shapes.Shape;
+    other: Shapes.Shape;
+    point?: Vec;
+    closest?: Vec;
+}
 
 class Physics {
     private colliders: Collider[] = [];
@@ -35,6 +44,16 @@ class Physics {
         let m = 0;
         for (const l of layers) m += 2 ** l;
         return m;
+    }
+
+    public collisions(col: Collider): CollisionInfo[] {
+        let possible = this.get(col.mask);
+        let info: CollisionInfo[] = [];
+        for (let i = 0; i < possible.length; i++) {
+            if (col == possible[i]) continue;
+            info.push(...col.checkAgainst(possible[i]));
+        }
+        return info;
     }
 }
 export { Physics };

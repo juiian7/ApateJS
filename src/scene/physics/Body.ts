@@ -1,8 +1,9 @@
 import { Obj } from "../Obj.js";
 import { Vec } from "../../core/Vec.js";
-import { Collider, CollisionInfo } from "./Collider.js";
+import { Collider } from "./Collider.js";
 import { Context } from "../../graphics/Context.js";
 import { Apate } from "../../Apate.js";
+import { CollisionInfo } from "../../core/Physics.js";
 
 export class Body<E extends Apate = Apate> extends Obj<E> {
     public mass: number = 1;
@@ -18,14 +19,14 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
         if (collider) {
             this.add(collider);
             this.collider = collider;
-        } else new Collider([], 0, this, name ? name + "-collider" : null);
+        } //else this.collider = new Collider(0, this, name ? name + "-collider" : null);
 
         this.velocity = Vec.from(0, 0, 0);
     }
 
     private clone: Vec = new Vec([0, 0, 0, 0]);
     public accelerate(force: Vec) {
-        this.clone.setTo(force).multiplyScalar(this.engine.delta / 1000);
+        this.clone.setTo(force).multiplyScalar(this.engine!.delta / 1000);
         this.velocity.add(this.clone);
     }
 
@@ -34,6 +35,7 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
     }
 
     private _update() {
+        if (!this.engine) throw new Error("Body is not connected to physics engine -> not in active scene?");
         if (this.gravity) {
             this.accelerate(this.gravity);
         }
@@ -42,31 +44,32 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
     public slide() {
         this._update();
 
-        const factor = this.engine.delta * 0.001; // delta in seconds
+        const factor = this.engine!.delta * 0.001; // delta in seconds
         // apply vel and if collision change vel along colliding obj
         // apply y
         this.transform.move(0, this.velocity.y * factor, 0);
-        if (this.collider.check() > 0) {
+        let info = this.engine!.physics.collisions(this.collider);
+        if (info.length > 0) {
             // resolve
             // this.velocity.y > 0 -> up
         }
         this.transform.move(this.velocity.x * factor, 0, 0);
-        if (this.collider.check() > 0) {
+        info = this.engine!.physics.collisions(this.collider);
+        if (info.length > 0) {
             // resolve
             // this.velocity.x > 0 -> right
         }
     }
 
-    public collide(): CollisionInfo<any>[] {
+    public collide(): CollisionInfo[] {
         this._update();
 
-        const factor = this.engine.delta * 0.001; // delta in seconds
+        const factor = this.engine!.delta * 0.001; // delta in seconds
         // apply vel, and return optional collision
         this.transform.move(this.velocity.x * factor, this.velocity.y * factor, 0);
 
         // check collisions
-        this.collider.check();
-        return this.collider.collisions;
+        return this.engine!.physics.collisions(this.collider);
     }
 
     public draw(context: Context): void {}

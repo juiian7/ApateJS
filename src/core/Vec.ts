@@ -28,20 +28,31 @@ class Vec {
     /**
      * Creates a Vec object from a given number. Typically used for specifying hex colors.
      *
-     * @static
      * @param {number} num - The value of the vector, formatted in a single number (see hex colors -> 0xff00ff)
      * @param {number} bit - The number of bits per component
      * @returns {Core.Vec} - The created vector
+     *
      */
     public static fromHex(num: number, bit: number = 8): Vec {
         let mask = 2 ** bit - 1;
-        let v = new Vec([
-            (num >> (bit * 3)) & mask,
-            (num >> (bit * 2)) & mask,
-            (num >> bit) & mask,
-            num & mask, //
+        let f = 255 / mask; // / 2 ** bit + mask;
+        return new Vec([
+            ((num >> (bit * 3)) & mask) * f,
+            ((num >> (bit * 2)) & mask) * f,
+            ((num >> bit) & mask) * f,
+            (num & mask) * f, //
         ]);
-        return v;
+    }
+
+    /**
+     * Creates a Vec object from a given css hex string. Typically used for specifying hex colors.
+     *
+     * @static
+     * @param {string} hex - The value of the vector, formatted like a css hex string
+     * @returns {Core.Vec} - The created vector
+     */
+    public static fromHexStr(hex: string): Vec {
+        return hexToRgba(hex);
     }
 
     /**
@@ -246,6 +257,22 @@ class Vec {
         return new Vec([...this.data], this.offset, this.end);
     }
 
+    private _last: number;
+    /**
+     * Checks if the vector was modified since the last time this function was called
+     *
+     * @returns {boolean}
+     */
+    public changed(): boolean {
+        let hash = 0;
+        for (let i = this.offset; i < this.end; i++) hash = hash * 31 + this.data[i];
+
+        if (hash == this._last) return true;
+
+        this._last = hash;
+        return false;
+    }
+
     // Getter & Setter
 
     /**
@@ -332,3 +359,38 @@ class Vec {
 }
 
 export { Vec };
+
+function hexToRgba(hex: string): Vec {
+    if (!hex.startsWith("#")) throw new Error("Hex strings need to start with a leading #");
+    hex = hex.substring(1);
+
+    let v = new Vec([0, 0, 0, 0]);
+    v.a = 1;
+
+    if (hex.length === 3) {
+        // #f0f-
+        v.r = parseInt(hex[0], 16) * 32;
+        v.g = parseInt(hex[1], 16) * 32;
+        v.b = parseInt(hex[2], 16) * 32;
+    } else if (hex.length === 4) {
+        // #f0ff
+        v.r = parseInt(hex[0], 16) * 32;
+        v.g = parseInt(hex[1], 16) * 32;
+        v.b = parseInt(hex[2], 16) * 32;
+        v.a = parseInt(hex[3], 16) * 32;
+    } else if (hex.length === 6) {
+        // #ff00ff--
+        v.r = parseInt(hex.slice(0, 2), 16);
+        v.g = parseInt(hex.slice(2, 4), 16);
+        v.b = parseInt(hex.slice(4, 6), 16);
+    } else if (hex.length === 8) {
+        // #ff00ffff
+        v.r = parseInt(hex.slice(0, 2), 16);
+        v.g = parseInt(hex.slice(2, 4), 16);
+        v.b = parseInt(hex.slice(4, 6), 16);
+        v.a = parseInt(hex.slice(6, 8), 16);
+    } else {
+        throw new Error("Invalid hex color format");
+    }
+    return v;
+}

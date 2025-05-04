@@ -139,6 +139,7 @@ export class Apate {
         this.update();
 
         // rendering
+        this.context.clear();
         this.renderer.begin(this.delta);
         this._scene.render(this.context);
         this.renderer.flush();
