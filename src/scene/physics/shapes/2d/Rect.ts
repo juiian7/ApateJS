@@ -1,4 +1,5 @@
 import { Vec } from "../../../../core/Vec.js";
+import { Transform } from "../../../../core/Transform.js";
 import { CollisionInfo } from "../../../../core/Physics.js";
 
 import { Shape2D } from "./Shape2D.js";
@@ -74,11 +75,33 @@ class Rect extends Shape2D {
         return distanceX * distanceX + distanceY * distanceY <= b.size.x * b.size.y;
     }
 
+    public resolveRect(other: Rect, transform: Transform) {
+        let a = this.transform.absolute();
+        let b = other.transform.absolute();
+
+        let ox = Math.min(a.position.x + a.size.x - b.position.x, b.position.x + b.size.x - a.position.x);
+        let oy = Math.min(a.position.y + a.size.y - b.position.y, b.position.y + b.size.y - a.position.y);
+
+        if (ox < oy) transform.position.x += a.position.x < b.position.x ? -ox : ox;
+        else transform.position.y += a.position.y < b.position.y ? -oy : oy;
+    }
+
+    public resolveCircle(other: Circle, transform: Transform) {}
+
     public collides(other: Shape): boolean {
         if (other instanceof Rect) return this.collideRect(other);
         else if (other instanceof Circle) return this.collideCircle(other);
 
         super.collides(other);
+    }
+
+    public resolve(collisionInfo: CollisionInfo): void {
+        if (collisionInfo.otherShape instanceof Rect)
+            return this.resolveRect(collisionInfo.otherShape, (collisionInfo.self.belongsTo || collisionInfo.self).transform);
+        else if (collisionInfo.otherShape instanceof Circle)
+            return this.resolveCircle(collisionInfo.otherShape, (collisionInfo.self.belongsTo || collisionInfo.self).transform);
+
+        super.resolve(collisionInfo);
     }
 }
 export { Rect };

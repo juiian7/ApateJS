@@ -1,12 +1,12 @@
 import { Vec } from "./Vec.js";
 
-import { Collider, Shapes } from "../scene/index.js";
+import { Body, Collider, Shapes } from "../scene/index.js";
 
 export interface CollisionInfo {
-    self: Shapes.Shape;
-    other: Shapes.Shape;
-    point?: Vec;
-    closest?: Vec;
+    self: Collider;
+    other: Collider;
+    ownShape: Shapes.Shape;
+    otherShape: Shapes.Shape;
 }
 
 class Physics {
@@ -15,7 +15,7 @@ class Physics {
     constructor() {}
 
     public add(collider: Collider) {
-        if (this.colliders.includes(collider)) console.warn(`"${collider.name}" already in collision list -> skipping`);
+        if (this.colliders.includes(collider)) console.warn(`"${collider.name}" already in physics body list -> skipping`);
         this.colliders.push(collider);
         this.cleanCache(collider.collisionLayer);
     }
@@ -46,14 +46,20 @@ class Physics {
         return m;
     }
 
-    public collisions(col: Collider): CollisionInfo[] {
-        let possible = this.get(col.mask);
-        let info: CollisionInfo[] = [];
+    public collisions(collider: Collider): number {
+        let possible = this.get(collider.mask);
+        collider.collisions.length = 0;
+
         for (let i = 0; i < possible.length; i++) {
-            if (col == possible[i]) continue;
-            info.push(...col.checkAgainst(possible[i]));
+            if (collider == possible[i]) continue;
+            collider.checkAgainst(possible[i]);
         }
-        return info;
+        return collider.collisions.length;
+    }
+
+    public resolve(collider: Collider) {
+        let info: CollisionInfo;
+        while ((info = collider.collisions.pop())) info.ownShape.resolve(info);
     }
 }
 export { Physics };

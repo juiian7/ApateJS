@@ -3,7 +3,7 @@ import { Vec } from "../../core/Vec.js";
 import { Collider } from "./Collider.js";
 import { Context } from "../../graphics/Context.js";
 import { Apate } from "../../Apate.js";
-import { CollisionInfo } from "../../core/Physics.js";
+import { CollisionInfo, Physics } from "../../core/Physics.js";
 
 export class Body<E extends Apate = Apate> extends Obj<E> {
     public mass: number = 1;
@@ -11,7 +11,14 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
 
     public gravity: Vec = Vec.from(0, -9.81, 0);
 
-    public collider: Collider<E>;
+    private _collider: Collider<E>;
+    public get collider(): Collider<E> {
+        return this._collider;
+    }
+    public set collider(v: Collider<E>) {
+        this._collider = v;
+        this._collider.belongsTo = this;
+    }
 
     constructor(collider?: Collider<E>, parent?: Obj, name?: string) {
         super(parent, name);
@@ -19,7 +26,7 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
         if (collider) {
             this.add(collider);
             this.collider = collider;
-        } //else this.collider = new Collider(0, this, name ? name + "-collider" : null);
+        } else this.collider = new Collider([], 0, this, (name || "unnamed") + "-collider");
 
         this.velocity = Vec.from(0, 0, 0);
     }
@@ -48,15 +55,16 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
         // apply vel and if collision change vel along colliding obj
         // apply y
         this.transform.move(0, this.velocity.y * factor, 0);
-        let info = this.engine!.physics.collisions(this.collider);
-        if (info.length > 0) {
+
+        if (this.engine!.physics.collisions(this.collider) > 0) {
             // resolve
-            // this.velocity.y > 0 -> up
+            this.engine!.physics.resolve(this.collider);
+            // this.velocity.y > 0 -> up ? TODO: physically resolving
         }
         this.transform.move(this.velocity.x * factor, 0, 0);
-        info = this.engine!.physics.collisions(this.collider);
-        if (info.length > 0) {
+        if (this.engine!.physics.collisions(this.collider) > 0) {
             // resolve
+            this.engine!.physics.resolve(this.collider);
             // this.velocity.x > 0 -> right
         }
     }
@@ -69,7 +77,8 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
         this.transform.move(this.velocity.x * factor, this.velocity.y * factor, 0);
 
         // check collisions
-        return this.engine!.physics.collisions(this.collider);
+        this.engine!.physics.collisions(this.collider);
+        return this.collider.collisions;
     }
 
     public draw(context: Context): void {}

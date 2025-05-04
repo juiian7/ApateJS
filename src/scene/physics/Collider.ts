@@ -1,4 +1,5 @@
 import { Obj } from "../Obj.js";
+import { Body } from "./Body.js";
 
 import { Context } from "../../graphics/Context.js";
 
@@ -11,6 +12,8 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
     private shapes: Shape[] = [];
     public enabled: boolean = true;
 
+    public belongsTo: Obj;
+
     public layer: number = Collider.Layers.indexOf("debug");
 
     public collisionLayer: CollisionLayer = 0;
@@ -19,6 +22,7 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
     constructor(shapes: Shape[] = [], layer: CollisionLayer = 0, parent?: Obj, name?: string) {
         super(parent, name);
 
+        this.belongsTo = parent;
         this.shapes = [...shapes];
         this.collisionLayer = layer;
     }
@@ -29,14 +33,18 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
         return this;
     }
 
-    public checkAgainst(col: Collider): CollisionInfo[] {
-        let infos: CollisionInfo[] = [];
+    public collisions: CollisionInfo[] = [];
+
+    public checkAgainst(other: Collider): boolean {
+        let l = this.collisions.length;
         for (let i = 0; i < this.shapes.length; i++) {
-            for (let j = 0; j < col.shapes.length; j++) {
-                if (this.shapes[i].collides(col.shapes[j])) infos.push({ self: this.shapes[i], other: this.shapes[j] });
+            for (let j = 0; j < other.shapes.length; j++) {
+                if (this.shapes[i].collides(other.shapes[j])) {
+                    this.collisions.push({ self: this, other, ownShape: this.shapes[i], otherShape: other.shapes[j] });
+                }
             }
         }
-        return infos;
+        return this.collisions.length != l;
     }
 
     public draw(context: Context): void {
