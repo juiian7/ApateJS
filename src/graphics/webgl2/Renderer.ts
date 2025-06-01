@@ -1,7 +1,8 @@
-import { Vec } from "../../core/Vec.js";
+//import { Vec4 } from "../../core/Vec4.js";
 import { VertexArray } from "./VertexArray.js";
 import { Shader } from "./Shader.js";
 import { Texture } from "../Texture.js";
+import { Color } from "../../core/Color.js";
 
 export type DrawMode = "lines" | "line_loop" | "line_strip" | "points" | "triangles" | "triangle_fan" | "triangle_strip";
 
@@ -19,7 +20,7 @@ export class Renderer {
         drawCalls: 0,
     };
 
-    private currentClearColor: Vec;
+    private currentClearColor: Color;
     private mask: number;
 
     private targets: RenderTarget[] = [];
@@ -35,29 +36,24 @@ export class Renderer {
         this.ctx.enable(this.ctx.BLEND);
         this.ctx.blendFunc(this.ctx.SRC_ALPHA, this.ctx.ONE_MINUS_SRC_ALPHA);
 
-        this.clearColor = new Vec([0, 0, 0, 1]);
+        this.clearColor = new Color(0, 0, 0, 1);
         this.mask = this.clearMask();
     }
 
-    clear(mask?: number, color?: Vec) {
+    clear(mask?: number, color?: Color) {
         if (mask !== undefined) this.mask = mask;
         if (color) this.clearColor = color;
 
         this.ctx.clear(this.mask);
     }
 
-    public set clearColor(color: Vec) {
-        if (color.r > 1) {
-            color.r /= 255;
-            color.g /= 255;
-            color.b /= 255;
-            color.a /= 255;
-        }
+    public set clearColor(color: Color) {
+        color.color();
         this.ctx.clearColor(color.r, color.g, color.b, color.a);
         this.currentClearColor = color;
     }
 
-    public get clearColor(): Vec {
+    public get clearColor(): Color {
         return this.currentClearColor;
     }
 

@@ -1,5 +1,3 @@
-import { Vec } from "./Vec.js";
-
 import { Body, Collider, Shapes } from "../scene/index.js";
 
 export interface CollisionInfo {

@@ -1,4 +1,4 @@
-import { Vec } from "../../../../core/Vec.js";
+import { Vec4 } from "../../../../core/Vec4.js";
 import { Transform } from "../../../../core/Transform.js";
 import { CollisionInfo } from "../../../../core/Physics.js";
 
@@ -42,7 +42,7 @@ class Rect extends Shape2D {
         this.transform.size.y = v;
     }
 
-    public contains(point: Vec): boolean {
+    public contains(point: Vec4): boolean {
         let self = this.transform.absolute();
         return (
             point.x >= self.position.x &&

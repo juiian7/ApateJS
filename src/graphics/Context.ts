@@ -5,16 +5,17 @@ import { Tile } from "../core/Tile.js";
 import { BaseMaterial, Default3DMaterial, SpriteMaterial, PostprocessingMaterial } from "./Material.js";
 
 import { Mesh } from "./Mesh.js";
-import { Vec } from "../core/Vec.js";
+import { Vec4 } from "../core/Vec4.js";
 import { Texture } from "./Texture.js";
 import { Transform } from "../core/Transform.js";
 
 import { inverse, Matrix } from "../core/Matrix.js";
+import { Color } from "../core/Color.js";
 
 export interface ICamera {
     transform: Transform;
     projection: Matrix;
-    bgColor: Vec;
+    bgColor: Color;
     width: number;
     height: number;
 }
@@ -44,7 +45,7 @@ export class Context {
 
         this.planeAlignCenter = Mesh.plane2D("center");
         this.planeAlignCorner = Mesh.plane2D("corner");
-        this.white = Texture.fromColor(Vec.fromHex(0xffffffff));
+        this.white = Texture.fromColor(Color.fromHex(0xffffffff));
         this.defaultMeshMat = new Default3DMaterial();
     }
 

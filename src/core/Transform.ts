@@ -1,6 +1,6 @@
 import { Mat } from "../index.js";
 import { Matrix } from "./Matrix.js";
-import { Vec } from "./Vec.js";
+import { Vec4 } from "./Vec4.js";
 import { Quaternion } from "./Quaternion.js";
 
 const rFac = Math.PI / 180;
@@ -12,7 +12,7 @@ const rFac = Math.PI / 180;
  * {@link Core.Transform#scale | scale}.
  *
  * <span class="note">
- * Like {@link Core.Vec}, {@link Core.Transform} is designed to work on the current reference.
+ * Like {@link Core.Vec4}, {@link Core.Transform} is designed to work on the current reference.
  * Be sure to create copies if needed!
  * </span>
  *
@@ -29,10 +29,10 @@ class Transform {
     /**
      * The position component of the transformation.
      *
-     * @type {Core.Vec}
+     * @type {Core.Vec4D}
      * @public
      */
-    public position: Vec;
+    public position: Vec4;
     /**
      * The rotation component of the transformation.
      *
@@ -43,10 +43,10 @@ class Transform {
     /**
      * The scale component of the transformation.
      *
-     * @type {Core.Vec}
+     * @type {Core.Vec4D}
      * @public
      */
-    public size: Vec;
+    public size: Vec4;
 
     private mat: Matrix = Mat.identity();
     private children: Transform[] = [];
@@ -84,32 +84,32 @@ class Transform {
      */
     constructor(parent?: Transform, x: number = 0, y: number = 0, z: number = 0) {
         this.parent = parent;
-        this.position = Vec.from(x || 0, y || 0, z || 0, 0);
+        this.position = Vec4.from(x || 0, y || 0, z || 0, 0);
         this.rotation = new Quaternion();
-        this.size = Vec.from(1, 1, 1, 0);
+        this.size = Vec4.from(1, 1, 1, 0);
     }
 
     /**
      * Constructs a transform object and sets the given properties
      *
-     * @param {Core.Vec} position - The postion of the transformation
+     * @param {Core.Vec4D} position - The postion of the transformation
      * @param {Core.Quaternion?} rotation - The rotation of the transformation
-     * @param {Core.Vec?} scale - The scale of the transformation
+     * @param {Core.Vec4D?} scale - The scale of the transformation
      * @returns {Core.Transform} The created {@link Core.Transform | Transform} object.
      */
-    public static from(position: Vec, rotation?: Quaternion, scale?: Vec) {
+    public static from(position: Vec4, rotation?: Quaternion, scale?: Vec4) {
         return new Transform().setTo(position, rotation, scale);
     }
 
     /**
      * Sets the given properties on this object. If omitted they won't be set.
      *
-     * @param {Core.Vec} position - The postion of the transformation
+     * @param {Core.Vec4D} position - The postion of the transformation
      * @param {Core.Quaternion?} rotation - The rotation of the transformation
-     * @param {Core.Vec?} scale - The scale of the transformation
+     * @param {Core.Vec4D?} scale - The scale of the transformation
      * @returns {Core.Transform} The reference to this {@link Core.Transform | Transform} object.
      */
-    public setTo(position: Vec, rotation?: Quaternion, scale?: Vec) {
+    public setTo(position: Vec4, rotation?: Quaternion, scale?: Vec4) {
         this.position.setTo(position);
         if (rotation) this.rotation.c.setTo(rotation.c);
         if (scale) this.size.setTo(scale);
@@ -165,8 +165,8 @@ class Transform {
         return this;
     }
 
-    public static up: Vec = Vec.from(0, 1, 0);
-    public lookAt(pos: Vec, up: Vec = Transform.up) {
+    public static up: Vec4 = Vec4.from(0, 1, 0);
+    public lookAt(pos: Vec4, up: Vec4 = Transform.up) {
         this.rotation.setMatrix(Mat.lookAt(this.position, pos, up));
         this.changed = true;
         return this;

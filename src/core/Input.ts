@@ -1,4 +1,4 @@
-import { Vec } from "./Vec.js";
+import { Vec4 } from "./Vec4.js";
 
 interface BrowserKey {
     code: string;
@@ -10,7 +10,7 @@ interface BrowserKey {
 
 class Input {
     private keys: { [code: string]: number } = {};
-    private mPosition: Vec = Vec.from(0, 0, 0);
+    private mPosition: Vec4 = Vec4.from(0, 0, 0);
 
     private mapping = {
         axis: {
@@ -110,7 +110,7 @@ class Input {
         }
     }
 
-    public mouse(): Vec {
+    public mouse(): Vec4 {
         return this.mPosition;
     }
 

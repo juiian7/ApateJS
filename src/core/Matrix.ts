@@ -1,5 +1,5 @@
 import { Transform } from "./Transform.js";
-import { Vec } from "./Vec.js";
+import { Vec4 } from "./Vec4.js";
 
 type c = number;
 export type Matrix = [c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c];
@@ -8,11 +8,11 @@ export function identity(): Matrix {
     return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 }
 
-export function translation(vec: Vec): Matrix {
+export function translation(vec: Vec4): Matrix {
     return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, vec.x, vec.y, vec.z, 1];
 }
 
-export function scale(vec: Vec): Matrix {
+export function scale(vec: Vec4): Matrix {
     return [vec.x, 0, 0, 0, 0, vec.y, 0, 0, 0, 0, vec.z, 0, 0, 0, 0, 1];
 }
 
@@ -28,14 +28,14 @@ export function rotationZ(rad: number): Matrix {
     return [Math.cos(rad), -Math.sin(rad), 0, 0, Math.sin(rad), Math.cos(rad), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 }
 
-export function rotation(axis: Vec): Matrix {
+export function rotation(axis: Vec4): Matrix {
     return multiply(multiply(rotationX(axis.x), rotationY(axis.y)), rotationZ(axis.z));
 }
 
-export function lookAt(eye: Vec, target: Vec, up = Vec.from(0, 1, 0)): Matrix {
+export function lookAt(eye: Vec4, target: Vec4, up = Vec4.from(0, 1, 0)): Matrix {
     let fwd = eye.clone().subtract(target).normalize();
-    let right = Vec.cross(up, fwd).normalize();
-    up = Vec.cross(fwd, right);
+    let right = Vec4.cross(up, fwd).normalize();
+    up = Vec4.cross(fwd, right);
     return [right.x, up.x, fwd.x, 0, right.y, up.y, fwd.y, 0, right.z, up.z, fwd.z, 0, 0, 0, 0, 1];
 }
 
@@ -70,8 +70,8 @@ export function multiplyStack(...matrices: Matrix[]) {
     return mat;
 }
 
-export function multiplyVec(mat: Matrix, vec: Vec): Vec {
-    return new Vec([
+export function multiplyVec(mat: Matrix, vec: Vec4): Vec4 {
+    return new Vec4([
         vec.x * mat[0] + vec.y * mat[4] + vec.z * mat[8] + vec.w * mat[12],
         vec.x * mat[1] + vec.y * mat[5] + vec.z * mat[9] + vec.w * mat[13],
         vec.x * mat[2] + vec.y * mat[6] + vec.z * mat[10] + vec.w * mat[14],
@@ -246,13 +246,13 @@ export function inverse(mat: Matrix): Matrix {
     return inv;
 }
 
-export function worldToScreen(world: Matrix, view: Matrix, projection: Matrix, screenSize: Vec) {
+export function worldToScreen(world: Matrix, view: Matrix, projection: Matrix, screenSize: Vec4) {
     var m = multiply(world, multiply(view, projection));
-    return Vec.from(m[12] / screenSize.x, m[13] / screenSize.y);
+    return Vec4.from(m[12] / screenSize.x, m[13] / screenSize.y);
 }
 
-export function screenToWorld(screenPos: Vec, view: Matrix, projection: Matrix, screenSize: Vec) {
+export function screenToWorld(screenPos: Vec4, view: Matrix, projection: Matrix, screenSize: Vec4) {
     let inv = inverse(multiply(projection, view));
-    let v = multiplyVec(inv, Vec.from((2 * screenPos.x) / screenSize.x - 1, 1 - (2 * screenPos.y) / screenSize.y));
+    let v = multiplyVec(inv, Vec4.from((2 * screenPos.x) / screenSize.x - 1, 1 - (2 * screenPos.y) / screenSize.y));
     return v;
 }

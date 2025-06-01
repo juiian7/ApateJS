@@ -130,7 +130,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
      * @example
      * // could be inside draw() {...}
      * // draw a tile with the current context
-     * const tile = Tile.fromColor(Vec.fromHex(0xFF00FFFF)); // create magenta tile
+     * const tile = Tile.fromColor(Vec4.fromHex(0xFF00FFFF)); // create magenta tile
      * const material = new Materials.SpriteMaterial(); // create a sprite material
      * // ...
      * context.drawTile(this.transform, tile, material);

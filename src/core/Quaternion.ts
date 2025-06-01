@@ -1,9 +1,9 @@
-import { Vec } from "./Vec.js";
+import { Vec4 } from "./Vec4.js";
 import { type Matrix } from "./Matrix.js";
 
 /**
  * This class represents a rotation.
- * Rotations are more complex, so unfortunately is not possible to simply store a {@link Core.Vec | Vec} with the axis angles.
+ * Rotations are more complex, so unfortunately is not possible to simply store a {@link Core.Vec4 | Vec4} with the axis angles.
  * But there are a few methods in this class and the {@link Core.Transform | Transform} class to make rotations easier.
  *
  * <span class="note warn">
@@ -27,10 +27,10 @@ class Quaternion {
     /**
      * The w, x, y, z, components of the quaternion. *These values are not angles!*
      *
-     * @type {Core.Vec}
+     * @type {Core.Vec4}
      * @public
      */
-    public c: Vec = Vec.from(0, 0, 0, 1);
+    public c: Vec4 = Vec4.from(0, 0, 0, 1);
 
     /**
      * Constructs a new quaternion object with an initial axis rotation (in radians!)

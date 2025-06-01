@@ -1,7 +1,7 @@
 import { Apate } from "../../Apate.js";
 import { Tile } from "../../core/Tile.js";
 import { Transform } from "../../core/Transform.js";
-import { Vec } from "../../core/Vec.js";
+import { Vec4 } from "../../core/Vec4.js";
 import { Texture } from "../../graphics/Texture.js";
 import { Obj } from "../Obj.js";
 import { SpriteBatch } from "./SpriteBatch.js";
@@ -58,7 +58,7 @@ export class Text<E extends Apate = Apate> extends Obj<E> {
         return this;
     }
 
-    center(pos: Vec) {
+    center(pos: Vec4) {
         let sortedX = this.sprites.transforms.map((t) => t.position).sort((a, b) => b.x - a.x);
         this.transform.position.x = pos.x - (sortedX[0].x * this.transform.size.x) / 2;
         this.transform.position.y = pos.y - this.transform.size.y / 2;
@@ -84,7 +84,7 @@ export function createBitFont(charset: string, size: string = "40px", family: st
     let x = 0;
     for (const c of chars) {
         let m = ctx.measureText(c);
-        font[c] = new Tile(text, Vec.from(x, 0, m.width, canvas.height));
+        font[c] = new Tile(text, Vec4.from(x, 0, m.width, canvas.height));
         x += m.width;
     }
     return font;

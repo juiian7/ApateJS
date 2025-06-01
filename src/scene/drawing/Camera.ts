@@ -2,13 +2,14 @@ import { Obj } from "../Obj.js";
 
 import { Matrix, orthographic, perspective } from "../../core/Matrix.js";
 import { Context, ICamera } from "../../graphics/Context.js";
-import { Vec } from "../../core/Vec.js";
+
 import { Apate } from "../../Apate.js";
+import { Color } from "../../core/Color.js";
 
 export class Camera<E extends Apate = Apate> extends Obj<E> implements ICamera {
     public projection: Matrix;
 
-    public bgColor: Vec = Vec.from(0, 0, 0, 0);
+    public bgColor: Color = Color.fromRGBA(0, 0, 0, 0);
 
     public width: number;
     public height: number;

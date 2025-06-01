@@ -3,15 +3,16 @@ import { Apate } from "./Apate.js";
 /**
  * The core functionality of Apate. It is not exported from the index as "Core". See below how to use members.
  * @example
- * import { Vec, Tile, ... } from "<path to engine>/index.js";
+ * import { Vec4, Tile, ... } from "<path to engine>/index.js";
  * // create a vec for storing a color and a tile with this color
- * const color = Vec.fromHex(0xff0000ff);
+ * const color = Vec4.fromHex(0xff0000ff);
  * const tile = Tile.fromColor(color);
  *
  * @namespace Core
  */
 import { Input } from "./core/Input.js";
-import { Vec } from "./core/Vec.js";
+import { Vec4 } from "./core/Vec4.js";
+import { Color } from "./core/Color.js";
 import * as Mat from "./core/Matrix.js";
 import { Tile } from "./core/Tile.js";
 import { Transform } from "./core/Transform.js";
@@ -78,5 +79,5 @@ import { Renderer, RenderTarget } from "./graphics/webgl2/Renderer.js";
 import * as UI from "./ui/index.js";
 
 export default Apate;
-export { Anim, Mat, Tile, Transform, Vec, World };
+export { Anim, Color, Mat, Tile, Transform, Vec4, World };
 export { Context, Input, Materials, Mesh, Physics, Renderer, RenderTarget, Texture, UI };

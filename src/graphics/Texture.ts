@@ -1,4 +1,5 @@
-import { Vec } from "../core/Vec.js";
+import { Color } from "../core/Color.js";
+import { Vec4 } from "../core/Vec4.js";
 import { Renderer } from "./webgl2/Renderer.js";
 
 // the raw image used for rendering
@@ -77,9 +78,9 @@ export class Texture {
         return text;
     }
 
-    public static fromColor(color: Vec): Texture {
+    public static fromColor(color: Color): Texture {
         let text = new Texture(1, 1, "rgba", "rgba");
-        text.buffer = new Uint8Array(color.vec());
+        text.buffer = new Uint8Array(color.color());
         return text;
     }
 

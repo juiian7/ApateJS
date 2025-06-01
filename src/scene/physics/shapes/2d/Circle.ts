@@ -1,11 +1,11 @@
-import { Vec } from "../../../../core/Vec.js";
+import { Vec4 } from "../../../../core/Vec4.js";
 import { CollisionInfo } from "../../../../core/Physics.js";
 
 import { Rect } from "./Rect.js";
 import { Shape2D } from "./Shape2D.js";
 
 class Circle extends Shape2D {
-    public center: Vec;
+    public center: Vec4;
 
     public get x(): number {
         return this.transform.position.x;
@@ -34,7 +34,7 @@ class Circle extends Shape2D {
         this.r = r;
     }
 
-    public contains(point: Vec): boolean {
+    public contains(point: Vec4): boolean {
         let a = this.transform.absolute();
 
         let d = Math.sqrt((point.x - a.position.x) ** 2 + (point.y - a.position.y) ** 2);

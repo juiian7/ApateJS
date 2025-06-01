@@ -1,4 +1,5 @@
-import { Vec } from "./Vec.js";
+import { Vec4 } from "./Vec4.js";
+import { Color } from "./Color.js";
 import { Texture } from "../graphics/Texture.js";
 
 /**
@@ -13,7 +14,7 @@ import { Texture } from "../graphics/Texture.js";
  * // or load a sprite atlas / sheet with multiple sub images
  * const spriteAtlas = Tile.fromImg(<img>);
  * // in the first row of 8 pixel in the atlas is a walk animation
- * const walkFrames = spriteAtlas.sub(Vec.from(0,0,64,8)).split(8);
+ * const walkFrames = spriteAtlas.sub(Vec4.from(0,0,64,8)).split(8);
  *
  * @memberof Core
  */
@@ -36,19 +37,19 @@ class Tile {
     /**
      * Constructs a new Tile from a given color
      *
-     * @param {Core.Vec} color - The color of the tile
+     * @param {Core.Color} color - The color of the tile
      * @returns The tile with the color and the size of one pixel.
      */
-    static fromColor(color: Vec): Tile {
+    static fromColor(color: Color): Tile {
         return new Tile(Texture.fromColor(color));
     }
 
     /**
      * The clip of the Tile. In other words: the visible part of the image.
      *
-     * @type {Core.Vec}
+     * @type {Core.Vec4}
      */
-    public clip: Vec;
+    public clip: Vec4;
 
     /**
      * The Texture behind this Tile.
@@ -61,11 +62,11 @@ class Tile {
      * Constructs a Tile from with a given texture and an optional clip.
      *
      * @param {Texture} texture - The image texture of the Tile
-     * @param {Core.Vec} clip - The visible area of the image
+     * @param {Core.Vec4} clip - The visible area of the image
      */
-    constructor(texture: Texture, clip?: Vec) {
+    constructor(texture: Texture, clip?: Vec4) {
         this.texture = texture;
-        if (!clip) clip = new Vec([0, 0, texture.width, texture.height]);
+        if (!clip) clip = new Vec4([0, 0, texture.width, texture.height]);
         this.clip = clip;
     }
 
@@ -80,7 +81,7 @@ class Tile {
     public split(px: number, gap: number = 0): Tile[] {
         let tiles: Tile[] = [];
         for (let i = this.clip.x; i < this.clip.x + this.clip.z; i += px + gap)
-            tiles.push(new Tile(this.texture, new Vec([i, this.clip.y, px, this.clip.w])));
+            tiles.push(new Tile(this.texture, new Vec4([i, this.clip.y, px, this.clip.w])));
         return tiles;
     }
 
@@ -95,7 +96,7 @@ class Tile {
     public splitV(px: number, gap: number = 0): Tile[] {
         let tiles: Tile[] = [];
         for (let i = this.clip.y; i < this.clip.y + this.clip.w; i += px + gap)
-            tiles.push(new Tile(this.texture, new Vec([this.clip.x, i, this.clip.z, px])));
+            tiles.push(new Tile(this.texture, new Vec4([this.clip.x, i, this.clip.z, px])));
         return tiles;
     }
 
@@ -115,10 +116,10 @@ class Tile {
     /**
      * Creates a new Tile with the given visible area.
      *
-     * @param {Core.Vec} clip - The visible area of the created texture
+     * @param {Core.Vec4} clip - The visible area of the created texture
      * @returns {Core.Tile} The created sub Tile.
      */
-    public sub(clip: Vec) {
+    public sub(clip: Vec4) {
         return new Tile(this.texture, clip);
     }
 }

@@ -3,8 +3,9 @@ import { Obj } from "../Obj.js";
 import { Default3DMaterial } from "../../graphics/Material.js";
 import { Mesh } from "../../graphics/Mesh.js";
 import { Context } from "../../graphics/Context.js";
-import { Vec } from "../../core/Vec.js";
+import { Vec4 } from "../../core/Vec4.js";
 import { Apate } from "../../Apate.js";
+import { Color } from "../../core/Color.js";
 
 type MatLib = { [name: string]: Default3DMaterial };
 
@@ -98,15 +99,15 @@ export class Model<E extends Apate = Apate> extends Obj<E> {
         const lines = content.split("\n");
         const lib: MatLib = {};
 
-        let name: string, diffuse: Vec, ambient: Vec;
+        let name: string, diffuse: Color, ambient: Color;
         for (const line of lines) {
             let [c, ...params] = line.split(" ");
             if (c == "newmtl") {
                 lib[name] = new Default3DMaterial(diffuse);
                 name = params[0];
             }
-            if (c == "Kd") diffuse = Vec.from(+params[0], +params[1], +params[2], 1);
-            if (c == "Ka") ambient = Vec.from(+params[0], +params[1], +params[2], 1);
+            if (c == "Kd") diffuse = Color.fromRGBA(+params[0], +params[1], +params[2], 1);
+            if (c == "Ka") ambient = Color.fromRGBA(+params[0], +params[1], +params[2], 1);
         }
         return lib;
     }

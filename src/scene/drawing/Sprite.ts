@@ -1,7 +1,8 @@
 import { Obj } from "../Obj.js";
 
 import { Tile } from "../../core/Tile.js";
-import { Vec } from "../../core/Vec.js";
+import { Color } from "../../core/Color.js";
+import { Vec4 } from "../../core/Vec4.js";
 
 import { Context } from "../../graphics/Context.js";
 import { SpriteMaterial } from "../../graphics/Material.js";
@@ -54,7 +55,7 @@ class Sprite<E extends Apate = Apate> extends Obj<E> {
     constructor(tile?: Tile, parent?: Obj, name?: string) {
         super(parent, name);
 
-        if (!tile) tile = Tile.fromColor(Vec.fromHex(0xff00ffff));
+        if (!tile) tile = Tile.fromColor(Color.fromHex(0xf0ff, 4));
         this.tile = tile;
 
         // to size

@@ -30,7 +30,7 @@ To get a detailed explanation of all different scene graph's node types take a l
 
 A general overview of the core classes can be found here: {@link Core}
 
-**{@link Core.Vec | Vec}**: just a simple 4-dimensional Vector (x,y,z,w), but also designed to be used for colors (r,g,b,a -> same as x,y,...). Actually it could be used for more dimensions, but all mathematical operations only work on the first four.
+**{@link Core.Vec4 | Vec4}**: just a simple 4-dimensional Vector (x,y,z,w), but also designed to be used for colors (r,g,b,a -> same as x,y,...). Actually it could be used for more dimensions, but all mathematical operations only work on the first four.
 
 **{@link Core.Transform | Transform}**: an object that describes a transformation. Stores vectors for position, rotation and scale.
 

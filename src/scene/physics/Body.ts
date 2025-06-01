@@ -1,5 +1,5 @@
 import { Obj } from "../Obj.js";
-import { Vec } from "../../core/Vec.js";
+import { Vec4 } from "../../core/Vec4.js";
 import { Collider } from "./Collider.js";
 import { Context } from "../../graphics/Context.js";
 import { Apate } from "../../Apate.js";
@@ -7,9 +7,9 @@ import { CollisionInfo, Physics } from "../../core/Physics.js";
 
 export class Body<E extends Apate = Apate> extends Obj<E> {
     public mass: number = 1;
-    public velocity: Vec;
+    public velocity: Vec4;
 
-    public gravity: Vec = Vec.from(0, -9.81, 0);
+    public gravity: Vec4 = Vec4.from(0, -9.81, 0);
 
     private _collider: Collider<E>;
     public get collider(): Collider<E> {
@@ -28,16 +28,16 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
             this.collider = collider;
         } else this.collider = new Collider([], 0, this, (name || "unnamed") + "-collider");
 
-        this.velocity = Vec.from(0, 0, 0);
+        this.velocity = Vec4.from(0, 0, 0);
     }
 
-    private clone: Vec = new Vec([0, 0, 0, 0]);
-    public accelerate(force: Vec) {
-        this.clone.setTo(force).multiplyScalar(this.engine!.delta / 1000);
+    private clone: Vec4 = new Vec4();
+    public accelerate(force: Vec4) {
+        this.clone.setTo(force).multiply(this.engine!.delta / 1000);
         this.velocity.add(this.clone);
     }
 
-    public impulse(force: Vec) {
+    public impulse(force: Vec4) {
         this.velocity.add(force);
     }
 
@@ -59,12 +59,14 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
         if (this.engine!.physics.collisions(this.collider) > 0) {
             // resolve
             this.engine!.physics.resolve(this.collider);
+            this.velocity.y = 0;
             // this.velocity.y > 0 -> up ? TODO: physically resolving
         }
         this.transform.move(this.velocity.x * factor, 0, 0);
         if (this.engine!.physics.collisions(this.collider) > 0) {
             // resolve
             this.engine!.physics.resolve(this.collider);
+            this.velocity.x = 0;
             // this.velocity.x > 0 -> right
         }
     }

@@ -1,9 +1,10 @@
 import { Obj } from "../Obj.js";
 import { Body } from "./Body.js";
 
+import { Apate } from "../../Apate.js";
 import { Context } from "../../graphics/Context.js";
 
-import { Apate } from "../../Apate.js";
+import { Vec4 } from "../../core/Vec4.js";
 import { Shape } from "./shapes/Shape.js";
 import { CollisionInfo } from "../../core/Physics.js";
 
@@ -46,6 +47,15 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
         }
         return this.collisions.length != l;
     }
+
+    /**
+     *
+     * @param ray
+     * @returns The distance where the ray hit the collider
+     */
+    /* public raycast(ray: Ray): number {
+        return 0;
+    } */
 
     public draw(context: Context): void {
         if (context.engine.debug && this.enabled) {

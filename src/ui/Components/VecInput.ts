@@ -1,13 +1,13 @@
-import { Vec } from "../../core/Vec.js";
+import { Vec4 } from "../../core/Vec4.js";
 import NumberInput from "./NumberInput.js";
 
 import { Container, container, text } from "../WebUI/src/index.js";
 
 export default class VecInput extends Container {
-    private ref: Vec;
+    private ref: Vec4;
     private inputs: NumberInput[] = [];
 
-    constructor(ref: Vec, name: string = "", size?: number) {
+    constructor(ref: Vec4, name: string = "", size?: number) {
         super();
 
         this.ref = ref;
