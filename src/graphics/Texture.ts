@@ -80,7 +80,7 @@ export class Texture {
 
     public static fromColor(color: Color): Texture {
         let text = new Texture(1, 1, "rgba", "rgba");
-        text.buffer = new Uint8Array(color.color());
+        text.buffer = new Uint8Array(color.color(false));
         return text;
     }
 

@@ -29,6 +29,11 @@ export class Context {
         return this.cameras[this.cameras.length - 1];
     }
 
+    public set camera(v: ICamera) {
+        if (this.cameras.length == 0) this.pushCamera(v);
+        else this.cameras[this.cameras.length - 1] = v;
+    }
+
     public engine: Apate;
     public renderer: Renderer;
 
