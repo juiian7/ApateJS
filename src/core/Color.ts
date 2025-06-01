@@ -1,15 +1,45 @@
 import { Vec4 } from "./Vec4.js";
 
 /**
+ * This class is used to create and manage colors.
  *
+ * @example
+ * const red = Color.fromRGBA(255, 0, 0);
+ * const magenta = Color.fromHex(0xff00ffff);
+ * const yellow = Color.fromHexStr("#ffff00");
+ * const cyan = Color.fromHex(0x0fff, 4); // 4 bit per channel
+ *
+ * magenta.color(); // [1, 0, 1, 1]
+ * yellow.color(false); // [255, 255, 0, 255]
+ * cyan.color(); // [0, 1, 1, 1]
+ *
+ * @memberof Core
  */
 class Color {
     private data: number[];
 
+    /**
+     * Constructs a new Color object
+     *
+     * @constructs
+     * @param r - The red channel of the color
+     * @param g - The green channel of the color
+     * @param b - The blue channel of the color
+     * @param a - The alpha channel of the color
+     */
     public constructor(r: number = 0, g: number = 0, b: number = 0, a: number = 255) {
         this.data = [r, g, b, a];
     }
 
+    /**
+     * Constructs a new Color object from r,g,b,a channels
+     *
+     * @param r - The red channel of the color
+     * @param g - The green channel of the color
+     * @param b - The blue channel of the color
+     * @param a - The alpha channel of the color
+     * @returns {Color} The new color object
+     */
     public static fromRGBA(r: number = 0, g: number = 0, b: number = 0, a: number = 255) {
         return new Color(r, g, b, a);
     }
@@ -39,12 +69,14 @@ class Color {
     }
 
     /**
-     * Gets the array of components behind the vector after normalizing colors bigger than 1 by dividing them with 255.
+     * Gets an array of the vectors components.
+     * Optionally normalize colors bigger than 1 by dividing them with 255.
      *
+     * @param normalize Specify if results should be normalized to values smaller than 1
      * @returns {number[]} The normalized array of components
      */
-    public color(): number[] {
-        if (this.r > 1 || this.g > 1 || this.b > 1 || this.a > 1) {
+    public color(normalize: boolean = true): number[] {
+        if (normalize && (this.r > 1 || this.g > 1 || this.b > 1 || this.a > 1)) {
             (this.data[0] /= 255), (this.data[1] /= 255), (this.data[2] /= 255), (this.data[3] /= 255);
         }
         return this.data;

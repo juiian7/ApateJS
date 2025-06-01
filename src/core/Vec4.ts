@@ -1,26 +1,25 @@
 /**
- * This class is used to create and operate with 4 dimensional vectors.
- * Vectors are typically used for storing positions, scales and also colors.
- * To make it practicable for working with colors the components
- * {@link Core.Vec4#x | x}, {@link Core.Vec4#y | y}, {@link Core.Vec4#z | z}, {@link Core.Vec4#w | w} can be replaced by
- * {@link Core.Vec4#r | r}, {@link Core.Vec4#g | g}, {@link Core.Vec4#b | b}, {@link Core.Vec4#a | a}.
+ * This class is used to create and operate with 4 dimensional vectors. If you are looking for colors see {@link Core.Color}.
+ * Vectors are typically used for storing location data.
+ * To make it practicable for working with positions the components
+ * {@link Core.Vec4#x | x}, {@link Core.Vec4#y | y}, {@link Core.Vec4#z | z}, {@link Core.Vec4#w | w} can be used.
  * <br>
+ *
  * A Vec4 object is in fact just a mask to operate on an array with the components more elegant.
  * The raw array can be accessed with {@link Core.Vec4#vec | this.vec()}.
  *
  * <span class="note">
- * Important: Vec4 is designed to work on the current reference. Be sure to create copies if needed!
+ * Important: Vec4 is designed to work on the current reference.
+ * Be sure to create copies if needed or use the static functions to choose the working reference!
  * </span>
  *
  * @example
  * // create a vector (0,0,0,0) and do few operations
  * const position = Vec4.from(0,0);
- * postion.add(otherVec).multiplyScalar(3.4);
- *
- * const magenta = Vec4.fromHex(0xff00ffff, 8);
- * const yellow = Vec4.fromHex("#ffff00");
- * magenta.vec(); // [255, 0, 255, 255]
- * magenta.color(); // [1, 0, 1, 1]
+ * postion.add(otherVec).multiply(3.4);
+ * // shorthand for:
+ * const outPos = new Vec4();
+ * Vec4.multiply(Vec4.add(position, otherVec, outPos), 3.4);
  *
  * @memberof Core
  */
@@ -148,9 +147,10 @@ class Vec4 {
     }
 
     /**
+     * Gets length of vector v
      *
-     * @param v
-     * @returns
+     * @param v - The vector to calculate the length
+     * @returns {number} The length of v
      */
     public static len(v: Vec4): number {
         return Math.sqrt(v.data[0] ** 2 + v.data[1] ** 2 + v.data[2] ** 2 + v.data[3] ** 2);
@@ -185,7 +185,7 @@ class Vec4 {
 
     /**
      * Creates a new Vec4 object. If you want more simple constructors look at:
-     * {@link Core.Vec4.from | Vec4.from} and {@link Core.Vec4.fromHex | Vec4.from}
+     * {@link Core.Vec4.from | Vec4.from} and {@link Core.Vec4.fromNum | Vec4.fromNum}
      *
      * @param {number[]} data - The array behind the vector, storing the components
      * @param {number} offset - The index of the array with the first component
