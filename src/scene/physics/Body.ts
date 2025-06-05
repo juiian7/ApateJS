@@ -25,7 +25,7 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
         }
         this._collider = v;
         this._collider.belongsTo = this;
-        this.add(this._collider);
+        if (!this.children.includes(v)) this.add(this._collider);
     }
 
     constructor(parent?: Obj, name?: string) {
