@@ -20,12 +20,13 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
     public collisionLayer: CollisionLayer = 0;
     public mask: number = 0xffff;
 
-    constructor(shapes: Shape[] = [], layer: CollisionLayer = 0, parent?: Obj, name?: string) {
+    constructor(shape: Shape, layer: CollisionLayer = 0, parent?: Obj, name?: string) {
         super(parent, name);
 
         this.belongsTo = parent;
-        this.shapes = [...shapes];
         this.collisionLayer = layer;
+
+        if (shape) this.addShape(shape);
     }
 
     public addShape(shape: Shape) {
@@ -38,6 +39,10 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
 
     public checkAgainst(other: Collider): boolean {
         let l = this.collisions.length;
+
+        if (this.shapes.length == 0) console.warn("No Shapes assigned to: ", this);
+        else if (other.shapes.length == 0) console.warn("No Shapes assigned to: ", other);
+
         for (let i = 0; i < this.shapes.length; i++) {
             for (let j = 0; j < other.shapes.length; j++) {
                 if (this.shapes[i].collides(other.shapes[j])) {
@@ -66,6 +71,9 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
     on_scene_enter(engine: E): void {
         super.on_scene_enter(engine);
         engine.physics.add(this);
+        if (this.name == "Player-collider") {
+            console.log("adding play col");
+        }
     }
 
     on_scene_exit(engine: E): void {

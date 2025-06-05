@@ -89,7 +89,7 @@ export class Context {
         return this.cameras.pop();
     }
 
-    drawTile(transform: Transform, tile: Tile, material: SpriteMaterial, align: "center" | "corner" = "center") {
+    drawTile(transform: Transform, tile: Tile, material: SpriteMaterial, align: "center" | "bottom-left" = "center") {
         let slot = 0;
         let texture = tile.texture.compile(this.renderer, 0);
         let shader = material.compile(this.renderer);

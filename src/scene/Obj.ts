@@ -97,14 +97,21 @@ class Obj<E extends Apate = Apate> implements Drawable {
     /**
      * Adds children to this node.
      * @param {World.Obj[]} children - The children to add
+     * @returns A reference to this
      */
-    public add(...children: Obj<E>[]): void {
+    public add(...children: Obj<E>[]): this {
         this.children.push(...children);
         for (const c of children) {
+            if (c.parent) {
+                // remove from current parent (without trigger on_scene_exit)
+                let i = c.parent.children.indexOf(c);
+                if (i >= 0) c.parent.children.splice(i, 1);
+            }
             c.parent = this;
             c.transform.parent = this.transform;
             if (this.engine) c.recCall("on_scene_enter", this.engine);
         }
+        return this;
     }
 
     public ref(): this {

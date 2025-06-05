@@ -9,6 +9,9 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
     public mass: number = 1;
     public velocity: Vec4;
 
+    public grounded: boolean = false;
+    public touchesWall: boolean = false;
+
     public gravity: Vec4 = Vec4.from(0, -9.81, 0);
 
     private _collider: Collider<E>;
@@ -16,18 +19,19 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
         return this._collider;
     }
     public set collider(v: Collider<E>) {
+        if (this._collider) {
+            console.warn("Overwriting collider. Are you sure you want this?");
+            //this._collider.remove();
+        }
         this._collider = v;
         this._collider.belongsTo = this;
+        this.add(this._collider);
     }
 
-    constructor(collider?: Collider<E>, parent?: Obj, name?: string) {
+    constructor(parent?: Obj, name?: string) {
         super(parent, name);
 
-        if (collider) {
-            this.add(collider);
-            this.collider = collider;
-        } else this.collider = new Collider([], 0, this, (name || "unnamed") + "-collider");
-
+        this.collider = new Collider(null, 0, this, (name || "unnamed") + "-collider");
         this.velocity = Vec4.from(0, 0, 0);
     }
 
@@ -46,6 +50,8 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
         if (this.gravity) {
             this.accelerate(this.gravity);
         }
+        this.grounded = false;
+        this.touchesWall = false;
     }
 
     public slide() {
@@ -61,6 +67,7 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
             this.engine!.physics.resolve(this.collider);
             this.velocity.y = 0;
             // this.velocity.y > 0 -> up ? TODO: physically resolving
+            this.grounded = true;
         }
         this.transform.move(this.velocity.x * factor, 0, 0);
         if (this.engine!.physics.collisions(this.collider) > 0) {
@@ -68,6 +75,7 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
             this.engine!.physics.resolve(this.collider);
             this.velocity.x = 0;
             // this.velocity.x > 0 -> right
+            this.touchesWall = true;
         }
     }
 

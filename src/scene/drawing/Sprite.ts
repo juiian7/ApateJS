@@ -32,6 +32,11 @@ class Sprite<E extends Apate = Apate> extends Obj<E> {
     public material: SpriteMaterial = new SpriteMaterial();
 
     /**
+     * The alignment of the sprite. Where the center of sprite is.
+     */
+    public align: "center" | "bottom-left" = "bottom-left";
+
+    /**
      * The tile of the sprite. Shorthand for tile.material.sprite.
      *
      * @type {Tile}
@@ -66,7 +71,7 @@ class Sprite<E extends Apate = Apate> extends Obj<E> {
     fromTexture() {}
 
     public draw(context: Context): void {
-        context.drawTile(this.transform, this.material.tile, this.material, "corner");
+        context.drawTile(this.transform, this.material.tile, this.material, this.align);
     }
 }
 export { Sprite };

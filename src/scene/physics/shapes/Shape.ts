@@ -25,7 +25,7 @@ abstract class Shape {
     private debugSpriteMat: SpriteMaterial = new SpriteMaterial();
     public debugDraw(ctx: Context) {
         this.debugSpriteMat.color = this.debugColor;
-        ctx.drawTile(this.transform, white, this.debugSpriteMat, "corner");
+        ctx.drawTile(this.transform, white, this.debugSpriteMat, "bottom-left");
     }
 }
 

@@ -7,13 +7,19 @@ import { Circle } from "./Circle.js";
 import { Shape } from "../Shape.js";
 
 class Rect extends Shape2D {
-    constructor(width: number = 1, height: number = 1, x: number = 0, y: number = 0) {
+    private align: "center" | "corner" = "corner";
+    private localX: number;
+    private localY: number;
+
+    constructor(width: number = 1, height: number = 1, x: number = 0, y: number = 0, align: "center" | "corner" = "corner") {
         super();
 
-        this.x = x;
-        this.y = y;
+        this.align = align;
+
         this.width = width;
         this.height = height;
+        this.x = x;
+        this.y = y;
     }
 
     public get x(): number {
@@ -30,16 +36,22 @@ class Rect extends Shape2D {
     }
 
     public set x(v: number) {
-        this.transform.position.x = v;
+        if (this.align == "corner") this.transform.position.x = v;
+        else this.transform.position.x = v - this.width / 2; // center
+        this.localX = v;
     }
     public set y(v: number) {
-        this.transform.position.y = v;
+        if (this.align == "corner") this.transform.position.y = v;
+        else this.transform.position.y = v - this.height / 2; // center
+        this.localY = v;
     }
     public set width(v: number) {
         this.transform.size.x = v;
+        if (this.align == "center") this.x = this.localX;
     }
     public set height(v: number) {
         this.transform.size.y = v;
+        if (this.align == "center") this.y = this.localY;
     }
 
     public contains(point: Vec4): boolean {
