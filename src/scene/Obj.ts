@@ -79,6 +79,11 @@ class Obj<E extends Apate = Apate> implements Drawable {
      */
     public transform: Transform;
 
+    private _absolute: Transform = new Transform();
+    public get absolute(): Transform {
+        return this.transform.absolute(this._absolute);
+    }
+
     /**
      * Constructs a new Obj with an optional parent and display name.
      * When the parent is set the Obj will be automatically added as a child of the parent.

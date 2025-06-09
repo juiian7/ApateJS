@@ -213,7 +213,6 @@ class Transform {
 
     /**
      * Gets the absolute transformation of this object
-     * TODO: Not finished!
      *
      * @param {Core.Transform} ref The destination to write to, if omitted a new transform object is created
      * @returns {Core.Transform} the absolute transform (equal to ref)

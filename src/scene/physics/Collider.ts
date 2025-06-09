@@ -6,9 +6,9 @@ import { Context } from "../../graphics/Context.js";
 
 import { Vec4 } from "../../core/Vec4.js";
 import { Shape } from "./shapes/Shape.js";
-import { CollisionInfo } from "../../core/Physics.js";
+import { CollisionInfo, CollisionLayer, RayHit } from "../../core/Physics.js";
+import { Ray } from "../../core/Ray.js";
 
-type CollisionLayer = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15;
 export class Collider<E extends Apate = Apate> extends Obj<E> {
     private shapes: Shape[] = [];
     public enabled: boolean = true;
@@ -17,7 +17,15 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
 
     public layer: number = Collider.Layers.indexOf("debug");
 
-    public collisionLayer: CollisionLayer = 0;
+    private _collisionLayer: CollisionLayer = 0;
+    public set collisionLayer(v: CollisionLayer) {
+        this._collisionLayer = v;
+        if (this.engine) this.engine.physics.layerUpdated(this);
+    }
+    public get collisionLayer(): CollisionLayer {
+        return this._collisionLayer;
+    }
+
     public mask: number = 0xffff;
 
     constructor(shape: Shape, layer: CollisionLayer = 0, parent?: Obj, name?: string) {
@@ -37,6 +45,11 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
 
     public collisions: CollisionInfo[] = [];
 
+    public collectCollisions(): number {
+        if (this.engine) return this.engine.physics.collisions(this);
+        return 0;
+    }
+
     public checkAgainst(other: Collider): boolean {
         let l = this.collisions.length;
 
@@ -51,6 +64,14 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
             }
         }
         return this.collisions.length != l;
+    }
+
+    public checkAgainstRay(ray: Ray): RayHit {
+        for (let i = 0; i < this.shapes.length; i++) {
+            let distance = this.shapes[i].raycast(ray);
+            if (distance !== null) return { collider: this, shape: this.shapes[i], distance };
+        }
+        return null;
     }
 
     /**
@@ -71,9 +92,6 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
     on_scene_enter(engine: E): void {
         super.on_scene_enter(engine);
         engine.physics.add(this);
-        if (this.name == "Player-collider") {
-            console.log("adding play col");
-        }
     }
 
     on_scene_exit(engine: E): void {

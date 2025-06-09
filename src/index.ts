@@ -13,6 +13,7 @@ import { Apate } from "./Apate.js";
 import { Input } from "./core/Input.js";
 import { Vec4 } from "./core/Vec4.js";
 import { Color } from "./core/Color.js";
+import { Ray } from "./core/Ray.js";
 import * as Mat from "./core/Matrix.js";
 import { Tile } from "./core/Tile.js";
 import { Transform } from "./core/Transform.js";
@@ -79,5 +80,5 @@ import { Renderer, RenderTarget } from "./graphics/webgl2/Renderer.js";
 import * as UI from "./ui/index.js";
 
 export default Apate;
-export { Anim, Color, Mat, Tile, Transform, Vec4, World };
+export { Anim, Color, Mat, Tile, Transform, Vec4, Ray, World };
 export { Context, Input, Materials, Mesh, Physics, Renderer, RenderTarget, Texture, UI };

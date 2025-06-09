@@ -4,6 +4,8 @@ import { Collider } from "./Collider.js";
 import { Context } from "../../graphics/Context.js";
 import { Apate } from "../../Apate.js";
 import { CollisionInfo, Physics } from "../../core/Physics.js";
+import { Ray } from "../../core/Ray.js";
+import { Transform } from "../../core/Transform.js";
 
 export class Body<E extends Apate = Apate> extends Obj<E> {
     public mass: number = 1;
@@ -11,6 +13,10 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
 
     public grounded: boolean = false;
     public touchesWall: boolean = false;
+    public wallThreshold: number = 0.01;
+
+    private left: Ray = Ray.left(this.transform.position);
+    private right: Ray = Ray.right(this.transform.position);
 
     public gravity: Vec4 = Vec4.from(0, -9.81, 0);
 
@@ -65,18 +71,37 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
         if (this.engine!.physics.collisions(this.collider) > 0) {
             // resolve
             this.engine!.physics.resolve(this.collider);
+
+            // assume ground is always direction of gravity
+            if (Math.sign(this.velocity.y) == Math.sign(this.gravity.y)) this.grounded = true;
+
             this.velocity.y = 0;
             // this.velocity.y > 0 -> up ? TODO: physically resolving
-            this.grounded = true;
+            // add to touching sides?
         }
         this.transform.move(this.velocity.x * factor, 0, 0);
         if (this.engine!.physics.collisions(this.collider) > 0) {
             // resolve
             this.engine!.physics.resolve(this.collider);
             this.velocity.x = 0;
-            // this.velocity.x > 0 -> right
+            // this.velocity.x > 0 -> right ? TODO: physically resolving
             this.touchesWall = true;
-        }
+        } /* else {
+            // checks in directions of wall
+            this.left.origin = this.absolute.position;
+            this.left.len = this.wallThreshold;
+            if (this.engine!.physics.raycast(this.left, this.collider.mask).nearest <= this.wallThreshold) {
+                this.touchesWall = true;
+                // add to touching sides?
+            }
+
+            this.right.origin = this.absolute.position;
+            this.right.len = this.wallThreshold;
+            if (this.engine!.physics.raycast(this.right, this.collider.mask).nearest <= this.wallThreshold) {
+                this.touchesWall = true;
+                // add to touching sides?
+            }
+        } */
     }
 
     public collide(): CollisionInfo[] {
