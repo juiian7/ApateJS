@@ -8,7 +8,7 @@ import { Context } from "../../graphics/Context.js";
 
 import { SpriteBatchMaterial } from "../../graphics/Material.js";
 import { VertexArray } from "../../graphics/webgl2/VertexArray.js";
-import { Buffer } from "../../graphics/webgl2/Buffer.js";
+import { Buffer, BufferTarget, BufferUsage } from "../../graphics/webgl2/Buffer.js";
 import { inverse } from "../../core/Matrix.js";
 import { Apate } from "../../Apate.js";
 
@@ -79,7 +79,7 @@ export class SpriteBatch<E extends Apate = Apate> extends Obj<E> {
     }
 
     private _runtime: VertexArray;
-    private _buffers: Buffer<any>[] = [];
+    private _buffers: Buffer[] = [];
     public draw(context: Context): void {
         if (this.tiles.length == 0) return;
 
@@ -87,22 +87,22 @@ export class SpriteBatch<E extends Apate = Apate> extends Obj<E> {
         if (!this._runtime) {
             let gl = context.renderer.ctx;
             this._buffers = [
-                new Buffer(gl, "array", "static_draw"),
-                new Buffer(gl, "array", "dynamic_draw"),
-                new Buffer(gl, "array", "dynamic_draw"),
+                new Buffer(BufferTarget.array, BufferUsage.static_draw, plane.data, gl),
+                new Buffer(BufferTarget.array, BufferUsage.dynamic_draw, this.clips, gl),
+                new Buffer(BufferTarget.array, BufferUsage.dynamic_draw, this.clips, gl),
             ];
-            this._buffers[0].upload(plane.data); // could be static
+            /* this._buffers[0].upload(plane.data); // could be static
             this._buffers[1].upload(this.clips);
-            this._buffers[2].upload(this.matrices);
+            this._buffers[2].upload(this.matrices); */
 
             this._runtime = new VertexArray(gl);
             let layout = { size: 4, divisor: 1, typeSize: 4 };
             let attrs = mat.attributeInfo;
             console.log(attrs);
 
-            this._runtime.setBuffer(this._buffers[0], plane.layout, attrs["aVertexPos"].location);
-            this._runtime.setBuffer(this._buffers[1], [layout], attrs["aClip"].location);
-            this._runtime.setBuffer(this._buffers[2], [layout, layout, layout, layout], attrs["aMatrix"].location);
+            this._runtime.setBuffer(this._buffers[0].view(), plane.layout, attrs["aVertexPos"].location);
+            this._runtime.setBuffer(this._buffers[1].view(), [layout], attrs["aClip"].location);
+            this._runtime.setBuffer(this._buffers[2].view(), [layout, layout, layout, layout], attrs["aMatrix"].location);
             //this._runtime.setBuffers(this._buffers, [plane.layout, [layout], [layout, layout, layout, layout]]);
             this.needsUpdate = false;
         }

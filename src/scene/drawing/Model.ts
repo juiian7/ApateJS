@@ -13,8 +13,8 @@ export class Model<E extends Apate = Apate> extends Obj<E> {
     public material?: Default3DMaterial;
     public meshes: Mesh[] = [];
 
-    constructor(parent?: Obj) {
-        super(parent);
+    constructor(parent?: Obj, name?: string) {
+        super(parent, name);
     }
 
     public addMesh(mesh: Mesh): this {

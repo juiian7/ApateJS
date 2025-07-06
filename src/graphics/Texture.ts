@@ -1,6 +1,7 @@
 import { Color } from "../core/Color.js";
 import { Vec4 } from "../core/Vec4.js";
 import { Renderer } from "./webgl2/Renderer.js";
+import { webglDebugger } from "./webgl2/WebGLDebugger.js";
 
 // the raw image used for rendering
 
@@ -30,6 +31,9 @@ const pixelTextureParameter: TextureParameter = {
 };
 
 export class Texture {
+    private static debugId: number = 0;
+    public readonly id: number = Texture.debugId++;
+
     public width: number;
     public height: number;
 
@@ -60,6 +64,8 @@ export class Texture {
     private source: TextureSource;
 
     public constructor(width: number, height: number, format: TextureFormat, internalFormat: TextureFormat) {
+        webglDebugger.watch("textures", this);
+
         this.width = width;
         this.height = height;
         this.format = format;

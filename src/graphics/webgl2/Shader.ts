@@ -1,4 +1,6 @@
+import { type Texture } from "../Texture.js";
 import { Renderer } from "./Renderer.js";
+import { webglDebugger } from "./WebGLDebugger.js";
 
 export interface ShaderSource {
     vertex: string;
@@ -30,6 +32,10 @@ const uniformTypeMap = {
 const cache: { [source: string]: Shader } = {};
 
 export class Shader {
+    private static debugId: number = 0;
+    public readonly id: number = Shader.debugId++;
+
+    private readonly renderer: Renderer;
     private readonly gl: WebGL2RenderingContext;
     private readonly program: WebGLProgram;
 
@@ -40,9 +46,12 @@ export class Shader {
     public readonly uniformInfo: UniformInfo = {};
     public readonly attributeInfo: AttributeInfo = {};
 
-    constructor(gl: WebGL2RenderingContext, source: ShaderSource) {
-        this.gl = gl;
-        this.program = gl.createProgram()!;
+    constructor(renderer: Renderer, source: ShaderSource) {
+        webglDebugger.watch("shaders", this);
+
+        this.renderer = renderer;
+        this.gl = renderer.ctx;
+        this.program = this.gl.createProgram()!;
         if (!this.program) throw new Error("Can't create shader program!");
 
         this.source = source;
@@ -52,10 +61,10 @@ export class Shader {
         this.readUniformTypes();
     }
 
-    public static cache(gl: WebGL2RenderingContext, source: ShaderSource): Shader {
+    public static cache(renderer: Renderer, source: ShaderSource): Shader {
         let hash = source.vertex + source.fragment;
         if (!cache[hash]) {
-            cache[hash] = new Shader(gl, source);
+            cache[hash] = new Shader(renderer, source);
         }
 
         return cache[hash];
@@ -125,40 +134,29 @@ export class Shader {
         // uniforms should be set
     }
 
-    public setUniform(name: string, value: number | number[]) {
+    private textureSlot: number = 0;
+    public setUniform(name: string, value: number | number[] | Texture) {
         let uniform = this.uniformInfo[name];
         if (uniform) {
             if (uniform.type[0] == "M") this.gl[`uniform${uniform.type}v`](uniform.location, false, value); //matrix
-            else if (uniform.type[0] == "T") this.gl.uniform1i(uniform.location, value as any); // texture
-            else {
+            else if (uniform.type[0] == "T") {
+                // texture
+                if (typeof value == "number") this.gl.uniform1i(uniform.location, value as any);
+                else {
+                    if (!value) return;
+                    (value as Texture).compile(this.renderer, this.textureSlot);
+                    this.gl.uniform1i(uniform.location, this.textureSlot);
+                    this.textureSlot++;
+                }
+            } else {
                 if (typeof value == "number") this.gl[`uniform${uniform.type}`](uniform.location, value); // vec
                 else this.gl[`uniform${uniform.type}v`](uniform.location, value); // vec
             }
         } // else console.warn(`uniform "${name}" not found`);
     }
 
-    public setUniforms(uniforms: { [name: string]: number | number[] }) {
+    public setUniforms(uniforms: { [name: string]: number | number[] | Texture }, slotStart: number = 0) {
+        this.textureSlot = slotStart;
         for (const name in uniforms) this.setUniform(name, uniforms[name]);
-    }
-
-    private applyUniforms() {
-        /* let uniforms = this.material.getUniforms();
-        for (const name in uniforms) {
-            let setter = this.uniformTypes[name];
-            if (!setter) {
-                console.warn(`Can't find uniform: "${name}"`);
-                continue;
-            }
-
-            if (setter.type[0] == "M") {
-                //matrix
-                this.gl[`uniform${setter.type}v`](setter.location, false, uniforms[name]);
-            } else if (setter.type[0] == "T") {
-                // texture
-                this.gl.uniform1i(setter.location, uniforms[name]);
-            } else {
-                this.gl[`uniform${setter.type}v`](setter.location, uniforms[name]);
-            }
-        } */
     }
 }

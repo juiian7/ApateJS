@@ -152,6 +152,11 @@ export class Renderer {
         this._drawCalls++;
     }
 
+    drawElements(count: number, type: number, drawMode: number = 5, offset: number = 0) {
+        this.ctx.drawElements(drawMode, count, type, offset);
+        this._drawCalls++;
+    }
+
     drawInstanced(count: number, instances: number, drawMode: number = 5) {
         this.ctx.drawArraysInstanced(drawMode, 0, count, instances);
         this._drawCalls++;

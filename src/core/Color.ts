@@ -70,7 +70,7 @@ class Color {
 
     /**
      * Gets an array of the vectors components.
-     * Optionally normalize colors bigger than 1 by dividing them with 255.
+     * Optionally (defaults to true) normalize colors bigger than 1 by dividing them with 255.
      *
      * @param normalize Specify if results should be normalized to values smaller than 1
      * @returns {number[]} The normalized array of components

@@ -26,23 +26,22 @@ export default {
     in vec2 uv;
     in vec3 normal;
     
-    uniform vec4 uAmbient;
-    uniform vec4 uDiffuse;
+    uniform vec4 uBaseColor;
 
     out vec4 glColor;
 
     void main() { 
-        vec4 objColor = uDiffuse;
+        vec4 objColor = uBaseColor;
 
         vec3 lightPos = vec3(10, 10, 10) * -1.0;
         vec3 lightDir = normalize(normal - lightPos);
-        vec3 lightColor = objColor.rgb; //vec3(1,1,1);
+        vec3 lightColor = vec3(1,1,1); // objColor.rgb;
         float lightIntensity = 1.0;
         
         float diff = max(dot(normalize(normal), lightDir), 0.0);
-        vec4 diffuse = vec4(diff * lightColor, 1.0);
+        vec4 diffuse = vec4(diff * lightColor * lightIntensity, 1.0);
         
-        vec4 ambient = uAmbient;
+        vec4 ambient = vec4(0);
 
         glColor = (ambient + diffuse) * objColor;
     }`,

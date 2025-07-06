@@ -176,7 +176,8 @@ class Transform {
         // rotation mat
         this.mat = this.rotation.matrix();
 
-        this.mat[0] *= this.size.x; // anchor
+        // world transformation
+        /* this.mat[0] *= this.size.x; // anchor
         this.mat[1] *= this.size.x;
         this.mat[2] *= this.size.x;
         this.mat[4] *= this.size.y;
@@ -187,7 +188,10 @@ class Transform {
         this.mat[10] *= this.size.z; // anchor
         this.mat[12] = this.position.x;
         this.mat[13] = this.position.y;
-        this.mat[14] = this.position.z;
+        this.mat[14] = this.position.z; */
+
+        // local transformation
+        this.mat = Mat.multiplyStack(Mat.translation(this.position), this.mat, Mat.scale(this.size));
 
         if (this.parent) this.mat = Mat.multiply(this.parent.mat, this.mat);
 

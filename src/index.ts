@@ -73,6 +73,9 @@ import { Mesh } from "./graphics/Mesh.js";
 import { Texture } from "./graphics/Texture.js";
 import { Context } from "./graphics/Context.js";
 
+// loader
+import * as Loader from "./graphics/loader/index.js";
+
 // webgl
 import { Renderer, RenderTarget } from "./graphics/webgl2/Renderer.js";
 
@@ -81,4 +84,4 @@ import * as UI from "./ui/index.js";
 
 export default Apate;
 export { Anim, Color, Mat, Tile, Transform, Vec4, Ray, World };
-export { Context, Input, Materials, Mesh, Physics, Renderer, RenderTarget, Texture, UI };
+export { Context, Input, Loader, Materials, Mesh, Physics, Renderer, RenderTarget, Texture, UI };

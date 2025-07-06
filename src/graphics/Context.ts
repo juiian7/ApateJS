@@ -11,6 +11,7 @@ import { Transform } from "../core/Transform.js";
 
 import { inverse, Matrix } from "../core/Matrix.js";
 import { Color } from "../core/Color.js";
+import { BufferView } from "./webgl2/Buffer.js";
 
 export interface ICamera {
     transform: Transform;
@@ -50,8 +51,8 @@ export class Context {
 
         this.planeAlignCenter = Mesh.plane2D("center");
         this.planeAlignCorner = Mesh.plane2D("corner");
-        this.white = Texture.fromColor(Color.fromHex(0xffffffff));
-        this.defaultMeshMat = new Default3DMaterial();
+        this.white = Texture.fromColor(Color.fromHex(0xffff, 4));
+        this.defaultMeshMat = new Default3DMaterial(Color.fromHex(0xf0fa, 4));
     }
 
     setPostProcessingMaterial(material: PostprocessingMaterial) {
@@ -91,7 +92,7 @@ export class Context {
 
     drawTile(transform: Transform, tile: Tile, material: SpriteMaterial, align: "center" | "bottom-left" = "center") {
         let slot = 0;
-        let texture = tile.texture.compile(this.renderer, 0);
+        let texture = tile.texture.compile(this.renderer, slot);
         let shader = material.compile(this.renderer);
         shader.use();
 
@@ -113,30 +114,29 @@ export class Context {
     drawMesh(transform: Transform, mesh: Mesh, material?: Default3DMaterial) {
         let mat = mesh.material || material || this.defaultMeshMat;
 
-        //(mat.texture.texture || this.white).compile(this.renderer, 1); // set texture
-
         let shader = mat.compile(this.renderer);
         shader.use();
         shader.setUniforms({
             ...mat.data(),
-            uAmbient: mat.ambient.color(),
-            uDiffuse: mat.diffuse.color(),
-            //uTexture: 1,
 
             uModel: transform.matrix(),
             uView: inverse(this.camera.transform.matrix()),
+            uViewPos: this.camera.transform.position.vec(),
             uProjection: this.camera.projection,
         });
 
-        // do before compile to set attribute location
-        // mesh.arrays.find((a) => a.type == "position").attributeLocation = shader.attributeInfo["aVertPos"].location;
-
         let arrays = mesh.compile(this.renderer);
-        this.renderer.draw(arrays.count, this.renderer.drawMode(mesh.drawMode)); // draw arrays
+        if (isBufferView(mesh.indices))
+            this.renderer.drawElements(mesh.indices.count, mesh.indices.type, this.renderer.drawMode(mesh.drawMode));
+        else this.renderer.draw(arrays.count, this.renderer.drawMode(mesh.drawMode));
     }
 
     clear() {
         this.renderer.clearColor = this.camera.bgColor;
         this.renderer.clear();
     }
+}
+
+export function isBufferView(data: any): data is BufferView {
+    return data && !!data.buffer;
 }

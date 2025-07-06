@@ -1,0 +1,18 @@
+.webgl-debugger {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.webgl-debug-element {
+    background-color: lightgray;
+}
+
+.buffer {
+    background-color: lightseagreen;
+}
+
+
+.vertex_array {
+    background-color: lightcoral;
+}
