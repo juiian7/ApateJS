@@ -44,15 +44,18 @@ export class SpriteMaterial extends BaseMaterial {
     public flipH: boolean = false;
     public flipV: boolean = false;
 
+    private flip: number[] = [0, 0];
+
     constructor(source: ShaderSource = sprite2d) {
         super(source);
     }
 
     data() {
+        this.flip[0] = +this.flipH;
+        this.flip[1] = +this.flipV;
         return {
             uColor: this.color.color(),
-            uFlipH: +this.flipH,
-            uFlipV: +this.flipV,
+            uFlip: this.flip,
         };
     }
 }

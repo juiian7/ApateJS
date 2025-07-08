@@ -18,6 +18,18 @@ import { Vec4 } from "./Vec4.js";
 class Color {
     private data: number[];
 
+    public static readonly presets = {
+        Transparent: Color.fromHex(0x0, 1),
+        Red: Color.fromHex(0xf00f, 4),
+        Green: Color.fromHex(0x0f0f, 4),
+        Blue: Color.fromHex(0x00ff, 4),
+        Yellow: Color.fromHex(0xff0f, 4),
+        Magenta: Color.fromHex(0xf0ff, 4),
+        Cyan: Color.fromHex(0x0fff, 4),
+        White: Color.fromHex(0xffff, 4),
+        Black: Color.fromHex(0x000f, 4),
+    };
+
     /**
      * Constructs a new Color object
      *

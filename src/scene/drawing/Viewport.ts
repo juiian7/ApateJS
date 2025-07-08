@@ -10,9 +10,10 @@ import { Tile } from "../../core/Tile.js";
 
 import { Transform } from "../../core/Transform.js";
 import { SpriteMaterial } from "../../graphics/Material.js";
+import { Color } from "../../core/Color.js";
 
 export class Viewport<E extends Apate = Apate> extends Obj<E> {
-    public camera: ICamera;
+    //public camera: ICamera;
 
     public material: SpriteMaterial = new SpriteMaterial();
 
@@ -26,13 +27,23 @@ export class Viewport<E extends Apate = Apate> extends Obj<E> {
     constructor(width: number, height: number, parent?: Obj, name?: string) {
         super(parent, name);
 
+        this.material.flipV = true;
+
         this.texture = new Texture(width, height, "rgba", "rgba");
         this.tile = new Tile(this.texture);
 
-        this.camera = new Camera(width, height, null, null, "Viewport Camera");
+        //this.camera = new Camera(width, height, orth, null, "Viewport Camera");
+
+        //this.transform.move(160, 90);
 
         this.transform.size.x = this.texture.width;
         this.transform.size.y = this.texture.height;
+    }
+
+    public add(...children: Obj<E>[]): this {
+        super.add(...children);
+        for (const c of children) c.transform.parent = undefined;
+        return this;
     }
 
     protected drawRec(context: Context, layer: number): void {
@@ -43,17 +54,17 @@ export class Viewport<E extends Apate = Apate> extends Obj<E> {
     }
 
     public draw(context: Context): void {
-        if (!this.camera) throw new Error("No camera set for viewport!");
+        //if (!this.camera) throw new Error("No camera set for viewport!");
 
         if (!this.target) this.target = context.renderer.createTarget(this.texture);
 
-        if (this.texture.width != this.camera.width || this.texture.height != this.camera.height)
-            this.texture.resize(this.camera.width, this.camera.height);
+        /*  if (this.texture.width != this.camera.width || this.texture.height != this.camera.height)
+            this.texture.resize(this.camera.width, this.camera.height); */
 
-        context.pushCamera(this.camera);
+        //context.pushCamera(this.camera);
         context.renderer.pushTarget(this.target);
 
-        context.clear();
+        context.clear(Color.presets.Transparent);
 
         for (let l = 0; l < Viewport.Layers.length; l++) {
             let i = this.children.length; // @ts-ignore
@@ -61,13 +72,13 @@ export class Viewport<E extends Apate = Apate> extends Obj<E> {
         }
 
         context.renderer.popTarget();
-        context.popCamera();
+        //context.popCamera();
 
-        if (this.autoDraw) context.drawTile(this.transform, this.tile, this.material);
+        if (this.autoDraw) context.drawTile(this.transform, this.tile, this.material, "bottom-left");
     }
 
-    private nullTransformation: Transform = new Transform();
+    /*  private nullTransformation: Transform = new Transform();
     public absolut(): Transform {
         return this.nullTransformation;
-    }
+    } */
 }

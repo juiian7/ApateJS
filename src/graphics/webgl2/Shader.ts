@@ -149,7 +149,7 @@ export class Shader {
                     this.textureSlot++;
                 }
             } else {
-                if (typeof value == "number") this.gl[`uniform${uniform.type}`](uniform.location, value); // vec
+                if (typeof value == "number") this.gl[`uniform${uniform.type}`](uniform.location, value); // value
                 else this.gl[`uniform${uniform.type}v`](uniform.location, value); // vec
             }
         } // else console.warn(`uniform "${name}" not found`);

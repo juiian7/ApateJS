@@ -132,8 +132,8 @@ export class Context {
         else this.renderer.draw(arrays.count, this.renderer.drawMode(mesh.drawMode));
     }
 
-    clear() {
-        this.renderer.clearColor = this.camera.bgColor;
+    clear(colorOverwrite?: Color) {
+        this.renderer.clearColor = colorOverwrite || this.camera.bgColor;
         this.renderer.clear();
     }
 
