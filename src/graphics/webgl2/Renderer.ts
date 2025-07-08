@@ -128,6 +128,10 @@ export class Renderer {
         else this.setTarget(this.targets[this.targets.length - 1]);
     }
 
+    resize(width: number, height: number) {
+        this.ctx.viewport(0, 0, width, height);
+    }
+
     drawMode(mode: DrawMode): number {
         switch (mode) {
             case "lines":

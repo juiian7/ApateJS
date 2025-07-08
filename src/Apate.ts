@@ -15,12 +15,14 @@ interface ScreenConfig {
     canvas?: HTMLCanvasElement;
     // filter style
     autoResize?: boolean;
-    width?: number;
-    height?: number;
+    size?: {
+        width: number;
+        height: number;
+    };
 }
 
 const defaultConfig: EngineConfig = {};
-const defaultScreenConfig: ScreenConfig = { autoResize: true, width: 640, height: 360 };
+const defaultScreenConfig: ScreenConfig = { autoResize: true, size: { width: 640, height: 360 } };
 
 /**
  * This class is the entry point of the engine.
@@ -84,6 +86,9 @@ export class Apate {
     private last: number = 0;
     public delta: number = 20;
 
+    public autoResize: boolean = false;
+    public screenAspect: number = 0;
+
     public debug: boolean = true;
 
     constructor(config?: EngineConfig) {
@@ -97,8 +102,10 @@ export class Apate {
 
             // create canvas
             config.screen.canvas = document.createElement("canvas");
-            if (config.screen.width) config.screen.canvas.width = config.screen.width;
-            if (config.screen.height) config.screen.canvas.height = config.screen.height;
+            if (config.screen.size) {
+                config.screen.canvas.width = config.screen.size.width;
+                config.screen.canvas.height = config.screen.size.height;
+            }
             document.body.appendChild(config.screen.canvas);
         }
 
@@ -109,6 +116,11 @@ export class Apate {
         camera.name = "Default Camera";
         camera.transform.move(0, 0, 1);
         this.context.pushCamera(camera);
+
+        if (config.screen.size) this.screenAspect = config.screen.size.width / config.screen.size.height;
+        window.addEventListener("resize", this.onResize.bind(this));
+        this.autoResize = !!config.screen.autoResize;
+        this.onResize();
 
         this.input = new Input(this.renderer.canvas);
         this.physics = new Physics();
@@ -152,4 +164,17 @@ export class Apate {
     public async init() {}
 
     public update() {}
+
+    public onResize() {
+        if (!this.autoResize) return;
+
+        let w = window.innerWidth;
+        let h = window.innerHeight;
+        if (this.screenAspect) h = w / this.screenAspect;
+
+        this.renderer.canvas.width = w;
+        this.renderer.canvas.height = h;
+
+        this.context.resize(w, h);
+    }
 }

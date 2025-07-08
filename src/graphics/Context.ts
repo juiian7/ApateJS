@@ -12,6 +12,7 @@ import { Transform } from "../core/Transform.js";
 import { inverse, Matrix } from "../core/Matrix.js";
 import { Color } from "../core/Color.js";
 import { BufferView } from "./webgl2/Buffer.js";
+import { Mat } from "../index.js";
 
 export interface ICamera {
     transform: Transform;
@@ -134,6 +135,16 @@ export class Context {
     clear() {
         this.renderer.clearColor = this.camera.bgColor;
         this.renderer.clear();
+    }
+
+    resize(width: number, height: number) {
+        const aspect = this.cameras[0].width / this.cameras[0].height;
+        const fov = this.cameras[0].projection[0] * aspect;
+        this.cameras[0].projection[0] = fov / (width / height);
+        this.cameras[0].width = width;
+        this.cameras[0].height = height;
+
+        this.renderer.resize(width, height);
     }
 }
 

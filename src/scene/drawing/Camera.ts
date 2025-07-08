@@ -17,6 +17,9 @@ export class Camera<E extends Apate = Apate> extends Obj<E> implements ICamera {
     constructor(width: number, height: number, projection: Matrix, parent?: Obj, name?: string) {
         super(parent, name);
 
+        this.width = width;
+        this.height = height;
+
         this.projection = projection;
     }
 
