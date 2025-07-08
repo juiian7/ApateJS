@@ -89,7 +89,7 @@ export class SpriteBatch<E extends Apate = Apate> extends Obj<E> {
             this._buffers = [
                 new Buffer(BufferTarget.array, BufferUsage.static_draw, plane.data, gl),
                 new Buffer(BufferTarget.array, BufferUsage.dynamic_draw, this.clips, gl),
-                new Buffer(BufferTarget.array, BufferUsage.dynamic_draw, this.clips, gl),
+                new Buffer(BufferTarget.array, BufferUsage.dynamic_draw, this.matrices, gl),
             ];
             /* this._buffers[0].upload(plane.data); // could be static
             this._buffers[1].upload(this.clips);
@@ -98,7 +98,6 @@ export class SpriteBatch<E extends Apate = Apate> extends Obj<E> {
             this._runtime = new VertexArray(gl);
             let layout = { size: 4, divisor: 1, typeSize: 4 };
             let attrs = mat.attributeInfo;
-            console.log(attrs);
 
             this._runtime.setBuffer(this._buffers[0].view(), plane.layout, attrs["aVertexPos"].location);
             this._runtime.setBuffer(this._buffers[1].view(), [layout], attrs["aClip"].location);

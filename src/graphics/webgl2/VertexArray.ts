@@ -44,18 +44,21 @@ export class VertexArray {
         let size = 0;
         let offset = view.offset;
         let stride = 0;
+        let vertexCount = view.count;
         for (const attr of layout) stride += attr.size * attr.typeSize;
         for (const attr of layout) {
             this.gl.enableVertexAttribArray(index);
             this.gl.vertexAttribPointer(index, attr.size, view.type, false, stride, offset);
-            if (attr.divisor) this.gl.vertexAttribDivisor(index, attr.divisor);
-            else size += attr.size;
+            if (attr.divisor) {
+                this.gl.vertexAttribDivisor(index, attr.divisor);
+                vertexCount = this.vertexCount;
+            } else size += attr.size;
             offset += attr.size * attr.typeSize;
             this.debugState[index] = { view, layout: attr };
             index++;
         }
-        if (this.vertexCount == 0) this.vertexCount = view.count;
-        else if (this.vertexCount != view.count) console.warn("Different vertex counts in one array. Is this desired??");
+        if (this.vertexCount == 0) this.vertexCount = vertexCount;
+        else if (this.vertexCount != vertexCount) console.warn("Different vertex counts in one array. Is this desired??");
     }
 
     public setBuffers(buffers: BufferView[], layouts: AttributeLayout[]) {
