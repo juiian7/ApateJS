@@ -15,6 +15,7 @@ interface ScreenConfig {
     canvas?: HTMLCanvasElement;
     // filter style
     autoResize?: boolean;
+    screenAspect?: number;
     size?: {
         width: number;
         height: number;
@@ -117,7 +118,8 @@ export class Apate {
         camera.transform.move(0, 0, 1);
         this.context.pushCamera(camera);
 
-        if (config.screen.size) this.screenAspect = config.screen.size.width / config.screen.size.height;
+        if (config.screen.screenAspect) this.screenAspect = config.screen.screenAspect;
+        else if (config.screen.size) this.screenAspect = config.screen.size.width / config.screen.size.height;
         window.addEventListener("resize", this.onResize.bind(this));
         this.autoResize = !!config.screen.autoResize;
         this.onResize();
