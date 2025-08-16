@@ -78,7 +78,7 @@ export class Shader {
 
             let type = uniformTypeMap[uni.type];
             if (!type) {
-                console.warn("Couldn't auto get uniform type!");
+                console.warn("Couldn't auto get uniform type!", uni);
                 return;
             }
             this.uniformInfo[uni.name] = { type, location: this.gl.getUniformLocation(this.program, uni.name)! };

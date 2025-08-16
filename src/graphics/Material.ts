@@ -98,6 +98,8 @@ export class PBR3DMaterial extends Default3DMaterial {
     public emissiveTexture?: Texture;
     public emissiveFactor?: Color;
 
+    public combine = { ambient: true, diffuse: true, spectacular: true, emission: true };
+
     constructor(base?: Color) {
         super(base, pbr3d);
     }
@@ -109,6 +111,12 @@ export class PBR3DMaterial extends Default3DMaterial {
         if (this.metallicRoughnessTexture) data["uMetallicRoughnessTexture"] = this.metallicRoughnessTexture;
         if (this.emissiveTexture) data["uEmissiveTexture"] = this.emissiveTexture;
         if (this.emissiveFactor) data["uEmissiveFactor"] = this.emissiveFactor.color();
+        const layers = [0, 0, 0, 0];
+        if (this.combine.ambient) layers[0] = 1;
+        if (this.combine.diffuse) layers[1] = 1;
+        if (this.combine.spectacular) layers[2] = 1;
+        if (this.combine.emission) layers[3] = 1;
+        data["uCombineLayers"] = layers;
         return data;
     }
 }

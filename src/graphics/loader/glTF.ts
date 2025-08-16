@@ -123,7 +123,7 @@ export function loadSync(tf: any, buffers: ArrayBuffer[]): Model[] {
 
         const { translation, scale, rotation, matrix } = node;
         if (translation) model.transform.move(translation[0], translation[1], translation[2]);
-        if (rotation) model.transform.rotate(rotation[0], rotation[1], rotation[2]);
+        if (rotation) model.transform.rotation.c.setXYZ(rotation[0], rotation[1], rotation[2], -rotation[3]);
         if (scale) model.transform.scale(scale[0], scale[1], scale[2]);
         //if (matrix) model.transform.setMatrix(matrix);
 
