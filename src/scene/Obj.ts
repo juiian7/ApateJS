@@ -79,6 +79,27 @@ class Obj<E extends Apate = Apate> implements Drawable {
      */
     public transform: Transform;
 
+    /**
+     * Specifies if this node should sort its children (not recursive) by the z-index before drawing them.
+     *
+     * @type {boolean}
+     * @public
+     */
+    public zSorting: boolean = false;
+
+    private _zIndex: number = undefined;
+    private _zIndex_transform_cache: Transform;
+    public get zIndex(): number {
+        if (this._zIndex === undefined) {
+            if (!this._zIndex_transform_cache) this._zIndex_transform_cache = new Transform();
+            return this.transform.absolute(this._zIndex_transform_cache).position.z;
+        }
+        return this._zIndex;
+    }
+    public set zIndex(ndx: number) {
+        this._zIndex = ndx;
+    }
+
     private _absolute: Transform = new Transform();
     public get absolute(): Transform {
         return this.transform.absolute(this._absolute);
@@ -159,6 +180,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
      */
     public drawAfter(context: Context) {}
 
+    private _z_sorting_cache: Transform[] = [new Transform(), new Transform()];
     /**
      * This method is used to propagate the draw through all children of this node.
      *
@@ -171,6 +193,7 @@ class Obj<E extends Apate = Apate> implements Drawable {
         if (layer == this.layer) this.draw(context);
 
         // render children
+        if (this.zSorting) this.children.sort((a, b) => b.zIndex - a.zIndex);
         let i = this.children.length;
         while (i-- > 0) this.children[i].drawRec(context, layer);
 

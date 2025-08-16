@@ -23,6 +23,7 @@ export class Viewport<E extends Apate = Apate> extends Obj<E> {
     private target: RenderTarget;
 
     public autoDraw: boolean = true;
+    public camera?: Camera = undefined;
 
     constructor(width: number, height: number, parent?: Obj, name?: string) {
         super(parent, name);
@@ -61,18 +62,19 @@ export class Viewport<E extends Apate = Apate> extends Obj<E> {
         /*  if (this.texture.width != this.camera.width || this.texture.height != this.camera.height)
             this.texture.resize(this.camera.width, this.camera.height); */
 
-        //context.pushCamera(this.camera);
+        if (this.camera) context.pushCamera(this.camera);
         context.renderer.pushTarget(this.target);
 
         context.clear(Color.presets.Transparent);
 
+        if (this.zSorting) this.children.sort((a, b) => b.zIndex - a.zIndex);
         for (let l = 0; l < Viewport.Layers.length; l++) {
             let i = this.children.length; // @ts-ignore
             while (i-- > 0) this.children[i].drawRec(context, l);
         }
 
         context.renderer.popTarget();
-        //context.popCamera();
+        if (this.camera) context.popCamera();
 
         if (this.autoDraw) context.drawTile(this.transform, this.tile, this.material, "bottom-left");
     }
