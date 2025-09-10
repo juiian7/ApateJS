@@ -8,9 +8,13 @@ interface BrowserKey {
     metaKey?: boolean;
 }
 
+type ButtonEvents = "down" | "up" | "pressed";
+
 class Input {
     private keys: { [code: string]: number } = {};
     private mPosition: Vec4 = Vec4.from(0, 0, 0);
+
+    private pads: Gamepad[] = [];
 
     private mapping = {
         axis: {
@@ -23,6 +27,16 @@ class Input {
                 pad: null,
                 pos: { keys: ["KeyW", "ArrowUp"], btn: [] },
                 neg: { keys: ["KeyS", "ArrowDown"], btn: [] },
+            },
+        },
+        buttons: {
+            jump: {
+                keys: ["Space"],
+                btn: [0],
+            },
+            combination: {
+                keys: [["KeyS", "KeyD"]],
+                btn: [],
             },
         },
     };
@@ -71,11 +85,21 @@ class Input {
         this.mPosition.y = ev.offsetY;
     }
 
-    public on() {}
+    public on(btn: string, event: ButtonEvents, handler: (value: number) => void) {}
 
-    public btn() {}
+    public btn(name: string): number {
+        const mapping = this.mapping.buttons[name];
+        if (!mapping) throw `Button "${name}" not defined!`;
 
-    public key(internalKey: string) {
+        const btnValue = this.valueOfPadButtons(mapping.btn);
+        if (btnValue) return btnValue;
+
+        if (this.oneOfKeys(mapping.keys)) return 1;
+
+        return 0;
+    }
+
+    public key(internalKey: string): boolean {
         return this.keys[internalKey] > 0;
     }
 
@@ -101,17 +125,54 @@ class Input {
         return axis;
     }
 
-    private oneOfKeys(keys?: string[]) {
+    private oneOfKeys(keys?: (string | string[])[]) {
         if (!keys || keys.length == 0) return null;
         for (let i = 0; i < keys.length; i++) {
-            if (this.keys[keys[i]] > 0) {
-                return keys[i];
+            if (typeof keys[i] == "string") {
+                if (this.keys[keys[i] as string] > 0) return keys[i];
+            } else {
+                let valid = true;
+                for (let j = 0; j < keys[i].length; j++) {
+                    if (!this.keys[keys[i][j]]) {
+                        valid = false;
+                        break;
+                    }
+                }
+                if (valid) return keys[i];
             }
         }
     }
 
+    private valueOfPadButtons(buttons?: (number | number[])[], pad: number = 0): number {
+        if (this.pads.length <= pad || !buttons || buttons.length == 0) return null;
+        let sum = 0;
+        for (let i = 0; i < buttons.length; i++) {
+            if (typeof buttons[i] == "number") {
+                sum += this.pads[pad].buttons[buttons[i] as number].value;
+            } else {
+                let valid = true;
+                for (let j = 0; j < (buttons[i] as number[]).length; j++) {
+                    if (!this.pads[pad].buttons[buttons[i][j]].value) {
+                        valid = false;
+                        break;
+                    }
+                }
+                if (valid) sum += 1;
+            }
+            if (sum >= 1) {
+                sum = 1;
+                break;
+            }
+        }
+        return sum;
+    }
+
     public mouse(): Vec4 {
-        return this.mPosition;
+        return this.mPosition.clone();
+    }
+
+    public _fetch() {
+        // called by engine to poll inputs (gamepads and other logic)
     }
 
     //cursor() {}
