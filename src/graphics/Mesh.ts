@@ -28,16 +28,14 @@ export class Mesh {
     public drawMode: DrawMode = "triangle_strip";
     public material?: Default3DMaterial;
 
-    public static plane2D(align: "center" | "corner"): Mesh {
+    public static plane2D(align: "center" | "bottom left"): Mesh {
         let mesh = new Mesh();
 
-        const pos = [0, 0, 0, 1, 1, 0, 1, 1];
+        let pos = [0, 0, 0, 1, 1, 0, 1, 1];
+        let uv = [0, 1, 0, 0, 1, 1, 1, 0];
         if (align == "center") for (let i = 0; i < pos.length; i++) pos[i] -= 0.5;
 
-        mesh.arrays.push(
-            { type: "position", data: pos, vertexSize: 2 },
-            { type: "texture", data: [0, 1, 0, 0, 1, 1, 1, 0], vertexSize: 2 }
-        );
+        mesh.arrays.push({ type: "position", data: pos, vertexSize: 2 }, { type: "texture", data: uv, vertexSize: 2 });
         return mesh;
     }
 

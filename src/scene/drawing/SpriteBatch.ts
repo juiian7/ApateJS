@@ -25,6 +25,8 @@ export class SpriteBatch<E extends Apate = Apate> extends Obj<E> {
     public tiles: Tile[] = [];
     public transforms: Transform[] = [];
 
+    public automaticUpdateOnTransformChange: boolean = true;
+
     private clips: Float32Array;
     private matrices: Float32Array;
 
@@ -47,14 +49,17 @@ export class SpriteBatch<E extends Apate = Apate> extends Obj<E> {
         this.sync();
     }
 
-    public batch(tile: Tile, transform: Transform) {
+    public batch(tile: Tile, transform: Transform, absoluteTransform: boolean = false): Transform {
         if (this.material.atlas.texture != tile.texture) throw new Error("Wrong texture!");
         if (this.tiles.length == this.maxSize) throw new Error("Out of mem!");
 
         this.tiles.push(tile);
         this.transforms.push(transform);
+        if (!transform.parent && !absoluteTransform) transform.parent = this.transform;
 
         this.sync();
+
+        return transform;
     }
 
     public clear() {
@@ -91,9 +96,6 @@ export class SpriteBatch<E extends Apate = Apate> extends Obj<E> {
                 new Buffer(BufferTarget.array, BufferUsage.dynamic_draw, this.clips, gl),
                 new Buffer(BufferTarget.array, BufferUsage.dynamic_draw, this.matrices, gl),
             ];
-            /* this._buffers[0].upload(plane.data); // could be static
-            this._buffers[1].upload(this.clips);
-            this._buffers[2].upload(this.matrices); */
 
             this._runtime = new VertexArray(gl);
             let layout = { size: 4, divisor: 1, typeSize: 4 };
@@ -102,8 +104,16 @@ export class SpriteBatch<E extends Apate = Apate> extends Obj<E> {
             this._runtime.setBuffer(this._buffers[0].view(), plane.layout, attrs["aVertexPos"].location);
             this._runtime.setBuffer(this._buffers[1].view(), [layout], attrs["aClip"].location);
             this._runtime.setBuffer(this._buffers[2].view(), [layout, layout, layout, layout], attrs["aMatrix"].location);
-            //this._runtime.setBuffers(this._buffers, [plane.layout, [layout], [layout, layout, layout, layout]]);
             this.needsUpdate = false;
+        }
+
+        if (this.automaticUpdateOnTransformChange) {
+            for (let i = 0; i < this.transforms.length; i++) {
+                if (this.transforms[i].changed) {
+                    this.needsUpdate = true;
+                    break;
+                }
+            }
         }
 
         if (this.needsUpdate) {
@@ -118,7 +128,7 @@ export class SpriteBatch<E extends Apate = Apate> extends Obj<E> {
             uAtlasSize: this.material.atlas.texture.size,
             uAtlas: 5,
 
-            uModel: this.transform.matrix(),
+            //uModel: this.transform.matrix(),
             uView: inverse(context.camera.transform.matrix()),
             uProjection: context.camera.projection,
         });

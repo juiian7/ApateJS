@@ -10,7 +10,7 @@ import { CollisionInfo, CollisionLayer, RayHit } from "../../core/Physics.js";
 import { Ray } from "../../core/Ray.js";
 
 export class Collider<E extends Apate = Apate> extends Obj<E> {
-    private shapes: Shape[] = [];
+    public shapes: Shape[] = [];
     public enabled: boolean = true;
 
     public belongsTo: Obj;

@@ -34,6 +34,7 @@ export class Renderer {
         this.ctx.enable(this.ctx.DEPTH_TEST);
 
         this.ctx.enable(this.ctx.BLEND);
+        //this.ctx.blendFunc(this.ctx.ONE, this.ctx.ONE_MINUS_SRC_ALPHA);
         this.ctx.blendFunc(this.ctx.SRC_ALPHA, this.ctx.ONE_MINUS_SRC_ALPHA);
 
         this.clearColor = new Color(0, 0, 0, 1);
@@ -48,8 +49,8 @@ export class Renderer {
     }
 
     public set clearColor(color: Color) {
-        color.color();
-        this.ctx.clearColor(color.r, color.g, color.b, color.a);
+        const [r, g, b, a] = color.color();
+        this.ctx.clearColor(r, g, b, a);
         this.currentClearColor = color;
     }
 

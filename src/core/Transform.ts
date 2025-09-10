@@ -64,6 +64,7 @@ class Transform {
 
         if (v) v.children.push(this);
         this._parent = v;
+        this._changed = true;
     }
     public get changed(): boolean {
         return this._changed || this.position.changed() || this.rotation.c.changed() || this.size.changed();

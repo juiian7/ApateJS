@@ -256,8 +256,27 @@ class Obj<E extends Apate = Apate> implements Drawable {
         this.engine = undefined;
     }
 
-    drawDebugUI(): Elem {
-        return container(heading(this.name || "-"), new Engine.TransformInput(this.transform));
+    /**
+     * Override to enhance inspecting of Obj.
+     *
+     * @example
+     * // could be inside watch() {...}
+     * // create inputs to control position
+     * UI.input.vec("Position", this.transform.position);
+     *
+     */
+    public inspect() {
+        this.name = UI.input.text("Name", this.name);
+
+        //if (UI.button.text("remove from scene")) this.remove();
+
+        if (UI.group.beginCollapsible("Transform")) {
+            UI.input.vec("Position", this.transform.position);
+            UI.input.vec("Rotation", this.transform.rotation.c);
+            UI.input.vec("Size", this.transform.size);
+        }
+        UI.group.end();
+    }
     }
 }
 export { Obj };

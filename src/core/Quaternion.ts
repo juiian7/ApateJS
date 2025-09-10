@@ -43,6 +43,12 @@ class Quaternion {
         if (ax || ay || az) this.setAngles(ax, ay, az);
     }
 
+    public static fromVec(vec: Vec4) {
+        const q = new Quaternion();
+        q.c.setTo(vec);
+        return q;
+    }
+
     private static rFac = Math.PI / 180;
     private static dFac = 1 / this.rFac;
     /**

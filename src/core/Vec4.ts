@@ -147,6 +147,23 @@ class Vec4 {
     }
 
     /**
+     * Divides a single value from all components of a vector.
+     * Only modifies ref, a stays the same!
+     *
+     * @param a - The vector to divide from
+     * @param b - The numbers to divide the components
+     * @param ref - The resulting vector, will be written within the function
+     * @returns {Core.Vec4} The ref
+     */
+    public static divideVec(a: Vec4, b: Vec4, ref: Vec4 = new Vec4()): Vec4 {
+        ref.data[0] = a.data[0] / b.data[0];
+        ref.data[1] = a.data[1] / b.data[1];
+        ref.data[2] = a.data[2] / b.data[2];
+        ref.data[3] = a.data[3] / b.data[3];
+        return ref;
+    }
+
+    /**
      * Gets length of vector v
      *
      * @param v - The vector to calculate the length
@@ -366,6 +383,22 @@ class Vec4 {
     }
     public set w(v: number) {
         this.data[3] = v;
+    }
+
+    /**
+     * Checks if all components are zero
+     */
+    public isZero(dim: number = 3): boolean {
+        for (let i = 0; i < dim; i++) if (this.data[i] != 0) return false;
+        return true;
+    }
+
+    /**
+     * Checks if all components are one
+     */
+    public allOne(dim: number = 3): boolean {
+        for (let i = 0; i < dim; i++) if (this.data[i] != 1) return false;
+        return true;
     }
 }
 

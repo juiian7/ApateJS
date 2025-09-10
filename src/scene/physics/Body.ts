@@ -43,11 +43,13 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
 
     private clone: Vec4 = new Vec4();
     public accelerate(force: Vec4) {
-        this.clone.setTo(force).multiply(this.engine!.delta / 1000);
+        this.clone.setTo(force).multiply(this.mass);
+        this.clone.multiply(this.engine!.delta / 1000);
         this.velocity.add(this.clone);
     }
 
     public impulse(force: Vec4) {
+        this.clone.setTo(force).multiply(this.mass);
         this.velocity.add(force);
     }
 

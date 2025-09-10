@@ -251,8 +251,19 @@ export function worldToScreen(world: Matrix, view: Matrix, projection: Matrix, s
     return Vec4.from(m[12] / screenSize.x, m[13] / screenSize.y);
 }
 
-export function screenToWorld(screenPos: Vec4, view: Matrix, projection: Matrix, screenSize: Vec4) {
-    let inv = inverse(multiply(projection, view));
-    let v = multiplyVec(inv, Vec4.from((2 * screenPos.x) / screenSize.x - 1, 1 - (2 * screenPos.y) / screenSize.y));
+export function screenToWorld(
+    screenPos: Vec4,
+    view: Matrix,
+    projection: Matrix,
+    screenSize: Vec4,
+    screenSpaceDim: number[] = [-1, 1, 1, -1]
+) {
+    const screenSpace = new Vec4();
+    screenSpace.x = (screenPos.x / screenSize.x) * (screenSpaceDim[1] - screenSpaceDim[0]) + screenSpaceDim[0];
+    screenSpace.y = (1.0 - screenPos.y / screenSize.y) * (screenSpaceDim[2] - screenSpaceDim[3]) + screenSpaceDim[3];
+
+    const inv = inverse(multiply(projection, view));
+    const v = multiplyVec(inv, screenSpace);
+    if (v.w != 0) v.divide(v.w);
     return v;
 }

@@ -17,9 +17,11 @@ import { Mat } from "../index.js";
 export interface ICamera {
     transform: Transform;
     projection: Matrix;
+    clipSpace: number[];
     bgColor: Color;
     width: number;
     height: number;
+    view(): Matrix;
 }
 
 export class Context {
@@ -51,7 +53,7 @@ export class Context {
         this.renderer = engine.renderer;
 
         this.planeAlignCenter = Mesh.plane2D("center");
-        this.planeAlignCorner = Mesh.plane2D("corner");
+        this.planeAlignCorner = Mesh.plane2D("bottom left");
         this.white = Texture.fromColor(Color.fromHex(0xffff, 4));
         this.defaultMeshMat = new Default3DMaterial(Color.fromHex(0xf0fa, 4));
     }
