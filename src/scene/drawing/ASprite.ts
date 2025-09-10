@@ -90,4 +90,18 @@ export class ASprite<E extends Apate = Apate> extends Sprite<E> {
         this.material.tile = this.animation.frames[this.animation.frame];
         super.draw(context);
     }
+
+    public onSerialize(): { [field: string]: any } {
+        return {
+            ...super.onSerialize(),
+            tile: this.animation.frames,
+            animation: { ...this.animation, frames: this.animation.frames.map((t, i) => i) },
+        };
+    }
+
+    public onDeserialize(data: { [field: string]: any }, children: Obj[]): void {
+        super.onDeserialize(data, children);
+        this.animation = data.animation;
+        this.animation.frames = data.animation.frames.map((i) => data.tile[i]);
+    }
 }

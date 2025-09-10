@@ -73,5 +73,26 @@ class Sprite<E extends Apate = Apate> extends Obj<E> {
     public draw(context: Context): void {
         context.drawTile(this.transform, this.material.tile, this.material, this.align);
     }
+
+    public onSerialize(): { [field: string]: any } {
+        return {
+            ...super.onSerialize(),
+            tile: this.tile,
+        };
+    }
+
+    public onDeserialize(data: { [field: string]: any }, children: Obj[]): void {
+        super.onDeserialize(data, children);
+        this.tile = data.tile;
+    }
+
+    /*  protected prepareSerialization(counter: AttributeCounter): FieldDecomposition {
+        const decomp = super.prepareSerialization(counter);
+        if (counter.tiles === undefined) counter.tiles = 0;
+
+        decomp.tiles = [this.tile];
+        decomp.nodes[0]["tile"] = counter.tiles++;
+        return decomp;
+    } */
 }
 export { Sprite };

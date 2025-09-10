@@ -2,7 +2,7 @@ import { Apate } from "../Apate.js";
 import { Transform } from "../core/Transform.js";
 import { Context } from "../graphics/Context.js";
 
-import { Elem, Engine, container, heading } from "../ui/index.js";
+import * as UI from "../ui/concept/index.js";
 
 /**
  * @deprecated
@@ -277,6 +277,18 @@ class Obj<E extends Apate = Apate> implements Drawable {
         }
         UI.group.end();
     }
+
+    public onSerialize(): { [field: string]: any } {
+        return {
+            name: this.name,
+            transform: this.transform,
+        };
+    }
+
+    public onDeserialize(data: { [field: string]: any }, children: Obj[]) {
+        this.name = data.name;
+        this.transform = data.transform;
+        for (const c of children) c.transform.parent = this.transform;
     }
 }
 export { Obj };

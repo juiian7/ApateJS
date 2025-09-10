@@ -1,7 +1,5 @@
 import { Color } from "../core/Color.js";
-import { Vec4 } from "../core/Vec4.js";
 import { Renderer } from "./webgl2/Renderer.js";
-import { webglDebugger } from "./webgl2/WebGLDebugger.js";
 
 // the raw image used for rendering
 
@@ -21,7 +19,14 @@ export interface TextureParameter {
     warp_v: "repeat" | "clamp" | "mirror";
 }
 
-export type TextureSource = TexImageSource & { width: number; height: number };
+export type TextureSource =
+    | ImageBitmap
+    | ImageData
+    | HTMLImageElement
+    | HTMLCanvasElement
+    | HTMLVideoElement
+    | OffscreenCanvas
+    | VideoFrame;
 
 const pixelTextureParameter: TextureParameter = {
     min: "nearest",
@@ -30,18 +35,20 @@ const pixelTextureParameter: TextureParameter = {
     warp_h: "clamp",
 };
 
+const urlDataCanvas = document.createElement("canvas");
+
 export class Texture {
     private static debugId: number = 0;
     public readonly id: number = Texture.debugId++;
 
-    public width: number;
-    public height: number;
+    public readonly width: number;
+    public readonly height: number;
 
     public get size(): number[] {
         return [this.width, this.height];
     }
 
-    private buffer: ArrayBufferView | null = null;
+    private buffer: Uint8ClampedArray | null = null;
 
     private format: TextureFormat;
     private internalFormat: TextureFormat;
@@ -62,10 +69,12 @@ export class Texture {
     }
 
     private source: TextureSource;
+    public origin: {
+        source: "dom" | "url" | "pixels";
+        res: any;
+    };
 
     public constructor(width: number, height: number, format: TextureFormat, internalFormat: TextureFormat) {
-        webglDebugger.watch("textures", this);
-
         this.width = width;
         this.height = height;
         this.format = format;
@@ -73,27 +82,42 @@ export class Texture {
         this.parameter = pixelTextureParameter;
     }
 
+    private generateUrlData(): string {
+        urlDataCanvas.width = this.width;
+        urlDataCanvas.height = this.height;
+        const ctx = urlDataCanvas.getContext("2d");
+        ctx.clearRect(0, 0, this.width, this.height);
+        let data = this.source;
+        if (!this.source && this.buffer) data = new ImageData(new Uint8ClampedArray(this.buffer), this.width, this.height);
+        if (data instanceof ImageData) ctx.putImageData(data, 0, 0);
+        else ctx.drawImage(data, 0, 0);
+        return urlDataCanvas.toDataURL();
+    }
+
     public resize(width: number, height: number) {}
 
-    public static fromSource(source: TextureSource, format: TextureFormat = "rgba", width: number = 1, height: number = 1): Texture {
-        let text = new Texture(width, height, format, format);
+    public static fromSource(source: TextureSource, format: TextureFormat = "rgba", width?: number, height?: number): Texture {
+        width = width || (source as any).width || (source as any).displayWidth;
+        height = height || (source as any).height || (source as any).displayHeight;
+        const text = new Texture(width, height, format, format);
         text.source = source;
-        text.format = format;
-        text.width = source.width;
-        text.height = source.height;
+        // generate origin (for serialization)
+        if (source instanceof HTMLImageElement || source instanceof HTMLCanvasElement || source instanceof HTMLVideoElement) {
+            if (source.id) text.origin = { res: "#" + source.id, source: "dom" };
+        }
+        if (!text.origin) text.origin = { res: text.generateUrlData(), source: "url" };
         return text;
     }
 
     public static fromColor(color: Color): Texture {
-        let text = new Texture(1, 1, "rgba", "rgba");
-        text.buffer = new Uint8Array(color.color(false));
-        return text;
+        return this.fromPixels(color.color(false), 1, 1, "rgba");
     }
 
     public static fromPixels(pixels: number[], width: number, height: number, format: TextureFormat = "rgba") {
         let text = new Texture(width, height, format, format);
         text.format = format;
-        text.buffer = new Uint8Array(pixels);
+        text.buffer = new Uint8ClampedArray(pixels);
+        text.origin = { source: "pixels", res: text.buffer };
         return text;
     }
 
