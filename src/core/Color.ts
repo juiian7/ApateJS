@@ -17,6 +17,7 @@ import { Vec4 } from "./Vec4.js";
  */
 class Color {
     private data: number[];
+    private normalized: number[];
 
     public static readonly presets = {
         Transparent: Color.fromHex(0x0, 1),
@@ -41,6 +42,7 @@ class Color {
      */
     public constructor(r: number = 0, g: number = 0, b: number = 0, a: number = 255) {
         this.data = [r, g, b, a];
+        this.normalized = [r / 255, g / 255, b / 255, a / 255];
     }
 
     /**
@@ -88,9 +90,7 @@ class Color {
      * @returns {number[]} The normalized array of components
      */
     public color(normalize: boolean = true): number[] {
-        if (normalize && (this.r > 1 || this.g > 1 || this.b > 1 || this.a > 1)) {
-            (this.data[0] /= 255), (this.data[1] /= 255), (this.data[2] /= 255), (this.data[3] /= 255);
-        }
+        if (normalize) return this.normalize();
         return this.data;
     }
 
@@ -135,8 +135,35 @@ class Color {
     public set a(v: number) {
         this.data[3] = v;
     }
+
+    private normalize() {
+        this.normalized[0] = this.data[0] / 255;
+        this.normalized[1] = this.data[1] / 255;
+        this.normalized[2] = this.data[2] / 255;
+        this.normalized[3] = this.data[3] / 255;
+        return this.normalized;
+    }
+
+    public toHex(includeAlpha: boolean = false): string {
+        if (includeAlpha) return rgbaToHex(this.r, this.g, this.b, this.a);
+        return rgbaToHex(this.r, this.g, this.b);
+    }
+
+    public cssStr(includeAlpha: boolean = false): string {
+        if (includeAlpha) `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a / 255})`;
+        return `rgb(${this.r}, ${this.g}, ${this.b})`;
+    }
 }
 export { Color };
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbaToHex(r: number, g: number, b: number, a?: number) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b) + (!!a ? componentToHex(a) : "");
+}
 
 function hexToRgba(hex: string): Color {
     if (!hex.startsWith("#")) throw new Error("Hex strings need to start with a leading #");

@@ -1,0 +1,109 @@
+:root {
+    --font: arial;
+    --text: #000;
+    --text-inv: #fff;
+    --text-primary-inv: #fff;
+
+    --disabled: #aaa;
+
+    --border-radius: 0px;
+    --panel-border-radius: var(--border-radius);
+    --group-border-radius: var(--border-radius);
+    --button-border-radius: var(--border-radius);
+
+    --surface-panel: #eee;
+    --surface-child: #ccc;
+    --surface-input: #ddd;
+
+    --red: #e23;
+    --blue: #28e;
+    --green: #7d2;
+    --yellow: #eb2;
+    --magenta: #e36;
+    --cyan: #2ec;
+    --primary: var(--magenta);
+}
+
+.primary {
+    color: var(--primary);
+}
+
+.red {
+    color: var(--red);
+}
+
+.green {
+    color: var(--green);
+}
+
+.blue {
+    color: var(--blue);
+}
+
+.yellow {
+    color: var(--yellow);
+}
+
+.magenta {
+    color: var(--magenta);
+}
+
+.cyan {
+    color: var(--cyan);
+}
+
+.text {
+    display: block;
+}
+
+.title {
+    font-size: 1em;
+}
+
+.panel {
+    font-family: var(--font);
+    color: var(--text);
+    background-color: var(--surface-panel);
+    border-radius: var(--panel-border-radius);
+    overflow: auto;
+}
+
+.panel.movable {
+    width: 20rem;
+    position: fixed;
+}
+
+input {
+    font-size: 0.875rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+button {
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
+.flex {
+    display: flex;
+}
+
+.color-select {
+    width: 100%;
+    aspect-ratio: 1;
+}
+
+.inspector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+}
+
+.inspector>.panel {
+    flex-grow: 1;
+}

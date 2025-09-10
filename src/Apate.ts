@@ -1,11 +1,15 @@
+import { Color } from "./core/Color.js";
 import { Input } from "./core/Input.js";
+import { screenToWorld, inverse } from "./core/Matrix.js";
 import { Physics } from "./core/Physics.js";
+import { Vec4 } from "./core/Vec4.js";
 
 import { Context } from "./graphics/Context.js";
 import { Renderer } from "./graphics/webgl2/Renderer.js";
 
 import { Camera, Viewport } from "./scene/index.js";
 import { Obj } from "./scene/Obj.js";
+import * as UI from "./ui/concept/index.js";
 
 interface EngineConfig {
     screen?: ScreenConfig;
@@ -91,6 +95,9 @@ export class Apate {
     public screenAspect: number = 0;
 
     public debug: boolean = true;
+    public inspector: boolean = true;
+
+    private uiContext: UI.Context;
 
     constructor(config?: EngineConfig) {
         this.startTime = Date.now();
@@ -137,6 +144,20 @@ export class Apate {
     /** Internal init only (do not overwrite) */
     private async _init() {
         // - do engine init
+        this.renderer.canvas.addEventListener("mousedown", (ev) => {
+            const cam = this.context.cameras[0];
+            const coords = screenToWorld(
+                Vec4.from(ev.offsetX, ev.offsetY),
+                cam.view(),
+                cam.projection,
+                Vec4.from(this.renderer.canvas.width, this.renderer.canvas.height),
+                cam.clipSpace
+            );
+            console.log(coords.vec());
+
+            // shoot ray to scene?
+        });
+
         // - do user init
         await this.init();
 
@@ -144,19 +165,42 @@ export class Apate {
         this._loop();
     }
 
+    private onHold: boolean = false;
+    private releaseForOneTick: boolean = false;
     private _loop() {
         // - do timings
         this.time = Date.now() - this.startTime;
         this.delta = this.time - this.last;
 
-        // update
-        this.update();
+        if (!this.onHold || this.releaseForOneTick) {
+            this.releaseForOneTick = false;
 
-        // rendering
-        this.context.clear();
-        this.renderer.begin(this.delta);
-        this._scene.render(this.context);
-        this.renderer.flush();
+            // input fetching / handling
+            this.input._fetch();
+
+            // update
+            this.update();
+
+            // rendering
+            this.context.clear();
+            this.renderer.begin(this.delta);
+            this._scene.render(this.context);
+            this.renderer.flush();
+        }
+
+        // inspecting
+        if (this.inspector) {
+            if (!this.uiContext) {
+                const inspector = document.createElement("div");
+                inspector.classList.add("inspector");
+                document.body.append(inspector);
+
+                this.uiContext = UI.setup(inspector);
+            }
+            UI.start(this.uiContext);
+            this.inspect();
+            UI.finish();
+        }
 
         // - do timings
         this.last = this.time;
@@ -166,6 +210,32 @@ export class Apate {
     public async init() {}
 
     public update() {}
+
+    public inspect() {
+        // scene graph / obj picker
+        UI.panel.begin({ name: "Scene", movable: false });
+
+        UI.text.title("Scene Graph");
+
+        UI.panel.end();
+
+        // engine stats / update rendering
+        UI.panel.begin({ name: "Runtime", movable: false });
+
+        UI.text.label("FPS: " + this.renderer.stats.fps);
+        if (UI.button.text("Limit FPS", { type: "toggle" })) {
+            UI.input.number("Limit", 100);
+        }
+
+        UI.text.label("Draw calls: " + this.renderer.stats.drawCalls);
+        this.onHold = UI.button.text(this.onHold ? "Run" : "Hold", {
+            type: "toggle",
+            styles: { backgroundColor: `var(--${this.onHold ? "green" : "red"})` },
+        });
+        if (this.onHold) if (UI.button.text("Tick")) this.releaseForOneTick = true;
+
+        UI.panel.end();
+    }
 
     public onResize() {
         if (!this.autoResize) return;
