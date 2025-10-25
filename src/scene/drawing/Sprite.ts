@@ -85,14 +85,5 @@ class Sprite<E extends Apate = Apate> extends Obj<E> {
         super.onDeserialize(data, children);
         this.tile = data.tile;
     }
-
-    /*  protected prepareSerialization(counter: AttributeCounter): FieldDecomposition {
-        const decomp = super.prepareSerialization(counter);
-        if (counter.tiles === undefined) counter.tiles = 0;
-
-        decomp.tiles = [this.tile];
-        decomp.nodes[0]["tile"] = counter.tiles++;
-        return decomp;
-    } */
 }
 export { Sprite };

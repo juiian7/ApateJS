@@ -1,5 +1,6 @@
 import { Body, Collider, Shapes } from "../scene/index.js";
 import { Ray } from "./Ray.js";
+import { Vec4 } from "./Vec4.js";
 
 export interface CollisionInfo {
     self: Collider;
@@ -20,6 +21,7 @@ export interface RaycastInfo {
 }
 
 export type CollisionLayer = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15;
+export type CollisionType = "static" | "trigger";
 
 class Physics {
     private colliders: Collider[] = [];
@@ -68,7 +70,6 @@ class Physics {
 
     public collisions(collider: Collider): number {
         let possible = this.get(collider.mask);
-        collider.collisions.length = 0;
 
         for (let i = 0; i < possible.length; i++) {
             if (collider == possible[i]) continue;
@@ -79,14 +80,16 @@ class Physics {
 
     public resolve(collider: Collider) {
         let info: CollisionInfo;
-        while ((info = collider.collisions.pop())) info.ownShape.resolve(info);
+        while ((info = collider.collisionsToResolve.pop())) {
+            info.ownShape.resolve(info);
+        }
     }
 
-    public raycast(ray: Ray, mask: number, /* ignore: Collider[] = [], */ stopAfterFirst: boolean = true): RaycastInfo {
+    public raycast(ray: Ray, mask: number, ignore: Collider[] = [], stopAfterFirst: boolean = true): RaycastInfo {
         let info: RaycastInfo = { nearest: Infinity, hits: [] };
         let possible = this.get(mask);
         for (let i = 0; i < possible.length; i++) {
-            /* if (ignore.includes(possible[i])) continue; */
+            if (ignore.includes(possible[i])) continue;
             let hit = possible[i].checkAgainstRay(ray);
             if (hit) {
                 if (hit.distance < info.nearest) info.nearest = hit.distance;

@@ -6,12 +6,17 @@ import { Context } from "../../graphics/Context.js";
 
 import { Vec4 } from "../../core/Vec4.js";
 import { Shape } from "./shapes/Shape.js";
-import { CollisionInfo, CollisionLayer, RayHit } from "../../core/Physics.js";
+import { CollisionInfo, CollisionLayer, RayHit, CollisionType } from "../../core/Physics.js";
 import { Ray } from "../../core/Ray.js";
+import { Color } from "../../core/Color.js";
 
 export class Collider<E extends Apate = Apate> extends Obj<E> {
     public shapes: Shape[] = [];
     public enabled: boolean = true;
+
+    public debugColor: Color = Color.fromHex(0x00ff0044);
+
+    public type: CollisionType = "static";
 
     public belongsTo: Obj;
 
@@ -28,10 +33,11 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
 
     public mask: number = 0xffff;
 
-    constructor(shape: Shape, layer: CollisionLayer = 0, parent?: Obj, name?: string) {
+    constructor(shape: Shape, type: CollisionType = "static", layer: CollisionLayer = 0, parent?: Obj, name?: string) {
         super(parent, name);
 
         this.belongsTo = parent;
+        this.type = type;
         this.collisionLayer = layer;
 
         if (shape) this.addShape(shape);
@@ -44,26 +50,64 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
     }
 
     public collisions: CollisionInfo[] = [];
+    public collisionsLastFrame: CollisionInfo[] = [];
+    public collisionsToResolve: CollisionInfo[] = [];
 
     public collectCollisions(): number {
         if (this.engine) return this.engine.physics.collisions(this);
         return 0;
     }
 
-    public checkAgainst(other: Collider): boolean {
-        let l = this.collisions.length;
+    public flushFrameCollisions() {
+        this.collisionsLastFrame.length = this.collisions.length;
+        for (let i = 0; i < this.collisions.length; i++) this.collisionsLastFrame[i] = this.collisions[i];
+        this.collisions.length = 0;
+    }
 
+    public checkAgainst(other: Collider): boolean {
         if (this.shapes.length == 0) console.warn("No Shapes assigned to: ", this);
         else if (other.shapes.length == 0) console.warn("No Shapes assigned to: ", other);
 
+        let foundCollision = false;
         for (let i = 0; i < this.shapes.length; i++) {
             for (let j = 0; j < other.shapes.length; j++) {
                 if (this.shapes[i].collides(other.shapes[j])) {
-                    this.collisions.push({ self: this, other, ownShape: this.shapes[i], otherShape: other.shapes[j] });
+                    foundCollision = true;
+                    const info = { self: this, other, ownShape: this.shapes[i], otherShape: other.shapes[j] };
+                    this.collisions.push(info);
+                    if (other.type == "static") this.collisionsToResolve.push(info);
+
+                    // fire event if new
+                    let alreadyCaptured = false;
+                    for (let i = 0; i < this.collisionsLastFrame.length; i++) {
+                        if (
+                            this.collisionsLastFrame[i].otherShape == info.otherShape &&
+                            this.collisionsLastFrame[i].ownShape == info.ownShape
+                        ) {
+                            alreadyCaptured = true;
+                        }
+                    }
+                    if (!alreadyCaptured) {
+                        this.on_enter(info);
+                        info.other.on_enter(info);
+                    }
                 }
             }
         }
-        return this.collisions.length != l;
+        if (!foundCollision && this.collisionsLastFrame.length > 0) {
+            // release previous collisions
+            for (let i = 0; i < this.collisionsLastFrame.length; i++) {
+                if (this.collisionsLastFrame[i].other != other) continue;
+
+                // clean up unresolved which are no longer colliding
+                const ndx = this.collisionsToResolve.indexOf(this.collisionsLastFrame[i]);
+                if (ndx >= 0) this.collisionsToResolve.splice(i, 1);
+
+                this.on_leave(this.collisionsLastFrame[i]);
+                this.collisionsLastFrame[i].other.on_leave(this.collisionsLastFrame[i]);
+            }
+        }
+        return foundCollision;
     }
 
     public checkAgainstRay(ray: Ray): RayHit {
@@ -85,7 +129,7 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
 
     public draw(context: Context): void {
         if (context.engine.debug && this.enabled) {
-            for (const shape of this.shapes) shape.debugDraw(context);
+            for (const shape of this.shapes) shape.debugDraw(context, this.debugColor);
         }
     }
 
@@ -98,4 +142,7 @@ export class Collider<E extends Apate = Apate> extends Obj<E> {
         super.on_scene_exit(engine);
         engine.physics.remove(this);
     }
+
+    on_enter(other: CollisionInfo): void {}
+    on_leave(other: CollisionInfo): void {}
 }

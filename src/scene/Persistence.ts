@@ -1,11 +1,7 @@
 import { Tile } from "../core/Tile.js";
 import { Transform } from "../core/Transform.js";
-import { Anim } from "./drawing/ASprite.js";
-import { Sprite } from "./drawing/Sprite.js";
 import { Obj } from "./Obj.js";
 import * as InternalNodes from "./index.js";
-import { Texture } from "../graphics/Texture.js";
-import { Color } from "../core/Color.js";
 import { Vec4 } from "../core/Vec4.js";
 
 type FieldSerializer<T> = (field: T) => any;

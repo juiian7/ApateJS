@@ -19,7 +19,7 @@ class Input {
     private mapping = {
         axis: {
             horizontal: {
-                pad: null,
+                pad: 0,
                 pos: { keys: ["KeyD", "ArrowRight"], btn: [] },
                 neg: { keys: ["KeyA", "ArrowLeft"], btn: [] },
             },
@@ -31,7 +31,7 @@ class Input {
         },
         buttons: {
             jump: {
-                keys: ["Space"],
+                keys: ["Space", "KeyC"],
                 btn: [0],
             },
             combination: {
@@ -67,6 +67,9 @@ class Input {
         window.addEventListener("keydown", this.keydown.bind(this));
 
         (canvas || document).addEventListener("mousemove", this.mouseMove.bind(this));
+
+        window.addEventListener("gamepadconnected", this.gamepadConnected.bind(this));
+        window.addEventListener("gamepaddisconnected", this.gamepadDisconnected.bind(this));
     }
 
     private keyup(ev: KeyboardEvent) {
@@ -83,6 +86,24 @@ class Input {
     private mouseMove(ev: MouseEvent) {
         this.mPosition.x = ev.offsetX;
         this.mPosition.y = ev.offsetY;
+    }
+
+    private gamepadConnected(ev: GamepadEvent) {
+        console.log(ev.gamepad.id, ev.gamepad);
+
+        if (!ev.gamepad.vibrationActuator) return;
+
+        console.log(ev.gamepad.vibrationActuator);
+
+        ev.gamepad.vibrationActuator.playEffect("dual-rumble", {
+            startDelay: 0,
+            duration: 2000,
+            weakMagnitude: 0.1,
+            strongMagnitude: 1.0,
+        });
+    }
+    private gamepadDisconnected(ev: GamepadEvent) {
+        console.log("disconnected: ", ev.gamepad.id);
     }
 
     public on(btn: string, event: ButtonEvents, handler: (value: number) => void) {}
@@ -103,14 +124,15 @@ class Input {
         return this.keys[internalKey] > 0;
     }
 
-    public axis(name: string): number {
+    public axis(name: string, pad: number = 0): number {
         let axis = 0;
 
         const dax = this.mapping.axis[name];
         if (!dax) throw `Axis "${name}" not defined!`;
 
-        if (dax.pad) {
+        if (Number.isInteger(dax.pad) && this.pads.length > pad) {
             // gamepad input
+            axis += this.pads[pad].axes[dax.pad];
         }
 
         if (dax.pos) {
@@ -150,19 +172,11 @@ class Input {
             if (typeof buttons[i] == "number") {
                 sum += this.pads[pad].buttons[buttons[i] as number].value;
             } else {
-                let valid = true;
                 for (let j = 0; j < (buttons[i] as number[]).length; j++) {
-                    if (!this.pads[pad].buttons[buttons[i][j]].value) {
-                        valid = false;
-                        break;
-                    }
+                    sum += this.pads[pad].buttons[buttons[i][j]].value;
                 }
-                if (valid) sum += 1;
             }
-            if (sum >= 1) {
-                sum = 1;
-                break;
-            }
+            if (sum > 0) break;
         }
         return sum;
     }
@@ -173,6 +187,7 @@ class Input {
 
     public _fetch() {
         // called by engine to poll inputs (gamepads and other logic)
+        this.pads = window.navigator.getGamepads();
     }
 
     //cursor() {}

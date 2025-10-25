@@ -12,7 +12,8 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
     public velocity: Vec4;
 
     public grounded: boolean = false;
-    public touchesWall: boolean = false;
+    public touchesLeftWall: boolean = false;
+    public touchesRightWall: boolean = false;
     public wallThreshold: number = 0.01;
 
     private left: Ray = Ray.left(this.transform.position);
@@ -37,7 +38,7 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
     constructor(parent?: Obj, name?: string) {
         super(parent, name);
 
-        this.collider = new Collider(null, 0, this, (name || "unnamed") + "-collider");
+        this.collider = new Collider(null, "trigger", 0, this, (name || "unnamed") + "-collider");
         this.velocity = Vec4.from(0, 0, 0);
     }
 
@@ -58,8 +59,10 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
         if (this.gravity) {
             this.accelerate(this.gravity);
         }
-        this.grounded = false;
-        this.touchesWall = false;
+        if (this.velocity.y != 0) this.grounded = false;
+        if (this.velocity.x != 0) (this.touchesLeftWall = false), (this.touchesRightWall = false);
+
+        this.collider.flushFrameCollisions();
     }
 
     public slide() {
@@ -69,41 +72,30 @@ export class Body<E extends Apate = Apate> extends Obj<E> {
         // apply vel and if collision change vel along colliding obj
         // apply y
         this.transform.move(0, this.velocity.y * factor, 0);
+        this.engine!.physics.collisions(this.collider);
 
-        if (this.engine!.physics.collisions(this.collider) > 0) {
+        if (this.collider.collisionsToResolve.length > 0) {
             // resolve
+            //TODO: physically resolving...
             this.engine!.physics.resolve(this.collider);
-
-            // assume ground is always direction of gravity
-            if (Math.sign(this.velocity.y) == Math.sign(this.gravity.y)) this.grounded = true;
-
+            if (Math.sign(this.velocity.y) == Math.sign(this.gravity.y)) this.grounded = true; // assume ground is always direction of gravity
             this.velocity.y = 0;
-            // this.velocity.y > 0 -> up ? TODO: physically resolving
-            // add to touching sides?
         }
-        this.transform.move(this.velocity.x * factor, 0, 0);
-        if (this.engine!.physics.collisions(this.collider) > 0) {
-            // resolve
-            this.engine!.physics.resolve(this.collider);
-            this.velocity.x = 0;
-            // this.velocity.x > 0 -> right ? TODO: physically resolving
-            this.touchesWall = true;
-        } /* else {
-            // checks in directions of wall
-            this.left.origin = this.absolute.position;
-            this.left.len = this.wallThreshold;
-            if (this.engine!.physics.raycast(this.left, this.collider.mask).nearest <= this.wallThreshold) {
-                this.touchesWall = true;
-                // add to touching sides?
-            }
 
-            this.right.origin = this.absolute.position;
-            this.right.len = this.wallThreshold;
-            if (this.engine!.physics.raycast(this.right, this.collider.mask).nearest <= this.wallThreshold) {
-                this.touchesWall = true;
-                // add to touching sides?
-            }
-        } */
+        // apply x
+        this.transform.move(this.velocity.x * factor, 0, 0);
+        this.engine!.physics.collisions(this.collider);
+
+        if (this.collider.collisionsToResolve.length > 0) {
+            // resolve
+            //  TODO: physically resolving...
+            this.engine!.physics.resolve(this.collider);
+
+            if (this.velocity.x < 0) this.touchesLeftWall = true;
+            else this.touchesRightWall = true;
+
+            this.velocity.x = 0;
+        }
     }
 
     public collide(): CollisionInfo[] {

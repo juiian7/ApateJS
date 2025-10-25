@@ -6,6 +6,7 @@ import { Shape2D } from "./Shape2D.js";
 import { Circle } from "./Circle.js";
 import { Shape } from "../Shape.js";
 import { Ray } from "../../../../core/Ray.js";
+import { Color } from "../../../../core/Color.js";
 
 class Rect extends Shape2D {
     private align: "center" | "corner" = "corner";

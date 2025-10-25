@@ -26,10 +26,9 @@ abstract class Shape {
         throw new Error("Collision resolving  not implemented for this type: " + Shape.name);
     }
 
-    public debugColor: Color = Color.fromHex(0x00ff0044);
     private debugSpriteMat: SpriteMaterial = new SpriteMaterial();
-    public debugDraw(ctx: Context) {
-        this.debugSpriteMat.color = this.debugColor;
+    public debugDraw(ctx: Context, color: Color) {
+        this.debugSpriteMat.color = color;
         ctx.drawTile(this.transform, white, this.debugSpriteMat, "bottom-left");
     }
 }
